@@ -1,0 +1,4 @@
+node_modules/
+reqs.md
+*venv/
+*__pycache__/
