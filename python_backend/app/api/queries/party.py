@@ -1,3 +1,4 @@
+import pyodbc
 from .utils import with_db_conn
 from typing import Dict, Tuple, Any, List
 
@@ -86,4 +87,22 @@ def get_party_address(cursor, party_pk: int) -> Dict[str, Any]:
 def get_all_document_groups(cursor) -> List[Tuple[str, int]]:
     query = "SELECT Code, DocumentGroupPK FROM DocumentGroup"
     cursor.execute(query)
+    return cursor.fetchall()
+
+
+@with_db_conn()
+def get_commodity_code_emails(cursor: pyodbc.Cursor, code: str):
+    sql = """
+        ;WITH e AS (
+          SELECT p.Name, p.Email
+          FROM CustomerGroup cg
+          JOIN PartyCustomerGroup pcg ON pcg.CustomerGroupFK = cg.CustomerGroupPK
+          JOIN Party p ON p.PartyPK = pcg.PartyFK
+          WHERE cg.Code = ?
+        )
+        SELECT ?, Name, Email FROM e
+        UNION ALL
+        SELECT ?, NULL, 'No Emails Found' WHERE NOT EXISTS (SELECT 1 FROM e);
+        """
+    cursor.execute(sql, (code, code, code))
     return cursor.fetchall()

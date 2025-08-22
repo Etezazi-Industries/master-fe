@@ -9,9 +9,9 @@ from dotenv import load_dotenv
 pyodbc.pooling = True
 load_dotenv()
 LOGGER = getlogger("MT Funcs")
-# DSN = "DRIVER={SQL Server};SERVER=ETZ-SQL;DATABASE=SANDBOX;Trusted_Connection=yes"
+DSN = "DRIVER={SQL Server};SERVER=ETZ-SQL;DATABASE=SANDBOX;Trusted_Connection=yes"
 
-DSN = "DRIVER={SQL Server};SERVER=ETZ-SQL;DATABASE=ETEZAZIMIETrakLive;Trusted_Connection=yes"
+# DSN = "DRIVER={SQL Server};SERVER=ETZ-SQL;DATABASE=ETEZAZIMIETrakLive;Trusted_Connection=yes"
 # LOGGER.info(f"Database conn: {DSN}")
 
 
@@ -71,7 +71,7 @@ def get_table_schema(cursor, table_name: str) -> List[Dict[str, Any]]:
 
     :param table_name: [TODO:description]
     """
-    query = f"""
+    query = """
     SELECT 
         COLUMN_NAME, 
         DATA_TYPE, 

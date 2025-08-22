@@ -6,11 +6,16 @@ contextBridge.exposeInMainWorld('api', {
         return ipcRenderer.invoke('login', username, password);
     },
 
-    switch_to_main_window: async (win) => {
-        return ipcRenderer.invoke('switch_to_main_window');
-    },
-
+    // TODO: These should be direct API calls and not through the renderer.
     search_for_rfq: async (rfq_num) => {
         return ipcRenderer.invoke('search_for_rfq', rfq_num);
+    },
+
+    get_rfq_details: async (rfq_num) => {
+        return ipcRenderer.invoke('get_rfq_details', rfq_num);
+    },
+
+    get_commodity_codes: async () => {
+        return ipcRenderer.invoke('get_commodity_codes');
     }
 })

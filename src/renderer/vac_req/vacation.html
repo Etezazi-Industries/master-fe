@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vendor Quoting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Floating approve button at bottom right */
+        #approve-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+            /* above table/card */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Back to Home -->
+    <div class="container-fluid py-2 sticky-top bg-white border-bottom" style="z-index:1060;">
+        <!--<button class="btn btn-outline-secondary" onclick="window.location.href='home.html'">-->
+        <!--    &larr; Back to Home-->
+        <!--</button>-->
+    </div>
+
+
+    <!-- Vacation Requests -->
+    <div class="container-fluid py-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <!-- Centered heading -->
+                <h4 class="card-title text-center mb-3">Vacation Requests</h4>
+
+                <div class="table-responsive">
+                    <table id="vacation-table" class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 60px;">ID</th>
+                                <th style="width: 180px;">Name</th>
+                                <th style="width: 120px;">From Date</th>
+                                <th style="width: 120px;">To Date</th>
+                                <th style="width: 120px;">Start Time</th>
+                                <th style="width: 100px;">Hours</th>
+                                <th style="width: 320px;">Reason</th>
+                                <th style="width: 110px;">Approved</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows will be injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Approve Button -->
+    <button id="approve-btn" class="btn btn-primary" disabled>Approve</button>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="./vacation.js"></script>
+
+</html>

@@ -15,8 +15,9 @@
   "type": "module",
   "main": "src/main/main.js",
   "scripts": {
-    "start": "concurrently \"cross-env PYTHONIOENCODING=utf-8 uv run --directory python_backend fastapi dev app/main.py\" \"wait-on http-get://127.0.0.1:8000/ && electron .\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "electron ."
   },
   "devDependencies": {
     "concurrently": "^9.2.0",

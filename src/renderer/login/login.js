@@ -10,7 +10,8 @@ form.addEventListener('submit', async (e) => {
     console.log("logging in...")
     e.preventDefault();
     try {
-        await window.api.switch_to_main_window();
+        //await window.api.switch_to_main_window();
+        window.location.href = "home/home.html"
 
         // NOTE: FOR PROD:
 
@@ -24,7 +25,7 @@ form.addEventListener('submit', async (e) => {
         //}
         // ----------------------------------------------------
         //
-    } catch (err){
+    } catch (err) {
         console.log("Somethin went wrong.");
     }
 })

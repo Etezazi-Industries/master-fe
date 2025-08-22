@@ -1,4 +1,4 @@
-from mie_trak_api.utils import with_db_conn, create_pydantic_model
+from api.queries.utils import with_db_conn, create_pydantic_model
 import pyodbc
 from typing import Dict
 
@@ -204,7 +204,9 @@ def check_and_create_tooling(cursor: pyodbc.Cursor, user_des: str) -> int:
 
 
 @with_db_conn()
-def get_item_dict(cursor: pyodbc.Cursor, item_fks_dict: Dict[int, int]) -> Dict:  # format? 
+def get_item_dict(
+    cursor: pyodbc.Cursor, item_fks_dict: Dict[int, int]
+) -> Dict:  # format?
     """
     Fetches the data of items in the Item table in MT.
     Returns a dict with ItemPK: {<column name>: value}. NOTE: QuantityRequired is a key.
@@ -236,14 +238,73 @@ def get_item_dict(cursor: pyodbc.Cursor, item_fks_dict: Dict[int, int]) -> Dict:
         #     ItemPK=fk
         # )
 
-        cursor.execute(query, (fk, ))
+        cursor.execute(query, (fk,))
         details = cursor.fetchone()
 
         if details:
-            columns = ["PartNumber", "Description", "ItemTypeFK", "PartLength",
-                       "PartWidth", "Thickness", "StockLength", "StockWidth", "PurchaseOrderComment"]
+            columns = [
+                "PartNumber",
+                "Description",
+                "ItemTypeFK",
+                "PartLength",
+                "PartWidth",
+                "Thickness",
+                "StockLength",
+                "StockWidth",
+                "PurchaseOrderComment",
+            ]
             # item_details = details[0]
             item_dict[fk] = {column: value for column, value in zip(columns, details)}
             item_dict[fk]["QuantityRequired"] = value
     return item_dict
 
+
+@with_db_conn()
+def get_commodity_code(cursor: pyodbc.Cursor, itempk: int) -> str | None:
+    query = """
+    SELECT c.Code
+    FROM Item AS i
+    JOIN Commodity AS c
+      ON c.CommodityPK = i.CommodityFK
+    WHERE i.ItemPK = ?
+    """
+    cursor.execute(query, (itempk,))
+    row = cursor.fetchone()
+    if not row:
+        return None
+    return row[0]
+
+
+@with_db_conn()
+def get_item_info(cursor: pyodbc.Cursor, item_pk: int):
+    print(item_pk)
+    query = """
+    SELECT 
+        PartNumber,
+        StockLength,
+        StockWidth,
+        Thickness,
+        Description,
+        ItemTypeFK,
+        PartLength,
+        PartWidth,
+        PurchaseOrderComment
+    FROM
+        Item
+    WHERE
+        ItemPK = ?
+    """
+    cursor.execute(query, (item_pk, ))
+    return cursor.fetchone()
+
+
+@with_db_conn()
+def get_all_commodity_codes(cursor: pyodbc.Cursor):
+    query = """
+    SELECT
+        Code
+    FROM
+        Commodity
+    """
+    cursor.execute(query)
+    return cursor.fetchall()

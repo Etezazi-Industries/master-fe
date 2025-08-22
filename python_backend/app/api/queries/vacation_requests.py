@@ -1,6 +1,8 @@
 from typing import List
 from datetime import datetime
-from utils import with_db_conn, LOGGER
+
+import pyodbc
+from api.queries.utils import with_db_conn
 
 
 @with_db_conn()
@@ -30,7 +32,7 @@ def get_all_vacation_requests(cursor) -> List:
     results = cursor.fetchall()
 
     if not results:
-        LOGGER.error(f"MT did not return anything for: \n{query}")
+        # LOGGER.error(f"MT did not return anything for: \n{query}")
         raise ValueError("Mie Trak did not return anything. Check Query.")
 
     return _format_results(results)
@@ -97,7 +99,10 @@ def approve_vacation_request(cursor, request_pk: int) -> None:
         SET Approved = 1
         WHERE VacationRequestPK = ?
     """
-    cursor.execute(query, (request_pk,))
+    try:
+        cursor.execute(query, (request_pk,))
+    except pyodbc.Error:
+        raise ValueError(f"Vacation Request PK: `{request_pk}` is not valid")
 
 
 @with_db_conn(commit=True)
@@ -154,3 +159,7 @@ def get_user_email_from_vacation_pk(cursor, pk: int) -> str:
         raise ValueError("Database did not return anything")
 
     return result[0]
+
+
+# if __name__ == "__main__":
+#     print(get_all_vacation_requests())

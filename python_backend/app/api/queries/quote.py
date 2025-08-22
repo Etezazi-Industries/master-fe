@@ -318,8 +318,7 @@ def create_assy_quote(
 @with_db_conn()
 def get_quote_items_qty(cursor: pyodbc.Cursor, quote_fk: int):
     query = """
-    SELECT ItemFK, QuantityRequired FROM QuoteFK WHERE QuoteFK=?
+    SELECT ItemFK, QuantityRequired FROM QuoteAssembly WHERE QuoteFK=?
     """
     cursor.execute(query, (quote_fk))
     return cursor.fetchall()
-

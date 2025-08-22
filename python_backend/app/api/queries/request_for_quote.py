@@ -1,7 +1,6 @@
-from typing import Dict, Any, Tuple, List
+from typing import Dict, Any, List
 import pyodbc
 from api.queries.utils import with_db_conn
-from api.queries.quote import get_quote_items_qty
 
 
 DEFAULT_DOCUMENT_GROUP = 52
@@ -360,3 +359,25 @@ def get_item_pks(cursor: pyodbc.Cursor, rfq_pk: int):
     """
     cursor.execute(get_from_rfq_line, (rfq_pk))
     return cursor.fetchall()
+
+
+# TODO: to test
+@with_db_conn()
+def get_emails_for_op_items(cursor: pyodbc.Cursor) -> Dict[str, List]:
+    QUERY = """SELECT p.Email
+        FROM PartyBuyer pb
+        JOIN Party p
+          ON p.PartyPK = pb.BuyerFK
+        WHERE pb.PartyFK = ?;"""
+    PARTIES = {                              # name : partyFK (we get buyerfk from this)
+        "fin" : 3755,
+        "mat-al": 3744,
+        "mat-steel": 3747,
+        "ht": 3764,
+        'hardware': 3867,
+    }
+    email_dict = {}
+    for key, party in PARTIES.items():
+        results = cursor.execute(QUERY, (party,)).fetchall()
+        email_dict[key] = [res[0] for res in results]
+    return email_dict
