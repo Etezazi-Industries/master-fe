@@ -1,4 +1,4 @@
-from api.queries.utils import with_db_conn
+from .utils import with_db_conn
 from typing import Dict, List
 
 

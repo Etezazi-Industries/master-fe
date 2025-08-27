@@ -196,6 +196,7 @@ function startInlineEdit(li) {
     });
 }
 
+
 // Delete
 async function deleteEmail(li) {
     if (!li) return;

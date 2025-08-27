@@ -43,6 +43,7 @@ def get_commodity_codes():
     return {"codes": codes}
 
 
+# TODO: this should be in its own file.
 @router.get("/get-vacation-requests")
 def get_vacation_requests():
     data = vacation_requests.get_all_vacation_requests()

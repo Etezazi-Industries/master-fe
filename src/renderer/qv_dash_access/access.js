@@ -1,149 +1,198 @@
-// ----- Dummy data -----
-const users = ["Alice Johnson", "Bob Smith", "Carlos Diaz", "Dev Patel", "Emma Williams", "Fatima Noor", "Grace Lee", "Henry Zhao", "Isha Kapoor"];
-const dashboards = ["Sales Dashboard", "Ops Dashboard", "Finance Overview", "Executive Summary", "Manufacturing KPIs", "NPI Readout"];
-const quickViews = ["Inventory Snapshot", "AR Aging", "AP Aging", "Weekly KPIs", "Supplier Scorecard", "Late Orders", "Open Quotes"];
+// @ts-check
 
-// Map<User, {dashboards:Set, quickViews:Set}>
-const accessMap = new Map([
-    ["Alice Johnson", { dashboards: new Set(["Sales Dashboard"]), quickViews: new Set(["Weekly KPIs"]) }],
-    ["Bob Smith", { dashboards: new Set([]), quickViews: new Set(["Inventory Snapshot"]) }],
-    ["Carlos Diaz", { dashboards: new Set([]), quickViews: new Set([]) }],
-    ["Dev Patel", { dashboards: new Set([]), quickViews: new Set(["AR Aging", "AP Aging"]) }],
-    ["Emma Williams", { dashboards: new Set(["Executive Summary"]), quickViews: new Set([]) }],
-    ["Fatima Noor", { dashboards: new Set([]), quickViews: new Set([]) }],
-    ["Grace Lee", { dashboards: new Set(["Finance Overview"]), quickViews: new Set(["Supplier Scorecard"]) }],
-    ["Henry Zhao", { dashboards: new Set(["Ops Dashboard"]), quickViews: new Set(["Late Orders"]) }],
-    ["Isha Kapoor", { dashboards: new Set([]), quickViews: new Set(["Open Quotes"]) }],
-]);
+import { fetch_users, get_user_quickviews, get_user_dashboards, remove_qv_access, remove_db_access, add_qv, add_db } from "./api.js"
 
-// ----- DOM -----
-const usersEl = document.getElementById("users");
-const accessedQVEl = document.getElementById("accessedQuickViews");
-const accessedDBEl = document.getElementById("accessedDashboards");
 
-const searchUsersEl = document.getElementById("searchUsers");
-const searchAccessedQVEl = document.getElementById("searchAccessedQV");
-const searchAccessedDBEl = document.getElementById("searchAccessedDB");
+// TODO: add event listeners for search box.
+document.addEventListener("DOMContentLoaded", async () => {
+    const users_box = document.getElementById("users");
+    const qv_box = document.getElementById("accessedQuickViews");
+    const db_box = document.getElementById("accessedDashboards");
+    const loading = bootstrap.Modal.getOrCreateInstance(document.getElementById('loadingModal'));
 
-const dashboardsList = document.getElementById("dashboardsList");
-const quickViewsList = document.getElementById("quickViewsList");
-const btnRemove = document.getElementById("btnRemove");
-const confirmAddBtn = document.getElementById("confirmAdd");
 
-// Helpers
-const selectedValues = (sel) => Array.from(sel.selectedOptions).map(o => o.value);
-const unique = (arr) => Array.from(new Set(arr));
-const includesInsensitive = (str, q) => str.toLowerCase().includes(q.trim().toLowerCase());
+    const API_URL = 'http://127.0.0.1:8000/';
 
-function fillSelect(select, items, keepSelected = true) {
-    const prevSelected = new Set(keepSelected ? selectedValues(select) : []);
-    select.innerHTML = items.map(v => `<option${prevSelected.has(v) ? ' selected' : ''}>${v}</option>`).join("");
-}
 
-function checkboxList(container, items, name) {
-    container.innerHTML = items.map((v, i) => `
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="${v}" id="${name}-${i}">
-        <label class="form-check-label" for="${name}-${i}">${v}</label>
-      </div>`).join("");
-}
+    async function withLoading(task, params) {
+        loading.show();
+        try {
+            if (params) {
+                return await task(params);
+            }
+            else {
+                return await task();
+            }
+        }
+        finally {
+            loading.hide();
+            setTimeout(() => {
+                const el = document.getElementById('loadingModal');
+                const stuck = document.body.classList.contains('modal-open') ||
+                    document.querySelectorAll('.modal-backdrop').length > 0;
 
-function getCheckedValues(container) {
-    return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.value);
-}
+                if (stuck) {
+                    console.warn('[fix] forcing modal cleanup');
+                    document.body.classList.remove('modal-open');
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                    if (el) {
+                        el.classList.remove('show');
+                        el.style.display = 'none';
+                        el.setAttribute('aria-hidden', 'true');
+                    }
+                }
+            }, 150);  // 150 is the transition time for bootstrap
+        }
+    }
 
-// Union of selected users' access, split by type
-function getAccessUnionForSelectedUsers() {
-    const selUsers = selectedValues(usersEl);
-    const union = { dashboards: new Set(), quickViews: new Set() };
-    selUsers.forEach(u => {
-        const rec = accessMap.get(u);
-        if (!rec) return;
-        rec.dashboards.forEach(d => union.dashboards.add(d));
-        rec.quickViews.forEach(q => union.quickViews.add(q));
+
+    function populate_users(users) {
+        for (const [id, info] of Object.entries(users)) {
+            const firstname = info[0];
+            const lastname = info[1];
+            const opt = document.createElement("option");
+            opt.value = id;
+            opt.textContent = `${firstname} ${lastname}`
+            opt.addEventListener("click", async () => await get_user_db_qv(id));
+            users_box?.append(opt);
+        }
+    }
+
+
+    async function get_user_db_qv(user_id) {
+        const dashboards = await withLoading(get_user_dashboards, user_id);
+        const quickviews = await withLoading(get_user_quickviews, user_id);
+        if (qv_box) qv_box.innerHTML = '';
+        if (db_box) db_box.innerHTML = '';
+        if (quickviews) {
+            for (const [id, name] of Object.entries(quickviews)) {
+                const opt = document.createElement("option");
+                opt.value = id;
+                opt.textContent = name;
+                qv_box?.appendChild(opt);
+            }
+        }
+        if (dashboards) {
+            for (const [id, name] of Object.entries(dashboards)) {
+                const opt = document.createElement("option");
+                opt.value = id;
+                opt.textContent = name;
+                db_box?.appendChild(opt);
+            }
+        }
+    }
+
+
+    const users = await withLoading(fetch_users, null);
+    populate_users(users);
+
+
+    async function remove_access_qv_db() {
+        const selectedUser = users_box?.value;
+
+        if (!selectedUser) {
+            console.error("Event fired when no user was selected");
+            return;
+        }
+        console.log("Selected user ID:", selectedUser);
+        const selected_qvs = Array.from(qv_box?.selectedOptions).map(opt => opt.value);
+        const selected_dbs = Array.from(db_box?.selectedOptions).map(opt => opt.value);
+        if (selected_dbs) {
+            console.log(selected_dbs);
+            await remove_db_access(selectedUser, selected_dbs);
+        }
+        if (selected_qvs) {
+            console.log(selected_qvs);
+            await remove_qv_access(selectedUser, selected_qvs);
+        }
+        await get_user_db_qv(selectedUser);
+    }
+
+    document.getElementById("btnRemove")?.addEventListener("click", async () => await withLoading(remove_access_qv_db));
+
+
+    // ADD 
+    const addDbList = document.getElementById("dashboardsList");
+    const addQvList = document.getElementById("quickViewsList");
+
+
+    function populate_add_modal_listboxes(listbox_element, data) {
+        for (const [id, name] of Object.entries(data)) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "form-check";
+
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.className = "form-check-input";
+            input.id = `db-${id}`;
+            input.value = id;
+
+            const label = document.createElement("label");
+            label.className = "form-check-label";
+            label.htmlFor = input.id;
+            label.textContent = name; // frontend value shown
+
+            wrapper.append(input, label);
+            listbox_element?.appendChild(wrapper);
+        }
+    }
+
+
+    async function populate_add_modal() {
+        // TODO: need to filter out all the qvs and dbs that are already mapped to the user.
+        const response = await fetch(`${API_URL}dashboards`);
+        const data = await response.json();
+
+        populate_add_modal_listboxes(addDbList, data);
+
+        const res = await fetch(`${API_URL}quickviews`);
+        const dta = await res.json();
+
+        populate_add_modal_listboxes(addQvList, dta);
+    }
+
+
+    const addModalEl = document.getElementById('addModal');
+    document.getElementById('btnAdd')?.addEventListener('click', async () => {
+        if (addDbList && addQvList) {
+            addQvList.innerHTML = '';
+            addDbList.innerHTML = '';
+        }
+        await withLoading(populate_add_modal);
+        bootstrap.Modal.getOrCreateInstance(addModalEl).show();
     });
-    return union;
-}
 
-// Renderers with search filters
-function renderUsers() {
-    const q = searchUsersEl.value || "";
-    const data = q ? users.filter(u => includesInsensitive(u, q)) : users.slice();
-    fillSelect(usersEl, data, true);
-}
 
-function renderAccessed() {
-    const union = getAccessUnionForSelectedUsers();
+    async function add_db_qv_to_user() {
+        const selectedDashboards = Array.from(
+            document.querySelectorAll("#dashboardsList input[type=checkbox]:checked")
+        ).map(cb => cb.value);
 
-    const qQV = (searchAccessedQVEl.value || "");
-    const qDB = (searchAccessedDBEl.value || "");
+        const selectedQuickViews = Array.from(
+            document.querySelectorAll("#quickViewsList input[type=checkbox]:checked")
+        ).map(cb => cb.value);
 
-    const qvList = Array.from(union.quickViews).sort();
-    const dbList = Array.from(union.dashboards).sort();
+        console.log("Dashboards:", selectedDashboards);
+        console.log("Quick Views:", selectedQuickViews);
 
-    const filteredQV = qQV ? qvList.filter(v => includesInsensitive(v, qQV)) : qvList;
-    const filteredDB = qDB ? dbList.filter(v => includesInsensitive(v, qDB)) : dbList;
+        // api requests
+        const selectedUser = users_box?.value;
+        console.log("Selected user ID:", selectedUser);
 
-    fillSelect(accessedQVEl, filteredQV, true);
-    fillSelect(accessedDBEl, filteredDB, true);
-}
+        for (const db of selectedDashboards) {
+            await add_db(selectedUser, db);
+        }
 
-// Remove selected items from either accessed pane
-btnRemove.addEventListener("click", () => {
-    const selUsers = selectedValues(usersEl);
-    const selQV = selectedValues(accessedQVEl);
-    const selDB = selectedValues(accessedDBEl);
-    if (!selUsers.length || (!selQV.length && !selDB.length)) return;
+        for (const qv of selectedQuickViews) {
+            await add_qv(selectedUser, qv);
+        }
 
-    selUsers.forEach(u => {
-        const rec = accessMap.get(u) || { dashboards: new Set(), quickViews: new Set() };
-        selQV.forEach(q => rec.quickViews.delete(q));
-        selDB.forEach(d => rec.dashboards.delete(d));
-        accessMap.set(u, rec);
-    });
-    renderAccessed();
-});
+        await get_user_db_qv(selectedUser);
 
-// Modal: Add selections
-confirmAddBtn.addEventListener("click", () => {
-    const selUsers = selectedValues(usersEl);
-    const selDash = getCheckedValues(dashboardsList);
-    const selQuick = getCheckedValues(quickViewsList);
-    if (!selUsers.length || (selDash.length + selQuick.length === 0)) return;
+        if (addModalEl) {
+            bootstrap.Modal.getOrCreateInstance(addModalEl).hide();
+        }
+    }
 
-    selUsers.forEach(u => {
-        const rec = accessMap.get(u) || { dashboards: new Set(), quickViews: new Set() };
-        selDash.forEach(d => rec.dashboards.add(d));
-        selQuick.forEach(q => rec.quickViews.add(q));
-        accessMap.set(u, rec);
-    });
-
-    // Clear checks
-    dashboardsList.querySelectorAll('input').forEach(c => c.checked = false);
-    quickViewsList.querySelectorAll('input').forEach(c => c.checked = false);
-
-    // Close modal and refresh
-    bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
-    renderAccessed();
-});
-
-// Events: search + selection
-searchUsersEl.addEventListener("input", () => {
-    renderUsers();
-    // keep same previously selected users if they still match; accessed updates on change
-    renderAccessed();
-});
-
-searchAccessedQVEl.addEventListener("input", renderAccessed);
-searchAccessedDBEl.addEventListener("input", renderAccessed);
-
-usersEl.addEventListener("change", renderAccessed);
-
-// Init
-fillSelect(usersEl, users, false);
-checkboxList(dashboardsList, dashboards, "dash");
-checkboxList(quickViewsList, quickViews, "qv");
-
-if (usersEl.options.length) usersEl.options[0].selected = true;
-renderAccessed();
-
+    document.getElementById("confirmAdd")?.addEventListener("click", async () => await withLoading(add_db_qv_to_user()))
+})
