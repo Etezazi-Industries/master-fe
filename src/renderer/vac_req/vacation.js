@@ -5,37 +5,23 @@ const table = document.getElementById('vacation-table');
 const tbody = table.querySelector('tbody');
 const approveBtn = document.getElementById('approve-btn');
 let selectedRow = null;
-const loading = bootstrap.Modal.getOrCreateInstance(document.getElementById('loadingModal'));
+const overlay = document.getElementById('loadingOverlay');
 
+
+function showLoading() {
+    overlay?.classList.remove('d-none');
+}
+
+function hideLoading() {
+    overlay?.classList.add('d-none');
+}
 
 async function withLoading(task, params) {
-    loading.show();
+    showLoading();
     try {
-        if (params) {
-            return await task(params);
-        }
-        else {
-            return await task();
-        }
-    }
-    finally {
-        loading.hide();
-        setTimeout(() => {
-            const el = document.getElementById('loadingModal');
-            const stuck = document.body.classList.contains('modal-open') ||
-                document.querySelectorAll('.modal-backdrop').length > 0;
-
-            if (stuck) {
-                console.warn('[fix] forcing modal cleanup');
-                document.body.classList.remove('modal-open');
-                document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
-                if (el) {
-                    el.classList.remove('show');
-                    el.style.display = 'none';
-                    el.setAttribute('aria-hidden', 'true');
-                }
-            }
-        }, 150);  // 150 is the transition time for bootstrap
+        return params ? await task(params) : await task();
+    } finally {
+        hideLoading();
     }
 }
 
@@ -191,7 +177,7 @@ saveBtn?.addEventListener('click', async () => {
     if (!id || !reason) return;
 
     try {
-        const serverReason = await addComment(id, reason); // <-- use returned value
+        const serverReason = await addComment(id, reason);
 
         const row = table?.querySelector(`tr[data-id="${id}"]`);
         if (row) {
