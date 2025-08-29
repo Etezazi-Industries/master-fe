@@ -1,21 +1,51 @@
-const API_URL = 'http://127.0.0.1:8000/get-vacation-requests';
+// @ts-check
 
-
+const API_URL = 'http://127.0.0.1:8000/employee-requests/get-vacation-requests';
 const table = document.getElementById('vacation-table');
 const tbody = table.querySelector('tbody');
 const approveBtn = document.getElementById('approve-btn');
 let selectedRow = null;
+const loading = bootstrap.Modal.getOrCreateInstance(document.getElementById('loadingModal'));
 
-console.log('[vacation] script loaded. readyState=', document.readyState);
+
+async function withLoading(task, params) {
+    loading.show();
+    try {
+        if (params) {
+            return await task(params);
+        }
+        else {
+            return await task();
+        }
+    }
+    finally {
+        loading.hide();
+        setTimeout(() => {
+            const el = document.getElementById('loadingModal');
+            const stuck = document.body.classList.contains('modal-open') ||
+                document.querySelectorAll('.modal-backdrop').length > 0;
+
+            if (stuck) {
+                console.warn('[fix] forcing modal cleanup');
+                document.body.classList.remove('modal-open');
+                document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                if (el) {
+                    el.classList.remove('show');
+                    el.style.display = 'none';
+                    el.setAttribute('aria-hidden', 'true');
+                }
+            }
+        }, 150);  // 150 is the transition time for bootstrap
+    }
+}
+
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('[vacation] DOMContentLoaded fired → calling loadData()');
-        loadData();
+        withLoading(loadData);
     });
 } else {
-    console.log('[vacation] DOM was already loaded → calling loadData() now');
-    loadData();
+    withLoading(loadData);
 }
 
 
@@ -27,12 +57,13 @@ function selectRow(tr, isApproved) {
     approveBtn.disabled = isApproved === true;
 }
 
-approveBtn.addEventListener('click', async () => {
+
+approveBtn?.addEventListener('click', async () => {
     if (!selectedRow) return;
     const id = Number(selectedRow.dataset.id);
     console.log('[vacation] approve click for id=', id);
 
-    const r = await fetch(`http://127.0.0.1:8000/approve-request/${id}`, { method: 'POST' });
+    const r = await fetch(`http://127.0.0.1:8000/employee-requests/approve-request/${id}`, { method: 'POST' });
     console.log('[vacation] approve response status=', r.status);
 
     selectedRow.querySelector('td:last-child').innerHTML = `<span class="badge bg-success">Yes</span>`;
@@ -48,6 +79,7 @@ function escapeHtml(str) {
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#39;');
 }
+
 
 // ---- Data loader ----
 async function loadData() {
