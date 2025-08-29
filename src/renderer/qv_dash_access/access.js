@@ -8,40 +8,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     const users_box = document.getElementById("users");
     const qv_box = document.getElementById("accessedQuickViews");
     const db_box = document.getElementById("accessedDashboards");
-    const loading = bootstrap.Modal.getOrCreateInstance(document.getElementById('loadingModal'));
+    const overlay = document.getElementById('loadingOverlay');
 
 
     const API_URL = 'http://127.0.0.1:8000/';
 
 
-    async function withLoading(task, params) {
-        loading.show();
-        try {
-            if (params) {
-                return await task(params);
-            }
-            else {
-                return await task();
-            }
-        }
-        finally {
-            loading.hide();
-            setTimeout(() => {
-                const el = document.getElementById('loadingModal');
-                const stuck = document.body.classList.contains('modal-open') ||
-                    document.querySelectorAll('.modal-backdrop').length > 0;
+    function showLoading() {
+        overlay?.classList.remove('d-none');
+    }
 
-                if (stuck) {
-                    console.warn('[fix] forcing modal cleanup');
-                    document.body.classList.remove('modal-open');
-                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
-                    if (el) {
-                        el.classList.remove('show');
-                        el.style.display = 'none';
-                        el.setAttribute('aria-hidden', 'true');
-                    }
-                }
-            }, 150);  // 150 is the transition time for bootstrap
+
+    function hideLoading() {
+        overlay?.classList.add('d-none');
+    }
+
+
+    async function withLoading(task, params) {
+        showLoading();
+        try {
+            return params ? await task(params) : await task();
+        } finally {
+            hideLoading();
         }
     }
 
