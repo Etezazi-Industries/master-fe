@@ -30,13 +30,6 @@ export default function EmailManager({ groups = [], onChange }) {
 
     const lastPayloadRef = useRef(null);
 
-    // ✅ Emit only after initial data load (or real edits)
-    //useEffect(() => {
-    //    if (!didLoad.current) return;
-    //    if (!cache || Object.keys(cache).length === 0) return; // still empty
-    //    onChange?.(serialize(cache));
-    //}, [cache, serialize, onChange]);
-    //
     useEffect(() => {
         const payload = serialize(cache);
         // Skip if unchanged to avoid redundant parent updates

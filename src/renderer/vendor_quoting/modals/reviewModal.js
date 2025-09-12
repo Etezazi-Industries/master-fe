@@ -19329,6 +19329,15 @@ async function getEmailGroups() {
   const data = await res.json();
   return data;
 }
+async function handlePrepareMail(rfqId, payload) {
+  console.log(payload);
+  const res = await fetch(`${API_URL}rfqs/${rfqId}/emails`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  return res;
+}
 
 // src/renderer/vendor_quoting/components/emailgroups.jsx
 function EmailManager({ groups = [], onChange }) {
@@ -19533,17 +19542,9 @@ function renderRecipientsModalReact(rawData, { rfqId } = {}) {
     root = (0, import_client.createRoot)(container);
     container.__root = root;
   }
-  console.log("Mount container:", container);
-  console.log("Existing root?", Boolean(container.__root));
-  console.count("renderRecipientsModalReact() called");
   root.render(/* @__PURE__ */ import_react3.default.createElement(RecipientsModal, { rawData, rfqId }));
 }
 function RecipientsModal({ rawData, rfqId }) {
-  console.count("RecipientsModal render");
-  console.count("RecipientsModal render");
-  console.log("[effect] header+init ran");
-  console.count("renderRecipientsModalReact() called");
-  console.log("[action] closing modal");
   const { groups } = (0, import_react3.useMemo)(() => normalizeFromYourApi(rawData), [rawData]);
   const uncodedItems = (0, import_react3.useMemo)(
     () => groups.find((g) => g.code === "UNCODED")?.items ?? [],
@@ -19583,14 +19584,13 @@ function RecipientsModal({ rawData, rfqId }) {
     setSubmitting(true);
     try {
       const payload = {
-        rfqId,
         recipientsByCategory,
         // { FIN: ['a@x.com', ...], MAT: [...] }
-        assignments,
-        // { "12345": "FIN", "12346": "MAT-AL", ... }
         dryRun: false
       };
-      console.log(payload);
+      await handlePrepareMail(rfqId, payload).then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      });
       handleCancel();
     } catch (e) {
       setError(String(e?.message || e));

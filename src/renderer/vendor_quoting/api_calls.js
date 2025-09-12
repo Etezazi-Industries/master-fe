@@ -38,3 +38,12 @@ export async function getRfqDetails(rfq_pk) {
 }
 
 
+export async function handlePrepareMail(rfqId, payload) {
+    console.log(payload);
+    const res = await fetch(`${API_URL}rfqs/${rfqId}/emails`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    return res;
+}

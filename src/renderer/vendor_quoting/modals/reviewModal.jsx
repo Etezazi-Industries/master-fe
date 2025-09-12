@@ -8,12 +8,10 @@ import {
     UncodedCard,
     normalizeFromYourApi,
 } from "../components/itemGroups.jsx";
+import { handlePrepareMail } from "../api_calls.js"
 
-// Mount React into the modal *content* so we control header/body/footer.
+
 export function renderRecipientsModalReact(rawData, { rfqId } = {}) {
-    // in renderRecipientsModalReact
-
-
     const modalEl = document.getElementById("rfqRecipientsModal");
     if (!modalEl) return;
 
@@ -26,26 +24,11 @@ export function renderRecipientsModalReact(rawData, { rfqId } = {}) {
         root = createRoot(container);
         container.__root = root;
     }
-    console.log("Mount container:", container);
-    console.log("Existing root?", Boolean(container.__root));
-    console.count("renderRecipientsModalReact() called");
     root.render(<RecipientsModal rawData={rawData} rfqId={rfqId} />);
 }
 
+
 function RecipientsModal({ rawData, rfqId }) {
-    // in RecipientsModal
-    console.count("RecipientsModal render");
-    console.count("RecipientsModal render");
-
-    // inside your header+init effect:
-    console.log("[effect] header+init ran");
-
-    // inside renderRecipientsModalReact:
-    console.count("renderRecipientsModalReact() called");
-
-    // right before closing the modal (if you close on success):
-    console.log("[action] closing modal");
-
     const { groups } = useMemo(() => normalizeFromYourApi(rawData), [rawData]);
 
     const uncodedItems = useMemo(
@@ -99,24 +82,14 @@ function RecipientsModal({ rawData, rfqId }) {
         setError("");
         setSubmitting(true);
         try {
-            // Build your payload exactly how your API expects it
             const payload = {
-                rfqId,
                 recipientsByCategory,            // { FIN: ['a@x.com', ...], MAT: [...] }
-                assignments,                     // { "12345": "FIN", "12346": "MAT-AL", ... }
                 dryRun: false,
             };
 
-            console.log(payload);
-
-            // Example: call your FastAPI endpoint
-            // await fetch(`/api/rfqs/${rfqId}/send`, {
-            //   method: "POST",
-            //   headers: { "Content-Type": "application/json" },
-            //   body: JSON.stringify(payload),
-            // }).then(r => {
-            //   if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            // });
+            await handlePrepareMail(rfqId, payload).then(r => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            });
 
             // Close only after success:
             handleCancel();
