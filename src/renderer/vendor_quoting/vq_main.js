@@ -1,7 +1,7 @@
 // @ts-check
 import { searchRfqOrItem, getRfqDetails } from "./api_calls.js";
-import { initEmailManagerFromGroups } from "./email_left_pane_renderer.js"
-import { pendingAssignments, normalizeFromYourApi, uncodedCard, groupCard } from "./request_review_renderer.js";
+import { renderRecipientsModalReact } from "./modals/reviewModal.js";
+import { SharedModalState } from "./send_handler.js";
 
 
 function setupFileSelector(browseBtnId, inputId, listId) {
@@ -33,7 +33,6 @@ setupFileSelector('browse-finish-attachments', 'finish-attachments-input', 'fini
 
 
 async function triggerSearchForRfq() {
-    console.log("Triggerred");
     const searchBoxEl = document.getElementById('rfq-or-item-search');
     const resultsBox = document.getElementById('search-result-box');
 
@@ -48,7 +47,6 @@ async function triggerSearchForRfq() {
     if (!query) return;
 
     const results = await searchRfqOrItem(query);
-    console.log(results);
 
     for (const [key, value] of Object.entries(results.result ?? {})) {
         const option = document.createElement('option');
@@ -72,7 +70,8 @@ searchBox?.addEventListener('dblclick', async () => {
 
     try {
         const data = await getRfqDetails(rfqId);
-        renderRecipientsModal(data, { rfqId });
+        const lineItems = data["line-items"];
+        renderRecipientsModal(lineItems, { rfqId });
 
         const modalEl = document.getElementById('rfqRecipientsModal');
         if (!modalEl) return;
@@ -86,61 +85,7 @@ searchBox?.addEventListener('dblclick', async () => {
 
 
 function renderRecipientsModal(rawData, { rfqId } = {}) {
-    pendingAssignments.clear();
-
-    const { groups, uncoded } = normalizeFromYourApi(rawData);
-
-    const container = document.getElementById('rfq-sections');
-    if (container) {
-        container.innerHTML = groups.map(groupCard).join('') + uncodedCard(uncoded);
-    }
-
-    // header bits
-    const rfqNumEl = document.getElementById('rfq-number');
-    if (rfqNumEl) rfqNumEl.textContent = rfqId ?? '—';
-    const sectionCountEl = document.getElementById('section-count');
-    if (sectionCountEl) sectionCountEl.textContent = String(groups.length + (uncoded.length ? 1 : 0));
-
-    // wire up dropdowns + update button visibility
-    const selects = document.querySelectorAll('.code-picker');
-    const updateArea = document.getElementById('uncoded-update-area');
-    const updateBtn = document.getElementById('apply-code-updates');
-    const statusEl = document.getElementById('uncoded-update-status');
-
-    if (selects.length && updateArea && updateBtn) {
-        selects.forEach(sel => {
-            sel.addEventListener('change', () => {
-                const itemPk = sel.getAttribute('data-item-pk');
-                const val = sel.value.trim();
-                if (val) {
-                    pendingAssignments.set(itemPk, val);
-                } else {
-                    pendingAssignments.delete(itemPk);
-                }
-                updateArea.classList.toggle('d-none', pendingAssignments.size === 0);
-                if (statusEl) statusEl.textContent = '';
-            });
-        });
-
-        updateBtn.addEventListener('click', async () => {
-            if (!pendingAssignments.size) return;
-
-            updateBtn.disabled = true;
-            if (statusEl) statusEl.textContent = 'Updating…';
-
-            try {
-                const payload = [...pendingAssignments].map(([item_pk, code]) => ({ item_pk, code }));
-                console.log('Would PUT these updates:', payload);
-
-                if (statusEl) statusEl.textContent = 'Saved (dummy).';
-            } catch (e) {
-                if (statusEl) statusEl.textContent = 'Update failed.';
-                console.error(e);
-            } finally {
-                updateBtn.disabled = false;
-            }
-        });
-    }
-    initEmailManagerFromGroups(groups);
+    SharedModalState.currentLineItems = rawData;
+    SharedModalState.currentRfqId = rfqId;
+    renderRecipientsModalReact(rawData, { rfqId });
 }
-
