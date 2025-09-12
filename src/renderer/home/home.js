@@ -1,5 +1,5 @@
 // @ts-check
-//
+
 function loadApp(url) {
     const frame = document.getElementById('app-frame');
     if (frame) {
