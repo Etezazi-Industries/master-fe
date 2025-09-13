@@ -1,21 +1,17 @@
-const { contextBridge, ipcRenderer } = require('electron')
+// preload.js (CommonJS)
+let electronModule;
+try {
+    // Works when not sandboxed
+    electronModule = require('electron');
+} catch {
+    // Works in sandboxed preload
+    electronModule = require('electron/renderer');
+}
+const { contextBridge, ipcRenderer } = electronModule;
 
+console.log('preload loaded');
 
-contextBridge.exposeInMainWorld('api', {
-    login: async (username, password) => {
-        return ipcRenderer.invoke('login', username, password);
-    },
+contextBridge.exposeInMainWorld('backend', {
+    getApiBase: () => ipcRenderer.invoke('get-api-base'),
+});
 
-    // TODO: These should be direct API calls and not through the renderer.
-    search_for_rfq: async (rfq_num) => {
-        return ipcRenderer.invoke('search_for_rfq', rfq_num);
-    },
-
-    get_rfq_details: async (rfq_num) => {
-        return ipcRenderer.invoke('get_rfq_details', rfq_num);
-    },
-
-    get_commodity_codes: async () => {
-        return ipcRenderer.invoke('get_commodity_codes');
-    }
-})

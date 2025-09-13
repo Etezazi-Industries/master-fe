@@ -1,6 +1,7 @@
 // @ts-check
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { getEmailGroups } from "../api_calls.js";
+import { getEmailGroups } from "../../api_calls.js";
+
 
 export default function EmailManager({ groups = [], onChange }) {
     const categories = [...new Set(groups.map(g => g.code).filter(Boolean))];
@@ -57,7 +58,7 @@ export default function EmailManager({ groups = [], onChange }) {
                 }));
             }
             updateCache(next);
-            didLoad.current = true;             // <-- gate opens AFTER cache populated
+            //didLoad.current = true;             // <-- gate opens AFTER cache populated
         })().catch(console.error);
     }, [updateCache]);
 

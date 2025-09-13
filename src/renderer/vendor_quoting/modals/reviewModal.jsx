@@ -8,7 +8,7 @@ import {
     UncodedCard,
     normalizeFromYourApi,
 } from "../components/itemGroups.jsx";
-import { handlePrepareMail } from "../api_calls.js"
+import { prepareRfqEmails } from "../../api_calls.js"
 
 
 export function renderRecipientsModalReact(rawData, { rfqId } = {}) {
@@ -87,7 +87,7 @@ function RecipientsModal({ rawData, rfqId }) {
                 dryRun: false,
             };
 
-            await handlePrepareMail(rfqId, payload).then(r => {
+            await prepareRfqEmails(rfqId, payload).then(r => {
                 if (!r.ok) throw new Error(`HTTP ${r.status}`);
             });
 

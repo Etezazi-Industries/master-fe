@@ -3,3 +3,5 @@ reqs.md
 *venv/
 *__pycache__/
 *test_main.py
+issues.md
+backend_dist/

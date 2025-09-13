@@ -1,5 +1,5 @@
 // @ts-check
-import { searchRfqOrItem, getRfqDetails } from "./api_calls.js";
+import { searchRfqOrItem, getRfqDetails } from "../api_calls.js";
 import { renderRecipientsModalReact } from "./modals/reviewModal.js";
 import { SharedModalState } from "./send_handler.js";
 

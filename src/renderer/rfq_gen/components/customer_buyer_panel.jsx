@@ -1,6 +1,6 @@
 //@ts-check
 import React, { useState, useEffect } from "react";
-import { getPartyData, getBuyers } from "../api_requests";
+import { getPartyData, getBuyers } from "../../api_calls.js";
 
 function TextInput({
     label,
