@@ -74,7 +74,7 @@ function stopBackend() {
 
 async function createWindow() {
     // 1) Make sure backend is up before window loads
-    const base = await startBackend();
+    //const base = await startBackend();
 
     ipcMain.handle('get-api-base', () => apiBase);
 
@@ -88,7 +88,7 @@ async function createWindow() {
             preload: path.join(app.getAppPath(), 'src', 'preload.js'),
             contextIsolation: true,
             nodeIntegration: false,
-            additionalArguments: [`--apiBase=${base}`], // <— pass backend URL to preload
+            //additionalArguments: [`--apiBase=${base}`], // <— pass backend URL to preload
         },
     });
 

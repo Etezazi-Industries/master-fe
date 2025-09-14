@@ -19320,10 +19320,28 @@ var import_react5 = __toESM(require_react(), 1);
 // src/renderer/rfq_gen/components/customer_buyer_panel.jsx
 var import_react = __toESM(require_react(), 1);
 
-// src/renderer/rfq_gen/api_requests.js
-var API_URL = "http://127.0.0.1:8000/";
+// src/renderer/api_calls.js
+async function getApiBase() {
+  return "http://127.0.0.1:8000/";
+}
+function joinUrl(base, endpoint) {
+  const e = String(endpoint || "").replace(/^\/+/, "");
+  return base + e;
+}
+async function apiFetch(endpoint, init = {}, timeoutMs = 2e4) {
+  const base = await getApiBase();
+  console.log(base);
+  const url = joinUrl(base, endpoint);
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    return await fetch(url, { signal: ctrl.signal, ...init });
+  } finally {
+    clearTimeout(id);
+  }
+}
 async function getPartyData() {
-  const res = await fetch(`${API_URL}rfq_gen/party`, { headers: { Accept: "application/json" } });
+  const res = await apiFetch(`rfq_gen/party`, { headers: { Accept: "application/json" } });
   if (!res.ok) {
     console.error("Failed to users.", res.status);
     return {};
@@ -19332,7 +19350,7 @@ async function getPartyData() {
   return data;
 }
 async function getBuyers(party_pk) {
-  const res = await fetch(`${API_URL}rfq_gen/${party_pk}/buyers`, { headers: { Accept: "application/json" } });
+  const res = await apiFetch(`rfq_gen/${party_pk}/buyers`, { headers: { Accept: "application/json" } });
   if (!res.ok) {
     console.error("Failed to users.", res.status);
     return {};
@@ -19629,7 +19647,7 @@ function ActionBar2({ onGenerate, onUpdate, onReset }) {
     ActionButton,
     {
       label: "Generate RFQ",
-      variant: "primary",
+      variant: "success",
       onClick: onGenerate
     }
   )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react4.default.createElement(

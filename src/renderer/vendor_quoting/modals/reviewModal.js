@@ -19318,43 +19318,8 @@ var import_client = __toESM(require_client(), 1);
 var import_react = __toESM(require_react(), 1);
 
 // src/renderer/api_calls.js
-var _apiBase = "";
-var _baseReady;
-function findBridge() {
-  try {
-    if (typeof window !== "undefined") {
-      if (window.backend) return window.backend;
-      const t = window.top;
-      if (t && t !== window && t.backend) return t.backend;
-    }
-  } catch {
-  }
-  return null;
-}
-function waitForBridge(timeoutMs = 8e3) {
-  return new Promise((resolve, reject) => {
-    const start = Date.now();
-    (function tick() {
-      const br = findBridge();
-      if (br && (typeof br.getApiBase === "function" || typeof br.apiBase === "string")) return resolve(br);
-      if (Date.now() - start > timeoutMs) return reject(new Error("Preload bridge not available"));
-      setTimeout(tick, 50);
-    })();
-  });
-}
 async function getApiBase() {
-  if (_apiBase) return _apiBase;
-  if (!_baseReady) {
-    _baseReady = (async () => {
-      const br = await waitForBridge();
-      const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
-      const b = (base || "").trim();
-      if (!b) throw new Error("API base not provided by preload");
-      _apiBase = b.endsWith("/") ? b : b + "/";
-      return _apiBase;
-    })();
-  }
-  return _baseReady;
+  return "http://127.0.0.1:8000/";
 }
 function joinUrl(base, endpoint) {
   const e = String(endpoint || "").replace(/^\/+/, "");
@@ -19362,6 +19327,7 @@ function joinUrl(base, endpoint) {
 }
 async function apiFetch(endpoint, init = {}, timeoutMs = 2e4) {
   const base = await getApiBase();
+  console.log(base);
   const url = joinUrl(base, endpoint);
   const ctrl = new AbortController();
   const id = setTimeout(() => ctrl.abort(), timeoutMs);

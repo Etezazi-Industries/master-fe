@@ -33,18 +33,19 @@ function waitForBridge(timeoutMs = 8000) {
 }
 
 async function getApiBase() {
-    if (_apiBase) return _apiBase;
-    if (!_baseReady) {
-        _baseReady = (async () => {
-            const br = await waitForBridge();
-            const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
-            const b = (base || "").trim();
-            if (!b) throw new Error("API base not provided by preload");
-            _apiBase = b.endsWith("/") ? b : b + "/";
-            return _apiBase;
-        })();
-    }
-    return _baseReady;
+    //if (_apiBase) return _apiBase;
+    //if (!_baseReady) {
+    //    _baseReady = (async () => {
+    //        const br = await waitForBridge();
+    //        const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
+    //        const b = (base || "").trim();
+    //        if (!b) throw new Error("API base not provided by preload");
+    //        _apiBase = b.endsWith("/") ? b : b + "/";
+    //        return _apiBase;
+    //    })();
+    //}
+    //return _baseReady;
+    return "http://127.0.0.1:8000/";
 }
 
 function joinUrl(base, endpoint) {
@@ -54,6 +55,7 @@ function joinUrl(base, endpoint) {
 
 async function apiFetch(endpoint, init = {}, timeoutMs = 20000) {
     const base = await getApiBase();
+    console.log(base);
     const url = joinUrl(base, endpoint);
 
     const ctrl = new AbortController();

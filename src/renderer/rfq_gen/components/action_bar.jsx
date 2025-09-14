@@ -21,7 +21,7 @@ export default function ActionBar({ onGenerate, onUpdate, onReset }) {
                 <div className="col">
                     <ActionButton
                         label="Generate RFQ"
-                        variant="primary"
+                        variant="success"
                         onClick={onGenerate}
                     />
                 </div>
