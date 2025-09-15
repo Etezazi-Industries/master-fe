@@ -165,3 +165,30 @@ export async function searchBoeingFinishCode(finishCode) {
     return requestJson(`boeing-finish-code?finish_code=${encodeURIComponent(finishCode.trim())}`);
 }
 
+// ----------- VACATION REQUESTS --------------------
+
+export async function getVacationRequests() {
+    return requestJson(`employee/vacation-requests/`);
+}
+
+export async function approveVacationRequest(id) {
+    if (!id) throw new Error("Request ID is required");
+    
+    return requestJson(`employee/approve-request/${id}`, {
+        method: "POST"
+    });
+}
+
+export async function addVacationComment(id, comment) {
+    if (!id) throw new Error("Request ID is required");
+    if (!comment || !comment.trim()) {
+        throw new Error("Comment is required");
+    }
+    
+    return requestJson(`employee/add-comment/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ comment: comment.trim() })
+    });
+}
+

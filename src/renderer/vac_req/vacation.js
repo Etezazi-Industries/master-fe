@@ -1,6 +1,6 @@
 // @ts-check
 
-const API_URL = 'http://127.0.0.1:8000/employee-requests/get-vacation-requests';
+import { getVacationRequests, approveVacationRequest, addVacationComment } from '../api_calls.js';
 const table = document.getElementById('vacation-table');
 const tbody = table.querySelector('tbody');
 const approveBtn = document.getElementById('approve-btn');
@@ -46,9 +46,14 @@ function selectRow(tr, isApproved) {
 approveBtn?.addEventListener('click', async () => {
     if (!selectedRow) return;
     const id = Number(selectedRow.dataset.id);
-    const r = await fetch(`http://127.0.0.1:8000/employee-requests/approve-request/${id}`, { method: 'POST' });
-    selectedRow.querySelector('td:last-child').innerHTML = `<span class="badge bg-success">Yes</span>`;
-    approveBtn.disabled = true;
+    try {
+        await approveVacationRequest(id);
+        selectedRow.querySelector('td:last-child').innerHTML = `<span class="badge bg-success">Yes</span>`;
+        approveBtn.disabled = true;
+    } catch (error) {
+        console.error('Failed to approve request:', error);
+        alert('Failed to approve request');
+    }
 });
 
 
@@ -64,18 +69,13 @@ function escapeHtml(str) {
 
 // ---- Data loader ----
 async function loadData() {
-    if (location.protocol === 'file:' && API_URL.startsWith('/')) {
-        console.warn('[vacation] WARNING: /api path under file:// will fail. Use http://localhost:PORT/... or IPC.');
-    }
-
     let rows;
     try {
-        const res = await fetch(API_URL, { headers: { 'Accept': 'application/json' } });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
+        const json = await getVacationRequests();
         rows = Array.isArray(json) ? json : (Array.isArray(json.data) ? json.data : []);
     } catch (e) {
         console.error('[vacation] API load failed → using fallback. Error=', e);
+        rows = []; // Fallback to empty array
     }
 
     // TODO: make the pencil edit button and the value two columsn in the same column.
@@ -156,16 +156,12 @@ table?.addEventListener('click', (e) => {
  */
 async function addComment(id, comment) {
     const normalize = comment.trim();
-    const r = await fetch(`http://127.0.0.1:8000/employee-requests/add-comment/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ comment: normalize })
-    });
-    if (!r.ok) {
-        const msg = await r.text().catch(() => r.statusText);
-        throw new Error(`Save failed: ${r.status} ${msg}`);
+    try {
+        await addVacationComment(id, normalize);
+        return normalize;
+    } catch (error) {
+        throw new Error(`Save failed: ${error.message}`);
     }
-    return normalize;
 }
 
 

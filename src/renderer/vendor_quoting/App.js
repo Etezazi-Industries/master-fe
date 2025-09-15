@@ -19319,8 +19319,8 @@ var import_react = __toESM(require_react(), 1);
 var headerStyle = {
   background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)",
   boxShadow: "0 2px 4px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
-  padding: "1.5rem 0",
-  marginBottom: "1.5rem",
+  padding: "1rem 0",
+  marginBottom: "1rem",
   position: "relative",
   overflow: "hidden",
   borderBottom: "3px solid #1976d2"
@@ -19356,7 +19356,7 @@ function HeaderBar() {
   const handleButtonLeave = (e) => {
     e.target.style.backgroundColor = "transparent";
   };
-  return /* @__PURE__ */ import_react.default.createElement("div", { style: headerStyle }, /* @__PURE__ */ import_react.default.createElement("div", { className: "container-fluid" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { style: headerIconStyle, className: "me-3" }, /* @__PURE__ */ import_react.default.createElement("i", { className: "bi bi-briefcase-fill" })), /* @__PURE__ */ import_react.default.createElement("div", null, /* @__PURE__ */ import_react.default.createElement("h4", { className: "mb-0 text-white fw-bold" }, "Vendor Quoting"), /* @__PURE__ */ import_react.default.createElement("small", { className: "text-white-50" }, "Manage RFQ and Item requests"))), /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react.default.createElement(
+  return /* @__PURE__ */ import_react.default.createElement("div", { style: headerStyle }, /* @__PURE__ */ import_react.default.createElement("div", { className: "container-fluid" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { style: headerIconStyle, className: "me-3" }, /* @__PURE__ */ import_react.default.createElement("i", { className: "bi bi-briefcase-fill" })), /* @__PURE__ */ import_react.default.createElement("div", null, /* @__PURE__ */ import_react.default.createElement("h4", { className: "mb-0 text-white fw-bold" }, "Vendor Quoting"), /* @__PURE__ */ import_react.default.createElement("small", { className: "text-white-50" }, "ProCure Hub - RFQ Management"))), /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react.default.createElement(
     "button",
     {
       style: actionButtonStyle,

@@ -2,6 +2,17 @@
 
 let currentApp = null;
 
+// Global logout function
+function logout() {
+    // You can implement your logout logic here
+    console.log('Logout clicked');
+    // For now, just show an alert
+    alert('Logout functionality not implemented yet');
+}
+
+// Make logout function available globally
+window.logout = logout;
+
 async function loadApp(url, appType = null) {
     const frame = document.getElementById('app-frame');
     const reactRoot = document.getElementById('vendor-quoting-root');

@@ -3,8 +3,8 @@ import React from 'react';
 const headerStyle = {
     background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)',
     boxShadow: '0 2px 4px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)',
-    padding: '1.5rem 0',
-    marginBottom: '1.5rem',
+    padding: '1rem 0',
+    marginBottom: '1rem',
     position: 'relative',
     overflow: 'hidden',
     borderBottom: '3px solid #1976d2'
@@ -55,7 +55,7 @@ export default function HeaderBar() {
                         </div>
                         <div>
                             <h4 className="mb-0 text-white fw-bold">Vendor Quoting</h4>
-                            <small className="text-white-50">Manage RFQ and Item requests</small>
+                            <small className="text-white-50">ProCure Hub - RFQ Management</small>
                         </div>
                     </div>
                     <div className="d-flex align-items-center gap-2">
