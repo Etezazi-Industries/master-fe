@@ -157,3 +157,11 @@ export async function createParty(body) {
     return res.json();
 }
 
+export async function searchBoeingFinishCode(finishCode) {
+    if (!finishCode || !finishCode.trim()) {
+        throw new Error("Finish code is required");
+    }
+    
+    return requestJson(`boeing-finish-code?finish_code=${encodeURIComponent(finishCode.trim())}`);
+}
+

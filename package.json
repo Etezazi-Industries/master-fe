@@ -17,7 +17,7 @@
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx esbuild src/renderer/rfq_gen/main.jsx --bundle --outfile=src/renderer/rfq_gen/main.js --format=esm && npx esbuild src/renderer/vendor_quoting/modals/reviewModal.jsx --bundle --outfile=src/renderer/vendor_quoting/modals/reviewModal.js --format=esm"
+    "build": "npx esbuild src/renderer/rfq_gen/main.jsx --bundle --outfile=src/renderer/rfq_gen/main.js --format=esm && npx esbuild src/renderer/vendor_quoting/modals/reviewModal.jsx --bundle --outfile=src/renderer/vendor_quoting/modals/reviewModal.js --format=esm && npx esbuild src/renderer/vendor_quoting/components/BoeingFinishModal.jsx --bundle --outfile=src/renderer/vendor_quoting/components/BoeingFinishModal.js --format=esm"
   },
   "devDependencies": {
     "concurrently": "^9.2.0",
