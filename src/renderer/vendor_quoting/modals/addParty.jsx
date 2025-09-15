@@ -131,6 +131,31 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
         }
     };
 
+    const materialModalStyle = {
+        borderRadius: '12px',
+        border: 'none',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.24), 0 4px 16px rgba(0,0,0,0.12)',
+        overflow: 'hidden'
+    };
+
+    const materialHeaderStyle = {
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #333333 100%)',
+        borderBottom: 'none',
+        borderLeft: '4px solid #1976d2',
+        padding: '1.5rem'
+    };
+
+    const materialBodyStyle = {
+        backgroundColor: '#f8f9fa',
+        padding: '1.5rem'
+    };
+
+    const materialFooterStyle = {
+        backgroundColor: '#f8f9fa',
+        borderTop: '1px solid #e9ecef',
+        padding: '1rem 1.5rem'
+    };
+
     return (
         // NOTE: No manual backdrop / d-block. Let Bootstrap manage everything.
         <div
@@ -142,17 +167,22 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
             data-bs-focus="true"
         >
             <div className="modal-dialog modal-lg modal-dialog-centered">
-                <div className="modal-content shadow">
-                    <div className="modal-header">
-                        <h5 className="modal-title" id={`${modalId}-label`}>
+                <div className="modal-content" style={materialModalStyle}>
+                    <div className="modal-header text-white" style={materialHeaderStyle}>
+                        <h5 className="modal-title fw-bold" id={`${modalId}-label`}>
                             <i className="bi bi-person-plus me-2" />
                             Add New Party
                         </h5>
-                        <button type="button" className="btn-close" onClick={close} aria-label="Close" />
+                        <button 
+                            type="button" 
+                            className="btn-close btn-close-white" 
+                            onClick={close} 
+                            aria-label="Close" 
+                        />
                     </div>
 
                     <form onSubmit={submit} noValidate>
-                        <div className="modal-body">
+                        <div className="modal-body" style={materialBodyStyle}>
                             {error && (
                                 <div className="alert alert-danger" role="alert" aria-live="assertive">
                                     {error}
@@ -162,7 +192,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                             <div className="row g-3">
                                 {/* Core */}
                                 <div className="col-12">
-                                    <label className="form-label" htmlFor={`${modalId}-name`}>
+                                    <label className="form-label text-dark fw-semibold" htmlFor={`${modalId}-name`}>
                                         Name <span className="text-danger">*</span>
                                     </label>
                                     <input
@@ -179,7 +209,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                                 </div>
 
                                 <div className="col-md-6">
-                                    <label className="form-label" htmlFor={`${modalId}-short-name`}>Short Name</label>
+                                    <label className="form-label text-dark fw-semibold" htmlFor={`${modalId}-short-name`}>Short Name</label>
                                     <input
                                         id={`${modalId}-short-name`}
                                         type="text"
@@ -191,7 +221,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                                 </div>
 
                                 <div className="col-md-6">
-                                    <label className="form-label" htmlFor={`${modalId}-job-title`}>Job Title</label>
+                                    <label className="form-label text-dark fw-semibold" htmlFor={`${modalId}-job-title`}>Job Title</label>
                                     <input
                                         id={`${modalId}-job-title`}
                                         type="text"
@@ -204,7 +234,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
 
                                 {/* Contact */}
                                 <div className="col-md-6">
-                                    <label className="form-label" htmlFor={`${modalId}-phone`}>Phone</label>
+                                    <label className="form-label text-dark fw-semibold" htmlFor={`${modalId}-phone`}>Phone</label>
                                     <input
                                         id={`${modalId}-phone`}
                                         type="tel"
@@ -216,7 +246,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                                 </div>
 
                                 <div className="col-md-6">
-                                    <label className="form-label" htmlFor={`${modalId}-email`}>Email</label>
+                                    <label className="form-label text-dark fw-semibold" htmlFor={`${modalId}-email`}>Email</label>
                                     <input
                                         id={`${modalId}-email`}
                                         type="email"
@@ -228,7 +258,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                                 </div>
 
                                 <div className="col-12">
-                                    <label className="form-label" htmlFor={`${modalId}-website`}>Website</label>
+                                    <label className="form-label text-dark fw-semibold" htmlFor={`${modalId}-website`}>Website</label>
                                     <input
                                         id={`${modalId}-website`}
                                         type="url"
@@ -252,7 +282,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                                             checked={form.is_customer}
                                             onChange={(e) => setField("is_customer", e.target.checked)}
                                         />
-                                        <label className="form-check-label" htmlFor={`${modalId}-is_customer`}>Customer</label>
+                                        <label className="form-check-label text-dark fw-semibold" htmlFor={`${modalId}-is_customer`}>Customer</label>
                                     </div>
 
                                     <div className="form-check form-check-inline">
@@ -263,7 +293,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                                             checked={form.is_salesperson}
                                             onChange={(e) => setField("is_salesperson", e.target.checked)}
                                         />
-                                        <label className="form-check-label" htmlFor={`${modalId}-is_salesperson`}>Salesperson</label>
+                                        <label className="form-check-label text-dark fw-semibold" htmlFor={`${modalId}-is_salesperson`}>Salesperson</label>
                                     </div>
 
                                     <div className="form-check form-check-inline">
@@ -274,28 +304,38 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                                             checked={form.is_supplier}
                                             onChange={(e) => setField("is_supplier", e.target.checked)}
                                         />
-                                        <label className="form-check-label" htmlFor={`${modalId}-is_supplier`}>Supplier</label>
-                                    </div>
-                                    <div className="form-check form-check-inline">
-                                        <input
-                                            id={`${modalId}-is_prospect`}
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            checked={form.is_supplier}
-                                            onChange={(e) => setField("is_prospect", e.target.checked)}
-                                        />
-                                        <label className="form-check-label" htmlFor={`${modalId}-is_supplier`}>Supplier</label>
+                                        <label className="form-check-label text-dark fw-semibold" htmlFor={`${modalId}-is_supplier`}>Supplier</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="modal-footer">
+                        <div className="modal-footer" style={materialFooterStyle}>
                             <button type="button" className="btn btn-outline-secondary" onClick={close} disabled={submitting}>
                                 Cancel
                             </button>
-                            <button type="submit" className="btn btn-success" disabled={!canSubmit || submitting}>
-                                {submitting ? "Creating…" : "Create Party"}
+                            <button 
+                                type="submit" 
+                                className="btn btn-success" 
+                                disabled={!canSubmit || submitting}
+                                style={{
+                                    background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    fontWeight: '600'
+                                }}
+                            >
+                                {submitting ? (
+                                    <>
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Creating…
+                                    </>
+                                ) : (
+                                    <>
+                                        <i className="bi bi-plus-circle me-1"></i>
+                                        Create Party
+                                    </>
+                                )}
                             </button>
                         </div>
                     </form>

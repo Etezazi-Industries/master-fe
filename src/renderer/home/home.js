@@ -1,27 +1,68 @@
 // @ts-check
 
-function loadApp(url) {
+let currentApp = null;
+
+async function loadApp(url, appType = null) {
     const frame = document.getElementById('app-frame');
-    if (frame) {
-        frame.src = url;
+    const reactRoot = document.getElementById('vendor-quoting-root');
+    
+    if (appType === 'vendor-quoting') {
+        // Hide iframe, show React app
+        if (frame) frame.style.display = 'none';
+        if (reactRoot) reactRoot.style.display = 'block';
+        
+        // Import and mount the React app
+        try {
+            const { mountVendorQuotingApp } = await import('../vendor_quoting/App.js');
+            mountVendorQuotingApp();
+            currentApp = 'vendor-quoting';
+        } catch (error) {
+            console.error('Failed to load vendor quoting app:', error);
+        }
+    } else {
+        // Show iframe, hide React app
+        if (reactRoot) reactRoot.style.display = 'none';
+        if (frame) {
+            frame.style.display = 'block';
+            frame.src = url;
+        }
+        
+        // Unmount React app if it was mounted
+        if (currentApp === 'vendor-quoting') {
+            try {
+                const { unmountVendorQuotingApp } = await import('../vendor_quoting/App.js');
+                unmountVendorQuotingApp();
+            } catch (error) {
+                console.error('Failed to unmount vendor quoting app:', error);
+            }
+        }
+        currentApp = null;
     }
 }
 
+// Load vendor quoting app by default
+loadApp(null, 'vendor-quoting');
 
-loadApp("../vendor_quoting/vendor_quoting.html");
-
-
-document.getElementById('app-nav')?.addEventListener('click', (e) => {
-    const link = e.target.closest('.tab-item');
+// Handle navigation clicks
+document.addEventListener('click', async (e) => {
+    const link = e.target.closest('.nav-link');
     if (!link) return;
 
     e.preventDefault();
 
-    document.getElementById('app-frame').src = link.getAttribute('href');
-
-    document.querySelectorAll('#app-nav .tab-item')
+    // Update active state
+    document.querySelectorAll('.nav-link')
         .forEach(el => el.classList.remove('active'));
-
     link.classList.add('active');
+
+    // Load the appropriate app
+    const appType = link.getAttribute('data-app');
+    const href = link.getAttribute('href');
+    
+    if (appType) {
+        await loadApp(null, appType);
+    } else if (href && href !== '#') {
+        await loadApp(href);
+    }
 });
 

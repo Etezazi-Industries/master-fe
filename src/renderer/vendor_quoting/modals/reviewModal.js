@@ -19669,6 +19669,27 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
       setSubmitting(false);
     }
   };
+  const materialModalStyle = {
+    borderRadius: "12px",
+    border: "none",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.24), 0 4px 16px rgba(0,0,0,0.12)",
+    overflow: "hidden"
+  };
+  const materialHeaderStyle = {
+    background: "linear-gradient(135deg, #1a1a1a 0%, #333333 100%)",
+    borderBottom: "none",
+    borderLeft: "4px solid #1976d2",
+    padding: "1.5rem"
+  };
+  const materialBodyStyle = {
+    backgroundColor: "#f8f9fa",
+    padding: "1.5rem"
+  };
+  const materialFooterStyle = {
+    backgroundColor: "#f8f9fa",
+    borderTop: "1px solid #e9ecef",
+    padding: "1rem 1.5rem"
+  };
   return (
     // NOTE: No manual backdrop / d-block. Let Bootstrap manage everything.
     /* @__PURE__ */ import_react3.default.createElement(
@@ -19681,7 +19702,15 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
         "aria-labelledby": `${modalId}-label`,
         "data-bs-focus": "true"
       },
-      /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-dialog modal-lg modal-dialog-centered" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-content shadow" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react3.default.createElement("h5", { className: "modal-title", id: `${modalId}-label` }, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-person-plus me-2" }), "Add New Party"), /* @__PURE__ */ import_react3.default.createElement("button", { type: "button", className: "btn-close", onClick: close, "aria-label": "Close" })), /* @__PURE__ */ import_react3.default.createElement("form", { onSubmit: submit, noValidate: true }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-body" }, error && /* @__PURE__ */ import_react3.default.createElement("div", { className: "alert alert-danger", role: "alert", "aria-live": "assertive" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-name` }, "Name ", /* @__PURE__ */ import_react3.default.createElement("span", { className: "text-danger" }, "*")), /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-dialog modal-lg modal-dialog-centered" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-content", style: materialModalStyle }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-header text-white", style: materialHeaderStyle }, /* @__PURE__ */ import_react3.default.createElement("h5", { className: "modal-title fw-bold", id: `${modalId}-label` }, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-person-plus me-2" }), "Add New Party"), /* @__PURE__ */ import_react3.default.createElement(
+        "button",
+        {
+          type: "button",
+          className: "btn-close btn-close-white",
+          onClick: close,
+          "aria-label": "Close"
+        }
+      )), /* @__PURE__ */ import_react3.default.createElement("form", { onSubmit: submit, noValidate: true }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-body", style: materialBodyStyle }, error && /* @__PURE__ */ import_react3.default.createElement("div", { className: "alert alert-danger", role: "alert", "aria-live": "assertive" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold", htmlFor: `${modalId}-name` }, "Name ", /* @__PURE__ */ import_react3.default.createElement("span", { className: "text-danger" }, "*")), /* @__PURE__ */ import_react3.default.createElement(
         "input",
         {
           id: `${modalId}-name`,
@@ -19694,7 +19723,7 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
           maxLength: 200,
           placeholder: "Acme Corp"
         }
-      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-short-name` }, "Short Name"), /* @__PURE__ */ import_react3.default.createElement(
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold", htmlFor: `${modalId}-short-name` }, "Short Name"), /* @__PURE__ */ import_react3.default.createElement(
         "input",
         {
           id: `${modalId}-short-name`,
@@ -19704,7 +19733,7 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
           onChange: (e) => setField("short_name", e.target.value),
           placeholder: "Acme"
         }
-      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-job-title` }, "Job Title"), /* @__PURE__ */ import_react3.default.createElement(
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold", htmlFor: `${modalId}-job-title` }, "Job Title"), /* @__PURE__ */ import_react3.default.createElement(
         "input",
         {
           id: `${modalId}-job-title`,
@@ -19714,7 +19743,7 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
           onChange: (e) => setField("job_title", e.target.value),
           placeholder: "Buyer, Purchasing Manager\u2026"
         }
-      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-phone` }, "Phone"), /* @__PURE__ */ import_react3.default.createElement(
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold", htmlFor: `${modalId}-phone` }, "Phone"), /* @__PURE__ */ import_react3.default.createElement(
         "input",
         {
           id: `${modalId}-phone`,
@@ -19724,7 +19753,7 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
           onChange: (e) => setField("phone", e.target.value),
           placeholder: "555-123-4567"
         }
-      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-email` }, "Email"), /* @__PURE__ */ import_react3.default.createElement(
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold", htmlFor: `${modalId}-email` }, "Email"), /* @__PURE__ */ import_react3.default.createElement(
         "input",
         {
           id: `${modalId}-email`,
@@ -19734,7 +19763,7 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
           onChange: (e) => setField("email", e.target.value),
           placeholder: "name@example.com"
         }
-      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-website` }, "Website"), /* @__PURE__ */ import_react3.default.createElement(
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold", htmlFor: `${modalId}-website` }, "Website"), /* @__PURE__ */ import_react3.default.createElement(
         "input",
         {
           id: `${modalId}-website`,
@@ -19753,7 +19782,7 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
           checked: form.is_customer,
           onChange: (e) => setField("is_customer", e.target.checked)
         }
-      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: `${modalId}-is_customer` }, "Customer")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check form-check-inline" }, /* @__PURE__ */ import_react3.default.createElement(
+      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label text-dark fw-semibold", htmlFor: `${modalId}-is_customer` }, "Customer")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check form-check-inline" }, /* @__PURE__ */ import_react3.default.createElement(
         "input",
         {
           id: `${modalId}-is_salesperson`,
@@ -19762,7 +19791,7 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
           checked: form.is_salesperson,
           onChange: (e) => setField("is_salesperson", e.target.checked)
         }
-      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: `${modalId}-is_salesperson` }, "Salesperson")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check form-check-inline" }, /* @__PURE__ */ import_react3.default.createElement(
+      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label text-dark fw-semibold", htmlFor: `${modalId}-is_salesperson` }, "Salesperson")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check form-check-inline" }, /* @__PURE__ */ import_react3.default.createElement(
         "input",
         {
           id: `${modalId}-is_supplier`,
@@ -19771,16 +19800,21 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
           checked: form.is_supplier,
           onChange: (e) => setField("is_supplier", e.target.checked)
         }
-      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: `${modalId}-is_supplier` }, "Supplier")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check form-check-inline" }, /* @__PURE__ */ import_react3.default.createElement(
-        "input",
+      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label text-dark fw-semibold", htmlFor: `${modalId}-is_supplier` }, "Supplier"))))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-footer", style: materialFooterStyle }, /* @__PURE__ */ import_react3.default.createElement("button", { type: "button", className: "btn btn-outline-secondary", onClick: close, disabled: submitting }, "Cancel"), /* @__PURE__ */ import_react3.default.createElement(
+        "button",
         {
-          id: `${modalId}-is_prospect`,
-          className: "form-check-input",
-          type: "checkbox",
-          checked: form.is_supplier,
-          onChange: (e) => setField("is_prospect", e.target.checked)
-        }
-      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: `${modalId}-is_supplier` }, "Supplier"))))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react3.default.createElement("button", { type: "button", className: "btn btn-outline-secondary", onClick: close, disabled: submitting }, "Cancel"), /* @__PURE__ */ import_react3.default.createElement("button", { type: "submit", className: "btn btn-success", disabled: !canSubmit || submitting }, submitting ? "Creating\u2026" : "Create Party")))))
+          type: "submit",
+          className: "btn btn-success",
+          disabled: !canSubmit || submitting,
+          style: {
+            background: "linear-gradient(135deg, #1976d2 0%, #1565c0 100%)",
+            border: "none",
+            borderRadius: "6px",
+            fontWeight: "600"
+          }
+        },
+        submitting ? /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("span", { className: "spinner-border spinner-border-sm me-2", role: "status", "aria-hidden": "true" }), "Creating\u2026") : /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-plus-circle me-1" }), "Create Party")
+      )))))
     )
   );
 }
