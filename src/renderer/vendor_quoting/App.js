@@ -19400,19 +19400,23 @@ function SearchPanel({
       handleSearch();
     }
   };
-  const materialCardStyle = {
-    borderRadius: "12px",
-    border: "none",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08)",
-    overflow: "hidden"
+  const cardStyle = {
+    border: "1px solid #e9ecef",
+    borderRadius: "16px",
+    boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+    background: "#ffffff"
   };
-  const materialHeaderStyle = {
-    background: "linear-gradient(135deg, #263238 0%, #37474f 100%)",
-    padding: "1rem 1.5rem",
-    borderBottom: "none",
-    borderLeft: "4px solid #1976d2"
-  };
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "card", style: materialCardStyle }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-header text-white", style: materialHeaderStyle }, /* @__PURE__ */ import_react2.default.createElement("h6", { className: "mb-0 fw-bold" }, "Search RFQ/Item")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-3 mb-3" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: searchType === "Item" ? "col-md-2" : "col-md-3" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "type-select-box", className: "form-label text-dark fw-semibold" }, "Type"), /* @__PURE__ */ import_react2.default.createElement(
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "card", style: cardStyle }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-body", style: { padding: "2rem" } }, /* @__PURE__ */ import_react2.default.createElement("h5", { className: "mb-4 fw-semibold text-dark", style: {
+    fontSize: "1.25rem",
+    fontWeight: "600",
+    letterSpacing: "-0.02em",
+    color: "#1a1a1a"
+  } }, "Search RFQ/Item"), /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-3 mb-3" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: searchType === "Item" ? "col-md-2" : "col-md-3" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "type-select-box", className: "form-label fw-medium", style: {
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.5rem"
+  } }, "Type"), /* @__PURE__ */ import_react2.default.createElement(
     "select",
     {
       className: "form-select",
@@ -19423,7 +19427,12 @@ function SearchPanel({
     /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, "-- Select --"),
     /* @__PURE__ */ import_react2.default.createElement("option", { value: "Item" }, "Item"),
     /* @__PURE__ */ import_react2.default.createElement("option", { value: "RFQ" }, "RFQ")
-  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: searchType === "Item" ? "col-md-7" : "col-md-9" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "rfq-or-item-search", className: "form-label text-dark fw-semibold" }, "Search Query"), /* @__PURE__ */ import_react2.default.createElement("div", { className: "input-group" }, /* @__PURE__ */ import_react2.default.createElement(
+  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: searchType === "Item" ? "col-md-7" : "col-md-9" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "rfq-or-item-search", className: "form-label fw-medium", style: {
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.5rem"
+  } }, "Search Query"), /* @__PURE__ */ import_react2.default.createElement("div", { className: "input-group" }, /* @__PURE__ */ import_react2.default.createElement(
     "input",
     {
       type: "text",
@@ -19444,7 +19453,12 @@ function SearchPanel({
       disabled: isSearching || !searchQuery.trim() || !searchType
     },
     isSearching ? /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, /* @__PURE__ */ import_react2.default.createElement("span", { className: "spinner-border spinner-border-sm me-1", role: "status", "aria-hidden": "true" }), "Searching...") : "Search"
-  ))), searchType === "Item" && /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-3" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "item-qty", className: "form-label text-dark fw-semibold" }, "Quantity"), /* @__PURE__ */ import_react2.default.createElement(
+  ))), searchType === "Item" && /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-3" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "item-qty", className: "form-label fw-medium", style: {
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.5rem"
+  } }, "Quantity"), /* @__PURE__ */ import_react2.default.createElement(
     "input",
     {
       type: "number",
@@ -19455,7 +19469,12 @@ function SearchPanel({
       value: quantity,
       onChange: (e) => onQuantityChange?.(parseInt(e.target.value) || 1)
     }
-  ))), (isSearching || searchResults.length > 0) && /* @__PURE__ */ import_react2.default.createElement("div", { className: "row" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label text-dark fw-semibold" }, "Search Results"), /* @__PURE__ */ import_react2.default.createElement(
+  ))), (isSearching || searchResults.length > 0) && /* @__PURE__ */ import_react2.default.createElement("div", { className: "row" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label fw-medium", style: {
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.5rem"
+  } }, "Search Results"), /* @__PURE__ */ import_react2.default.createElement(
     "div",
     {
       className: "border rounded p-2 bg-light",
@@ -19482,14 +19501,30 @@ function FileUploadSection({ title, buttonId, inputId, files, onFilesChange }) {
     input?.click();
   };
   const handleFileChange = (e) => {
-    const fileList = Array.from(e.target.files || []);
-    onFilesChange?.(fileList);
+    const newFiles = Array.from(e.target.files || []);
+    const filteredNewFiles = newFiles.filter((newFile) => {
+      return !files.some(
+        (existingFile) => existingFile.name === newFile.name && existingFile.size === newFile.size
+      );
+    });
+    const duplicateCount = newFiles.length - filteredNewFiles.length;
+    if (duplicateCount > 0) {
+      alert(`${duplicateCount} duplicate file${duplicateCount > 1 ? "s" : ""} skipped.`);
+    }
+    const updatedFiles = [...files, ...filteredNewFiles];
+    onFilesChange?.(updatedFiles);
+    e.target.value = "";
   };
   const removeFile = (index) => {
     const newFiles = files.filter((_, i) => i !== index);
     onFilesChange?.(newFiles);
   };
-  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold" }, title), /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex gap-2 mb-2" }, /* @__PURE__ */ import_react3.default.createElement(
+  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label fw-medium", style: {
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.5rem"
+  } }, title), /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex gap-2 mb-2" }, /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
       type: "button",
@@ -19508,16 +19543,36 @@ function FileUploadSection({ title, buttonId, inputId, files, onFilesChange }) {
       multiple: true,
       onChange: handleFileChange
     }
-  )), files.length > 0 && /* @__PURE__ */ import_react3.default.createElement("ul", { className: "list-group list-group-flush" }, files.map((file, index) => /* @__PURE__ */ import_react3.default.createElement("li", { key: index, className: "list-group-item d-flex justify-content-between align-items-center py-2" }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "text-truncate" }, file.name), /* @__PURE__ */ import_react3.default.createElement(
-    "button",
+  )), files.length > 0 && /* @__PURE__ */ import_react3.default.createElement(
+    "div",
     {
-      type: "button",
-      className: "btn btn-sm btn-outline-danger",
-      onClick: () => removeFile(index),
-      title: "Remove file"
+      className: "border rounded bg-light",
+      style: {
+        maxHeight: "150px",
+        // Height for about 5 files
+        overflowY: "auto",
+        overflowX: "hidden"
+      }
     },
-    /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-x" })
-  )))));
+    /* @__PURE__ */ import_react3.default.createElement("ul", { className: "list-group list-group-flush" }, files.map((file, index) => /* @__PURE__ */ import_react3.default.createElement("li", { key: index, className: "list-group-item d-flex justify-content-between align-items-center py-2 border-0" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex align-items-center flex-grow-1 me-2" }, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-file-earmark me-2 text-muted", style: { fontSize: "0.875rem" } }), /* @__PURE__ */ import_react3.default.createElement("span", { className: "text-truncate", style: { fontSize: "0.875rem" }, title: file.name }, file.name)), /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: "btn btn-sm btn-outline-danger",
+        onClick: () => removeFile(index),
+        title: "Remove file",
+        style: {
+          minWidth: "32px",
+          height: "28px",
+          padding: "0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }
+      },
+      /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-x", style: { fontSize: "0.875rem" } })
+    ))))
+  ), files.length > 0 && /* @__PURE__ */ import_react3.default.createElement("small", { className: "text-muted mt-1 d-block", style: { fontSize: "0.75rem" } }, files.length, " file", files.length !== 1 ? "s" : "", " selected"));
 }
 function AttachmentsPanel({
   otherAttachments = [],
@@ -19525,19 +19580,18 @@ function AttachmentsPanel({
   onOtherAttachmentsChange,
   onFinishAttachmentsChange
 }) {
-  const materialCardStyle = {
-    borderRadius: "12px",
-    border: "none",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08)",
-    overflow: "hidden"
+  const cardStyle = {
+    border: "1px solid #e9ecef",
+    borderRadius: "16px",
+    boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+    background: "#ffffff"
   };
-  const materialHeaderStyle = {
-    background: "linear-gradient(135deg, #2c2c2c 0%, #424242 100%)",
-    padding: "1rem 1.5rem",
-    borderBottom: "none",
-    borderLeft: "4px solid #d32f2f"
-  };
-  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "card", style: materialCardStyle }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "card-header text-white", style: materialHeaderStyle }, /* @__PURE__ */ import_react3.default.createElement("h6", { className: "mb-0 fw-bold" }, "File Attachments")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-4" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement(
+  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "card", style: cardStyle }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "card-body", style: { padding: "2rem" } }, /* @__PURE__ */ import_react3.default.createElement("h5", { className: "mb-4 fw-semibold text-dark", style: {
+    fontSize: "1.25rem",
+    fontWeight: "600",
+    letterSpacing: "-0.02em",
+    color: "#1a1a1a"
+  } }, "File Attachments"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-4" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement(
     FileUploadSection,
     {
       title: "Other Attachments",
@@ -19561,19 +19615,18 @@ function AttachmentsPanel({
 // src/renderer/vendor_quoting/components/ActionBar.jsx
 var import_react4 = __toESM(require_react(), 1);
 function ActionBar({ onOpenBoeingFinish, onOpenAddParty }) {
-  const materialCardStyle = {
-    borderRadius: "12px",
-    border: "none",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08)",
-    overflow: "hidden"
+  const cardStyle = {
+    border: "1px solid #e9ecef",
+    borderRadius: "16px",
+    boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+    background: "#ffffff"
   };
-  const materialHeaderStyle = {
-    background: "linear-gradient(135deg, #1a1a1a 0%, #333333 100%)",
-    padding: "1rem 1.5rem",
-    borderBottom: "none",
-    borderLeft: "4px solid #1976d2"
-  };
-  return /* @__PURE__ */ import_react4.default.createElement("div", { className: "card", style: materialCardStyle }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "card-header text-white", style: materialHeaderStyle }, /* @__PURE__ */ import_react4.default.createElement("h6", { className: "mb-0 fw-bold" }, "Tools & Resources")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "d-flex gap-2 flex-wrap" }, /* @__PURE__ */ import_react4.default.createElement(
+  return /* @__PURE__ */ import_react4.default.createElement("div", { className: "card", style: cardStyle }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "card-body", style: { padding: "2rem" } }, /* @__PURE__ */ import_react4.default.createElement("h5", { className: "mb-4 fw-semibold text-dark", style: {
+    fontSize: "1.25rem",
+    fontWeight: "600",
+    letterSpacing: "-0.02em",
+    color: "#1a1a1a"
+  } }, "Tools & Resources"), /* @__PURE__ */ import_react4.default.createElement("div", { className: "d-flex gap-2 flex-wrap" }, /* @__PURE__ */ import_react4.default.createElement(
     "button",
     {
       type: "button",
@@ -19599,43 +19652,41 @@ function ActionBar({ onOpenBoeingFinish, onOpenAddParty }) {
 // src/renderer/vendor_quoting/components/FooterActions.jsx
 var import_react5 = __toESM(require_react(), 1);
 function FooterActions({ onOpenPreview, isPreviewDisabled = false }) {
-  const materialCardStyle = {
+  const buttonStyle = {
     borderRadius: "12px",
-    border: "none",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08)",
-    background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)"
-  };
-  const materialButtonStyle = {
-    borderRadius: "25px",
-    padding: "12px 32px",
-    fontSize: "1.1rem",
+    padding: "14px 40px",
+    fontSize: "1rem",
     fontWeight: "600",
-    boxShadow: "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",
+    letterSpacing: "-0.01em",
     border: "none",
-    background: "linear-gradient(135deg, #1976d2 0%, #1565c0 100%)",
-    transition: "all 0.3s ease"
+    background: "#1976d2",
+    color: "white",
+    transition: "all 0.2s ease",
+    boxShadow: "0 2px 8px rgba(25, 118, 210, 0.3)"
   };
-  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "card", style: materialCardStyle }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "card-body", style: { padding: "2rem" } }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "d-flex justify-content-center" }, /* @__PURE__ */ import_react5.default.createElement(
+  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "d-flex justify-content-center", style: { marginTop: "1rem" } }, /* @__PURE__ */ import_react5.default.createElement(
     "button",
     {
       type: "button",
-      style: materialButtonStyle,
+      style: buttonStyle,
       id: "open-preview-modal",
       onClick: onOpenPreview,
       disabled: isPreviewDisabled,
       onMouseEnter: (e) => {
         if (!isPreviewDisabled) {
-          e.target.style.transform = "translateY(-2px)";
-          e.target.style.boxShadow = "0 6px 12px rgba(0,0,0,0.25), 0 4px 8px rgba(0,0,0,0.12)";
+          e.target.style.background = "#1565c0";
+          e.target.style.boxShadow = "0 4px 12px rgba(25, 118, 210, 0.4)";
+          e.target.style.transform = "translateY(-1px)";
         }
       },
       onMouseLeave: (e) => {
+        e.target.style.background = "#1976d2";
+        e.target.style.boxShadow = "0 2px 8px rgba(25, 118, 210, 0.3)";
         e.target.style.transform = "translateY(0)";
-        e.target.style.boxShadow = "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)";
       }
     },
-    isPreviewDisabled ? /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("span", { className: "spinner-border spinner-border-sm me-2", role: "status", "aria-hidden": "true" }), /* @__PURE__ */ import_react5.default.createElement("span", { style: { color: "white" } }, "Loading...")) : /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("span", { style: { color: "white" } }, "Next"), /* @__PURE__ */ import_react5.default.createElement("i", { className: "bi bi-arrow-right ms-2", style: { color: "white" } }))
-  ))));
+    isPreviewDisabled ? /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("span", { className: "spinner-border spinner-border-sm me-2", role: "status", "aria-hidden": "true" }), "Loading...") : /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "Next", /* @__PURE__ */ import_react5.default.createElement("i", { className: "bi bi-arrow-right ms-2" }))
+  ));
 }
 
 // src/renderer/vendor_quoting/components/PreviewModal.jsx
@@ -59447,38 +59498,60 @@ function VendorQuotingApp() {
       }
     });
   }, []);
-  return /* @__PURE__ */ import_react10.default.createElement("div", { className: "min-vh-100 bg-white text-dark" }, /* @__PURE__ */ import_react10.default.createElement(HeaderBar, null), /* @__PURE__ */ import_react10.default.createElement("div", { className: "container-fluid py-4" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "d-flex flex-column gap-4" }, /* @__PURE__ */ import_react10.default.createElement(
-    SearchPanel,
+  return /* @__PURE__ */ import_react10.default.createElement("div", { className: "bg-white text-dark", style: {
+    fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif',
+    letterSpacing: "-0.01em",
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column"
+  } }, /* @__PURE__ */ import_react10.default.createElement(HeaderBar, null), /* @__PURE__ */ import_react10.default.createElement(
+    "div",
     {
-      onSearch: handleSearch,
-      searchResults,
-      selectedResult,
-      onResultSelect: setSelectedResult,
-      quantity,
-      onQuantityChange: setQuantity,
-      isSearching
-    }
+      className: "flex-grow-1",
+      style: {
+        overflowY: "auto",
+        overflowX: "hidden"
+      }
+    },
+    /* @__PURE__ */ import_react10.default.createElement("div", { className: "container", style: {
+      maxWidth: "1200px",
+      margin: "0 auto",
+      padding: "2rem 1.5rem",
+      marginLeft: "1.5rem"
+      // Offset from sidebar
+    } }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "d-flex flex-column", style: { gap: "2rem" } }, /* @__PURE__ */ import_react10.default.createElement(
+      SearchPanel,
+      {
+        onSearch: handleSearch,
+        searchResults,
+        selectedResult,
+        onResultSelect: setSelectedResult,
+        quantity,
+        onQuantityChange: setQuantity,
+        isSearching
+      }
+    ), /* @__PURE__ */ import_react10.default.createElement(
+      AttachmentsPanel,
+      {
+        otherAttachments,
+        finishAttachments,
+        onOtherAttachmentsChange: setOtherAttachments,
+        onFinishAttachmentsChange: setFinishAttachments
+      }
+    ), /* @__PURE__ */ import_react10.default.createElement(
+      ActionBar,
+      {
+        onOpenBoeingFinish: handleOpenBoeingFinish,
+        onOpenAddParty: handleOpenAddParty
+      }
+    ), /* @__PURE__ */ import_react10.default.createElement(
+      FooterActions,
+      {
+        onOpenPreview: handleOpenPreview,
+        isPreviewDisabled: isPreviewLoading
+      }
+    )))
   ), /* @__PURE__ */ import_react10.default.createElement(
-    AttachmentsPanel,
-    {
-      otherAttachments,
-      finishAttachments,
-      onOtherAttachmentsChange: setOtherAttachments,
-      onFinishAttachmentsChange: setFinishAttachments
-    }
-  ), /* @__PURE__ */ import_react10.default.createElement(
-    ActionBar,
-    {
-      onOpenBoeingFinish: handleOpenBoeingFinish,
-      onOpenAddParty: handleOpenAddParty
-    }
-  ), /* @__PURE__ */ import_react10.default.createElement(
-    FooterActions,
-    {
-      onOpenPreview: handleOpenPreview,
-      isPreviewDisabled: isPreviewLoading
-    }
-  ))), /* @__PURE__ */ import_react10.default.createElement(
     PreviewModal,
     {
       isOpen: isPreviewModalOpen,

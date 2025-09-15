@@ -45,13 +45,13 @@ loadApp(null, 'vendor-quoting');
 
 // Handle navigation clicks
 document.addEventListener('click', async (e) => {
-    const link = e.target.closest('.nav-link');
+    const link = e.target.closest('.material-nav-item');
     if (!link) return;
 
     e.preventDefault();
 
     // Update active state
-    document.querySelectorAll('.nav-link')
+    document.querySelectorAll('.material-nav-item')
         .forEach(el => el.classList.remove('active'));
     link.classList.add('active');
 

@@ -42,6 +42,51 @@
             height: 100%;
             border: 0;
         }
+
+        /* Material Design Navigation Hover Effects */
+        .material-nav-item:hover:not(.active) {
+            background: rgba(255,255,255,0.05) !important;
+            color: rgba(255,255,255,0.95) !important;
+            border-left: 3px solid rgba(25,118,210,0.5) !important;
+        }
+
+        .material-nav-item:hover:not(.active) img {
+            opacity: 0.9 !important;
+        }
+
+        .material-nav-item.active {
+            background: rgba(25,118,210,0.1) !important;
+            color: white !important;
+            border-left: 3px solid #1976d2 !important;
+            font-weight: 500 !important;
+        }
+
+        .material-nav-item.active img {
+            opacity: 0.9 !important;
+        }
+
+        /* Ensure inactive items have proper styling */
+        .material-nav-item:not(.active) {
+            background: transparent !important;
+            color: rgba(255,255,255,0.8) !important;
+            border-left: 3px solid transparent !important;
+            font-weight: 400 !important;
+        }
+
+        .material-nav-item:not(.active) img {
+            opacity: 0.7 !important;
+        }
+
+        /* Ensure no gutters */
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container-fluid {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
     </style>
 </head>
 
@@ -58,25 +103,37 @@
     </nav>
 
     <!-- Sidebar + Content -->
-    <div class="container-fluid" style="height:calc(100vh - 40px); padding-top:40px;">
-        <div class="row h-100 g-0">
-            <!-- Sidebar -->
-            <div class="col-3 col-lg-2 bg-secondary d-flex flex-column p-0" style="overflow:auto;">
-                <div class="p-3 border-bottom">
-                    <h6 class="mb-0">Applications</h6>
+    <div style="height:calc(100vh - 40px); padding-top:40px; margin: 0; padding-left: 0; padding-right: 0;">
+        <div class="row h-100 g-0" style="margin: 0;">
+            <!-- Material Design Sidebar -->
+            <div class="col-3 col-lg-2 d-flex flex-column p-0" style="background: #475569; box-shadow: 2px 0 8px rgba(0,0,0,0.15); overflow:auto; position: relative;">
+                <!-- Sidebar Header -->
+                <div style="padding: 0.5rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); background: #475569;">
+                    <div class="d-flex align-items-center" style="height: 1.2rem;">
+                        <div style="width: 16px; height: 16px; background: rgba(25,118,210,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 0.5rem;">
+                            <i class="bi bi-grid-3x3-gap-fill" style="color: #1976d2; font-size: 0.6rem;"></i>
+                        </div>
+                        <small class="mb-0 text-white fw-bold" style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Applications</small>
+                    </div>
                 </div>
-                <nav class="nav flex-column">
-                    <a href="#" data-app="vendor-quoting" class="nav-link text-white active">
-                        <img src="../assets/shop.svg" alt="Vendor" width="20" class="me-2"> Vendor Quoting
+                
+                <!-- Navigation Items -->
+                <nav class="nav flex-column" style="padding: 0.5rem 0;">
+                    <a href="#" data-app="vendor-quoting" class="material-nav-item active" style="display: flex; align-items: center; padding: 0.75rem 1.5rem; text-decoration: none; transition: all 0.2s ease;">
+                        <img src="../assets/shop.svg" alt="Vendor" width="20" class="me-3"> 
+                        <span>Vendor Quoting</span>
                     </a>
-                    <a href="../vac_req/vacation.html" target="app-frame" class="nav-link text-white">
-                        <img src="../assets/calendar.svg" alt="Vacation" width="20" class="me-2"> Vacation Requests
+                    <a href="../vac_req/vacation.html" target="app-frame" class="material-nav-item" style="display: flex; align-items: center; padding: 0.75rem 1.5rem; text-decoration: none; transition: all 0.2s ease;">
+                        <img src="../assets/calendar.svg" alt="Vacation" width="20" class="me-3"> 
+                        <span>Vacation Requests</span>
                     </a>
-                    <a href="../qv_dash_access/quickview_access.html" target="app-frame" class="nav-link text-white">
-                        <img src="../assets/stats.svg" alt="Quickview" width="20" class="me-2"> Quickview Access
+                    <a href="../qv_dash_access/quickview_access.html" target="app-frame" class="material-nav-item" style="display: flex; align-items: center; padding: 0.75rem 1.5rem; text-decoration: none; transition: all 0.2s ease;">
+                        <img src="../assets/stats.svg" alt="Quickview" width="20" class="me-3"> 
+                        <span>Quickview Access</span>
                     </a>
-                    <a href="../rfq_gen/rfq_gen.html" target="app-frame" class="nav-link text-white">
-                        <img src="../assets/stats.svg" alt="Quickview" width="20" class="me-2">RFQ Gen
+                    <a href="../rfq_gen/rfq_gen.html" target="app-frame" class="material-nav-item" style="display: flex; align-items: center; padding: 0.75rem 1.5rem; text-decoration: none; transition: all 0.2s ease;">
+                        <img src="../assets/stats.svg" alt="Quickview" width="20" class="me-3">
+                        <span>RFQ Gen</span>
                     </a>
                 </nav>
             </div>

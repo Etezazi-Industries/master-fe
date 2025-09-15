@@ -24,30 +24,34 @@ export default function SearchPanel({
         }
     };
 
-    const materialCardStyle = {
-        borderRadius: '12px',
-        border: 'none',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08)',
-        overflow: 'hidden'
-    };
-
-    const materialHeaderStyle = {
-        background: 'linear-gradient(135deg, #263238 0%, #37474f 100%)',
-        padding: '1rem 1.5rem',
-        borderBottom: 'none',
-        borderLeft: '4px solid #1976d2'
+    const cardStyle = {
+        border: '1px solid #e9ecef',
+        borderRadius: '16px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+        background: '#ffffff'
     };
 
     return (
-        <div className="card" style={materialCardStyle}>
-            <div className="card-header text-white" style={materialHeaderStyle}>
-                <h6 className="mb-0 fw-bold">Search RFQ/Item</h6>
-            </div>
-            <div className="card-body">
+        <div className="card" style={cardStyle}>
+            <div className="card-body" style={{ padding: '2rem' }}>
+                {/* Clean title */}
+                <h5 className="mb-4 fw-semibold text-dark" style={{ 
+                    fontSize: '1.25rem',
+                    fontWeight: '600',
+                    letterSpacing: '-0.02em',
+                    color: '#1a1a1a'
+                }}>
+                    Search RFQ/Item
+                </h5>
                 {/* Top row: Type selector and search input */}
                 <div className="row g-3 mb-3">
                     <div className={searchType === 'Item' ? 'col-md-2' : 'col-md-3'}>
-                        <label htmlFor="type-select-box" className="form-label text-dark fw-semibold">Type</label>
+                        <label htmlFor="type-select-box" className="form-label fw-medium" style={{ 
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            color: '#374151',
+                            marginBottom: '0.5rem'
+                        }}>Type</label>
                         <select 
                             className="form-select" 
                             id="type-select-box"
@@ -60,7 +64,12 @@ export default function SearchPanel({
                         </select>
                     </div>
                     <div className={searchType === 'Item' ? 'col-md-7' : 'col-md-9'}>
-                        <label htmlFor="rfq-or-item-search" className="form-label text-dark fw-semibold">Search Query</label>
+                        <label htmlFor="rfq-or-item-search" className="form-label fw-medium" style={{ 
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            color: '#374151',
+                            marginBottom: '0.5rem'
+                        }}>Search Query</label>
                         <div className="input-group">
                             <input 
                                 type="text" 
@@ -92,7 +101,12 @@ export default function SearchPanel({
                     {/* Quantity field - only show for Item type */}
                     {searchType === 'Item' && (
                         <div className="col-md-3">
-                            <label htmlFor="item-qty" className="form-label text-dark fw-semibold">Quantity</label>
+                            <label htmlFor="item-qty" className="form-label fw-medium" style={{ 
+                                fontSize: '0.875rem',
+                                fontWeight: '500',
+                                color: '#374151',
+                                marginBottom: '0.5rem'
+                            }}>Quantity</label>
                             <input 
                                 type="number" 
                                 className="form-control" 
@@ -110,7 +124,12 @@ export default function SearchPanel({
                 {(isSearching || searchResults.length > 0) && (
                     <div className="row">
                         <div className="col-12">
-                            <label className="form-label text-dark fw-semibold">Search Results</label>
+                            <label className="form-label fw-medium" style={{ 
+                                fontSize: '0.875rem',
+                                fontWeight: '500',
+                                color: '#374151',
+                                marginBottom: '0.5rem'
+                            }}>Search Results</label>
                             <div 
                                 className="border rounded p-2 bg-light" 
                                 style={{ height: '120px', overflowY: 'auto' }}

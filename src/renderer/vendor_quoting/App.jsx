@@ -107,11 +107,30 @@ function VendorQuotingApp() {
     }, []);
 
     return (
-        <div className="min-vh-100 bg-white text-dark">
+        <div className="bg-white text-dark" style={{ 
+            fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif',
+            letterSpacing: '-0.01em',
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column'
+        }}>
             <HeaderBar />
             
-            <div className="container-fluid py-4">
-                <div className="d-flex flex-column gap-4">
+            {/* Main content with scrolling */}
+            <div 
+                className="flex-grow-1"
+                style={{ 
+                    overflowY: 'auto',
+                    overflowX: 'hidden'
+                }}
+            >
+                <div className="container" style={{ 
+                    maxWidth: '1200px',
+                    margin: '0 auto',
+                    padding: '2rem 1.5rem',
+                    marginLeft: '1.5rem' // Offset from sidebar
+                }}>
+                    <div className="d-flex flex-column" style={{ gap: '2rem' }}>
                     {/* Search Section */}
                     <SearchPanel
                         onSearch={handleSearch}
@@ -142,6 +161,7 @@ function VendorQuotingApp() {
                         onOpenPreview={handleOpenPreview}
                         isPreviewDisabled={isPreviewLoading}
                     />
+                    </div>
                 </div>
             </div>
 

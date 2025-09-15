@@ -1,26 +1,25 @@
 import React from 'react';
 
 export default function ActionBar({ onOpenBoeingFinish, onOpenAddParty }) {
-    const materialCardStyle = {
-        borderRadius: '12px',
-        border: 'none',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08)',
-        overflow: 'hidden'
-    };
-
-    const materialHeaderStyle = {
-        background: 'linear-gradient(135deg, #1a1a1a 0%, #333333 100%)',
-        padding: '1rem 1.5rem',
-        borderBottom: 'none',
-        borderLeft: '4px solid #1976d2'
+    const cardStyle = {
+        border: '1px solid #e9ecef',
+        borderRadius: '16px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+        background: '#ffffff'
     };
 
     return (
-        <div className="card" style={materialCardStyle}>
-            <div className="card-header text-white" style={materialHeaderStyle}>
-                <h6 className="mb-0 fw-bold">Tools & Resources</h6>
-            </div>
-            <div className="card-body">
+        <div className="card" style={cardStyle}>
+            <div className="card-body" style={{ padding: '2rem' }}>
+                {/* Clean title */}
+                <h5 className="mb-4 fw-semibold text-dark" style={{ 
+                    fontSize: '1.25rem',
+                    fontWeight: '600',
+                    letterSpacing: '-0.02em',
+                    color: '#1a1a1a'
+                }}>
+                    Tools & Resources
+                </h5>
                 <div className="d-flex gap-2 flex-wrap">
                     <button 
                         type="button" 
