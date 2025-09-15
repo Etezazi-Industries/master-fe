@@ -132,3 +132,28 @@ export async function getBuyers(party_pk) {
     const data = await res.json();
     return data;
 }
+
+export async function parseExcelFiles(body) {
+    const res = await fetch("http://127.0.0.1:8000/rfq_gen/excel-files", { method: "POST", body: body });
+    if (!res.ok) {
+        console.error("422 detail:", await res.text()); // FastAPI explains what's missing
+        throw new Error(`HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return data;
+}
+
+
+export async function createParty(body) {
+    const res = await fetch("http://127.0.0.1:8000/parties", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // <-- add this
+        body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+        console.error("422 detail:", await res.text());
+        throw new Error(`HTTP ${res.status}`);
+    }
+    return res.json();
+}
+

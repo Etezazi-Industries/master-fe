@@ -43,6 +43,12 @@ function waitForPortFile(timeoutMs = 15000) {
 }
 
 async function startBackend() {
+    // Always kill any existing backend first
+    if (backendProc && !backendProc.killed) {
+        backendProc.kill('SIGKILL');
+        backendProc = null;
+    }
+
     const exe = getBackendExe();
     if (!fs.existsSync(exe)) {
         throw new Error(`Backend EXE not found at: ${exe}`);
@@ -55,8 +61,9 @@ async function startBackend() {
     });
 
     backendProc.on('exit', (code) => {
-        // If it dies early, you’ll know
+        // If it dies early, you'll know
         if (!app.isQuiting) console.error(`Backend exited with code ${code}`);
+        backendProc = null; // Reset when process exits
     });
 
     const port = await waitForPortFile();
@@ -67,16 +74,34 @@ async function startBackend() {
 
 function stopBackend() {
     if (backendProc && !backendProc.killed) {
-        try { backendProc.kill(); } catch { }
+        try {
+            backendProc.kill('SIGTERM');
+            // Force kill if SIGTERM doesn't work within 3 seconds
+            setTimeout(() => {
+                if (backendProc && !backendProc.killed) {
+                    try { backendProc.kill('SIGKILL'); } catch { }
+                }
+            }, 3000);
+        } catch { }
     }
     backendProc = null;
+
+    // Clean up the port file
+    const portFile = path.join(os.tmpdir(), 'fastapi_port.txt');
+    try {
+        if (fs.existsSync(portFile)) {
+            fs.unlinkSync(portFile);
+        }
+    } catch (e) {
+        console.error('Failed to delete port file:', e);
+    }
 }
 
 async function createWindow() {
     // 1) Make sure backend is up before window loads
-    //const base = await startBackend();
+    // const base = await startBackend();
 
-    ipcMain.handle('get-api-base', () => apiBase);
+    // ipcMain.handle('get-api-base', () => apiBase);
 
     // 2) Create the browser window
     const win = new BrowserWindow({

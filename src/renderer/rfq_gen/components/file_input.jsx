@@ -3,13 +3,14 @@ import React from "react";
 
 
 // TODO: wire this up to change app state.
-function ActionBar() {
+function ActionBar({ onPress }) {
     return (
         <div className="d-flex align-items-center gap-3 my-3">
             {/* Document Map button */}
             <button
                 type="button"
                 className="btn btn-primary"
+                onClick={onPress}
             >
                 Document Map
             </button>
@@ -80,7 +81,7 @@ function FileUpload({
     );
 }
 
-export default function FileUploadSection({ onChange, onRemove, files = {} }) {
+export default function FileUploadSection({ onChange, onRemove, openDocMap, files = {} }) {
     return (
         <div className="container my-4">
             <h5 className="mb-3">Upload Files</h5>
@@ -120,7 +121,9 @@ export default function FileUploadSection({ onChange, onRemove, files = {} }) {
                     />
                 </div>
             </div>
-            <ActionBar />
+            <ActionBar
+                onPress={openDocMap}
+            />
         </div>
     );
 }

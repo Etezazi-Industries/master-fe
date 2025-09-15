@@ -1299,7 +1299,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React4 = require_react(), Internals = {
+      var React5 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1317,7 +1317,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2859,7 +2859,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React4.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React5.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -16441,14 +16441,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React4 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React5 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
       Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
       Symbol.for("react.legacy_hidden");
       Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
       Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -19170,7 +19170,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React4.version;
+        var isomorphicReactPackageVersion = React5.version;
         if ("19.1.1" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.1.1\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -19311,8 +19311,8 @@ var require_client = __commonJS({
 });
 
 // src/renderer/vendor_quoting/modals/reviewModal.jsx
-var import_react3 = __toESM(require_react(), 1);
-var import_client = __toESM(require_client(), 1);
+var import_react4 = __toESM(require_react(), 1);
+var import_client2 = __toESM(require_client(), 1);
 
 // src/renderer/vendor_quoting/components/emailgroups.jsx
 var import_react = __toESM(require_react(), 1);
@@ -19365,6 +19365,19 @@ async function prepareRfqEmails(rfqId, payload) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload ?? {})
   });
+}
+async function createParty(body) {
+  const res = await fetch("http://127.0.0.1:8000/parties", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    // <-- add this
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    console.error("422 detail:", await res.text());
+    throw new Error(`HTTP ${res.status}`);
+  }
+  return res.json();
 }
 
 // src/renderer/vendor_quoting/components/emailgroups.jsx
@@ -19558,6 +19571,220 @@ function normalizeFromYourApi(raw) {
   return { groups: Array.from(byCode.values()), uncoded: [] };
 }
 
+// src/renderer/vendor_quoting/modals/addParty.jsx
+var import_react3 = __toESM(require_react(), 1);
+var import_client = __toESM(require_client(), 1);
+function openAddPartyModal(opts = {}) {
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = (0, import_client.createRoot)(container);
+  const finish = () => {
+    root.unmount();
+    container.remove();
+  };
+  root.render(
+    /* @__PURE__ */ import_react3.default.createElement(
+      AddPartyModal,
+      {
+        onFinish: finish,
+        onCreated: opts.onCreated,
+        notify: opts.notify,
+        createParty: opts.createParty
+      }
+    )
+  );
+}
+function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 }) {
+  const [form, setForm] = (0, import_react3.useState)({
+    name: "",
+    short_name: "",
+    job_title: "",
+    phone: "",
+    email: "",
+    website: "",
+    is_customer: false,
+    is_salesperson: false,
+    is_supplier: false
+  });
+  const [submitting, setSubmitting] = (0, import_react3.useState)(false);
+  const [error, setError] = (0, import_react3.useState)("");
+  const canSubmit = (0, import_react3.useMemo)(() => form.name.trim().length > 0, [form.name]);
+  const setField = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+  const [modalId] = (0, import_react3.useState)(() => `add-party-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  (0, import_react3.useEffect)(() => {
+    const el = document.getElementById(modalId);
+    const bs = window.bootstrap?.Modal?.getOrCreateInstance(el, {
+      backdrop: "static",
+      keyboard: false,
+      focus: true
+    });
+    bs?.show();
+    const onHidden = () => onFinish?.();
+    el?.addEventListener("hidden.bs.modal", onHidden);
+    return () => {
+      el?.removeEventListener("hidden.bs.modal", onHidden);
+      try {
+        window.bootstrap?.Modal?.getInstance(el)?.hide();
+      } catch {
+      }
+    };
+  }, [modalId, onFinish]);
+  const close = () => {
+    const el = document.getElementById(modalId);
+    window.bootstrap?.Modal?.getInstance(el)?.hide();
+  };
+  const normalizePayload = (f) => {
+    const nn = (s) => s && String(s).trim() ? String(s).trim() : null;
+    let website = (f.website || "").trim();
+    if (website && !/^https?:\/\//i.test(website)) website = "https://" + website;
+    return {
+      name: f.name.trim(),
+      short_name: nn(f.short_name),
+      job_title: nn(f.job_title),
+      phone: nn(f.phone),
+      email: nn(f.email),
+      website: nn(website),
+      is_customer: !!f.is_customer,
+      is_salesperson: !!f.is_salesperson,
+      is_supplier: !!f.is_supplier
+    };
+  };
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!canSubmit || submitting) return;
+    setSubmitting(true);
+    setError("");
+    const payload = normalizePayload(form);
+    try {
+      const submitter = createParty2 ?? (async () => {
+        throw new Error("createParty function not provided. Pass it via openAddPartyModal({ createParty }) or as a prop.");
+      });
+      const result = await submitter(payload);
+      onCreated?.(result, payload);
+      (notify ?? ((m) => console.log(m)))("Party added successfully.");
+      close();
+    } catch (err) {
+      setError(err?.message || "Failed to create party.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  return (
+    // NOTE: No manual backdrop / d-block. Let Bootstrap manage everything.
+    /* @__PURE__ */ import_react3.default.createElement(
+      "div",
+      {
+        className: "modal fade",
+        id: modalId,
+        tabIndex: -1,
+        "aria-hidden": "true",
+        "aria-labelledby": `${modalId}-label`,
+        "data-bs-focus": "true"
+      },
+      /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-dialog modal-lg modal-dialog-centered" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-content shadow" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react3.default.createElement("h5", { className: "modal-title", id: `${modalId}-label` }, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-person-plus me-2" }), "Add New Party"), /* @__PURE__ */ import_react3.default.createElement("button", { type: "button", className: "btn-close", onClick: close, "aria-label": "Close" })), /* @__PURE__ */ import_react3.default.createElement("form", { onSubmit: submit, noValidate: true }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-body" }, error && /* @__PURE__ */ import_react3.default.createElement("div", { className: "alert alert-danger", role: "alert", "aria-live": "assertive" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-name` }, "Name ", /* @__PURE__ */ import_react3.default.createElement("span", { className: "text-danger" }, "*")), /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-name`,
+          autoFocus: true,
+          type: "text",
+          className: "form-control",
+          value: form.name,
+          onChange: (e) => setField("name", e.target.value),
+          required: true,
+          maxLength: 200,
+          placeholder: "Acme Corp"
+        }
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-short-name` }, "Short Name"), /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-short-name`,
+          type: "text",
+          className: "form-control",
+          value: form.short_name,
+          onChange: (e) => setField("short_name", e.target.value),
+          placeholder: "Acme"
+        }
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-job-title` }, "Job Title"), /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-job-title`,
+          type: "text",
+          className: "form-control",
+          value: form.job_title,
+          onChange: (e) => setField("job_title", e.target.value),
+          placeholder: "Buyer, Purchasing Manager\u2026"
+        }
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-phone` }, "Phone"), /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-phone`,
+          type: "tel",
+          className: "form-control",
+          value: form.phone,
+          onChange: (e) => setField("phone", e.target.value),
+          placeholder: "555-123-4567"
+        }
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-email` }, "Email"), /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-email`,
+          type: "email",
+          className: "form-control",
+          value: form.email,
+          onChange: (e) => setField("email", e.target.value),
+          placeholder: "name@example.com"
+        }
+      )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label", htmlFor: `${modalId}-website` }, "Website"), /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-website`,
+          type: "url",
+          className: "form-control",
+          value: form.website,
+          onChange: (e) => setField("website", e.target.value),
+          placeholder: "https://example.com"
+        }
+      ), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-text" }, "If you omit ", /* @__PURE__ */ import_react3.default.createElement("code", null, "https://"), ", we\u2019ll add it.")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check form-check-inline" }, /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-is_customer`,
+          className: "form-check-input",
+          type: "checkbox",
+          checked: form.is_customer,
+          onChange: (e) => setField("is_customer", e.target.checked)
+        }
+      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: `${modalId}-is_customer` }, "Customer")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check form-check-inline" }, /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-is_salesperson`,
+          className: "form-check-input",
+          type: "checkbox",
+          checked: form.is_salesperson,
+          onChange: (e) => setField("is_salesperson", e.target.checked)
+        }
+      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: `${modalId}-is_salesperson` }, "Salesperson")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check form-check-inline" }, /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-is_supplier`,
+          className: "form-check-input",
+          type: "checkbox",
+          checked: form.is_supplier,
+          onChange: (e) => setField("is_supplier", e.target.checked)
+        }
+      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: `${modalId}-is_supplier` }, "Supplier")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check form-check-inline" }, /* @__PURE__ */ import_react3.default.createElement(
+        "input",
+        {
+          id: `${modalId}-is_prospect`,
+          className: "form-check-input",
+          type: "checkbox",
+          checked: form.is_supplier,
+          onChange: (e) => setField("is_prospect", e.target.checked)
+        }
+      ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: `${modalId}-is_supplier` }, "Supplier"))))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react3.default.createElement("button", { type: "button", className: "btn btn-outline-secondary", onClick: close, disabled: submitting }, "Cancel"), /* @__PURE__ */ import_react3.default.createElement("button", { type: "submit", className: "btn btn-success", disabled: !canSubmit || submitting }, submitting ? "Creating\u2026" : "Create Party")))))
+    )
+  );
+}
+
 // src/renderer/vendor_quoting/modals/reviewModal.jsx
 function renderRecipientsModalReact(rawData, { rfqId } = {}) {
   const modalEl = document.getElementById("rfqRecipientsModal");
@@ -19566,26 +19793,26 @@ function renderRecipientsModalReact(rawData, { rfqId } = {}) {
   if (!container) return;
   let root = container.__root;
   if (!root) {
-    root = (0, import_client.createRoot)(container);
+    root = (0, import_client2.createRoot)(container);
     container.__root = root;
   }
-  root.render(/* @__PURE__ */ import_react3.default.createElement(RecipientsModal, { rawData, rfqId }));
+  root.render(/* @__PURE__ */ import_react4.default.createElement(RecipientsModal, { rawData, rfqId }));
 }
 function RecipientsModal({ rawData, rfqId }) {
-  const { groups } = (0, import_react3.useMemo)(() => normalizeFromYourApi(rawData), [rawData]);
-  const uncodedItems = (0, import_react3.useMemo)(
+  const { groups } = (0, import_react4.useMemo)(() => normalizeFromYourApi(rawData), [rawData]);
+  const uncodedItems = (0, import_react4.useMemo)(
     () => groups.find((g) => g.code === "UNCODED")?.items ?? [],
     [groups]
   );
-  const [recipientsByCategory, setRecipientsByCategory] = (0, import_react3.useState)({});
-  (0, import_react3.useEffect)(() => {
+  const [recipientsByCategory, setRecipientsByCategory] = (0, import_react4.useState)({});
+  (0, import_react4.useEffect)(() => {
     console.log("[state] recipients", recipientsByCategory);
   }, [recipientsByCategory]);
-  const [assignments, setAssignments] = (0, import_react3.useState)({});
-  (0, import_react3.useEffect)(() => {
+  const [assignments, setAssignments] = (0, import_react4.useState)({});
+  (0, import_react4.useEffect)(() => {
     console.log("[state] assignments", assignments);
   }, [assignments]);
-  (0, import_react3.useEffect)(() => {
+  (0, import_react4.useEffect)(() => {
     const rfqNumEl = document.getElementById("rfq-number");
     if (rfqNumEl) rfqNumEl.textContent = rfqId ?? "\u2014";
     const sectionCountEl = document.getElementById("section-count");
@@ -19598,8 +19825,8 @@ function RecipientsModal({ rawData, rfqId }) {
   const handleAssignmentsChange = (partial) => setAssignments((prev) => ({ ...prev, ...partial }));
   const handleApplyUncoded = (partial) => setAssignments((prev) => ({ ...prev, ...partial }));
   const submittingGuard = Object.keys(assignments).length === 0 && uncodedItems.length > 0;
-  const [submitting, setSubmitting] = (0, import_react3.useState)(false);
-  const [error, setError] = (0, import_react3.useState)("");
+  const [submitting, setSubmitting] = (0, import_react4.useState)(false);
+  const [error, setError] = (0, import_react4.useState)("");
   const handleCancel = () => {
     const el = document.getElementById("rfqRecipientsModal");
     if (!el) return;
@@ -19625,7 +19852,7 @@ function RecipientsModal({ rawData, rfqId }) {
       setSubmitting(false);
     }
   };
-  return /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react3.default.createElement("div", null, /* @__PURE__ */ import_react3.default.createElement("h5", { className: "modal-title" }, "Send for Quote"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "subtle" }, "RFQ #", /* @__PURE__ */ import_react3.default.createElement("strong", { id: "rfq-number" }, "\u2014"), " \u2022", " ", /* @__PURE__ */ import_react3.default.createElement("span", { id: "section-count" }, "0"), " sections")), /* @__PURE__ */ import_react3.default.createElement(
+  return /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react4.default.createElement("div", null, /* @__PURE__ */ import_react4.default.createElement("h5", { className: "modal-title" }, "Send for Quote"), /* @__PURE__ */ import_react4.default.createElement("div", { className: "subtle" }, "RFQ #", /* @__PURE__ */ import_react4.default.createElement("strong", { id: "rfq-number" }, "\u2014"), " \u2022", " ", /* @__PURE__ */ import_react4.default.createElement("span", { id: "section-count" }, "0"), " sections")), /* @__PURE__ */ import_react4.default.createElement(
     "button",
     {
       type: "button",
@@ -19634,27 +19861,27 @@ function RecipientsModal({ rawData, rfqId }) {
       onClick: handleCancel,
       disabled: submitting
     }
-  )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-body" }, error && /* @__PURE__ */ import_react3.default.createElement("div", { className: "alert alert-danger mb-3", role: "alert" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-4" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12 col-lg-7" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "vstack gap-3" }, groups.filter((g) => g.code !== "UNCODED").map((g) => /* @__PURE__ */ import_react3.default.createElement(
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "modal-body" }, error && /* @__PURE__ */ import_react4.default.createElement("div", { className: "alert alert-danger mb-3", role: "alert" }, error), /* @__PURE__ */ import_react4.default.createElement("div", { className: "row g-4" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "col-12 col-lg-7" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "vstack gap-3" }, groups.filter((g) => g.code !== "UNCODED").map((g) => /* @__PURE__ */ import_react4.default.createElement(
     GroupCard,
     {
       key: g.code,
       ...g,
       onAssignmentsChange: handleAssignmentsChange
     }
-  )), /* @__PURE__ */ import_react3.default.createElement(
+  )), /* @__PURE__ */ import_react4.default.createElement(
     UncodedCard,
     {
       items: uncodedItems,
       codes: window.codesCache || [],
       onApply: handleApplyUncoded
     }
-  ))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12 col-lg-5" }, /* @__PURE__ */ import_react3.default.createElement(
+  ))), /* @__PURE__ */ import_react4.default.createElement("div", { className: "col-12 col-lg-5" }, /* @__PURE__ */ import_react4.default.createElement(
     EmailManager,
     {
       groups,
       onChange: (obj) => setRecipientsByCategory(obj || {})
     }
-  )))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-footer d-flex justify-content-between" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "subtle" }, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-info-circle" }), " Review items and recipients per sub-category before sending."), /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex gap-2" }, /* @__PURE__ */ import_react3.default.createElement(
+  )))), /* @__PURE__ */ import_react4.default.createElement("div", { className: "modal-footer d-flex justify-content-between" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "subtle" }, /* @__PURE__ */ import_react4.default.createElement("i", { className: "bi bi-info-circle" }), " Review items and recipients per sub-category before sending."), /* @__PURE__ */ import_react4.default.createElement("div", { className: "d-flex gap-2" }, /* @__PURE__ */ import_react4.default.createElement(
     "button",
     {
       className: "btn btn-outline-secondary",
@@ -19662,7 +19889,7 @@ function RecipientsModal({ rawData, rfqId }) {
       disabled: submitting
     },
     "Cancel"
-  ), /* @__PURE__ */ import_react3.default.createElement(
+  ), /* @__PURE__ */ import_react4.default.createElement(
     "button",
     {
       className: "btn btn-primary",
@@ -19670,7 +19897,21 @@ function RecipientsModal({ rawData, rfqId }) {
       disabled: submitting || submittingGuard,
       title: submittingGuard ? "Resolve uncoded items / add recipients before sending" : ""
     },
-    submitting ? "Preparing\u2026" : /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-send me-1" }), "Prepare Emails")
+    submitting ? "Preparing\u2026" : /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("i", { className: "bi bi-send me-1" }), "Prepare Emails")
+  ), /* @__PURE__ */ import_react4.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "btn btn-success",
+      onClick: () => openAddPartyModal({
+        createParty,
+        notify: (m) => console.log("[Notify]", m),
+        onCreated: (data) => console.log("[API] response:", data)
+      }),
+      title: "Add a new party to Mie Trak"
+    },
+    /* @__PURE__ */ import_react4.default.createElement("i", { className: "bi bi-person-plus me-1" }),
+    "Add New Party"
   ))));
 }
 export {

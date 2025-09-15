@@ -60,28 +60,43 @@ document.getElementById('search-button')?.addEventListener('click', triggerSearc
 
 
 const searchBox = document.getElementById('search-result-box');
+const openBtn = document.getElementById('open-preview-modal');
 
+let opening = false;
 
-searchBox?.addEventListener('dblclick', async () => {
-    if (!('value' in searchBox)) return;
-    const raw = searchBox.value || '';
-    const rfqId = raw.split(' - ')[0]?.trim();
-    if (!rfqId) return;
+async function openPreviewModal() {
+    if (opening) return;
+    opening = true;
+    openBtn?.setAttribute('disabled', 'true');
 
     try {
+        if (!searchBox) return;
+        const raw = (searchBox.value ?? '').trim();
+        const rfqId = raw.split(' - ')[0]?.trim();
+        if (!rfqId) return;
+
         const data = await getRfqDetails(rfqId);
-        const lineItems = data["line-items"];
+        const lineItems = data['line-items'] ?? [];
         renderRecipientsModal(lineItems, { rfqId });
 
         const modalEl = document.getElementById('rfqRecipientsModal');
         if (!modalEl) return;
-        // @ts-ignore
-        const modal = new bootstrap.Modal(modalEl);
+
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl, {
+            backdrop: 'static',
+            keyboard: false,
+            focus: true,
+        });
         modal.show();
     } catch (err) {
         console.error('Error fetching RFQ details:', err);
+    } finally {
+        opening = false;
+        openBtn?.removeAttribute('disabled');
     }
-});
+}
+
+openBtn?.addEventListener('click', openPreviewModal);
 
 
 function renderRecipientsModal(rawData, { rfqId } = {}) {

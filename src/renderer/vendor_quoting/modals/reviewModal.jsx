@@ -8,7 +8,8 @@ import {
     UncodedCard,
     normalizeFromYourApi,
 } from "../components/itemGroups.jsx";
-import { prepareRfqEmails } from "../../api_calls.js"
+import { prepareRfqEmails, createParty } from "../../api_calls.js"
+import { openAddPartyModal } from "./addParty.jsx";
 
 
 export function renderRecipientsModalReact(rawData, { rfqId } = {}) {
@@ -187,6 +188,21 @@ function RecipientsModal({ rawData, rfqId }) {
                         }
                     >
                         {submitting ? "Preparing…" : (<><i className="bi bi-send me-1"></i>Prepare Emails</>)}
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={() =>
+                            openAddPartyModal({
+                                createParty: createParty,
+                                notify: (m) => console.log("[Notify]", m),
+                                onCreated: (data) => console.log("[API] response:", data),
+                            })
+                        }
+                        title="Add a new party to Mie Trak"
+                    >
+                        <i className="bi bi-person-plus me-1"></i>
+                        Add New Party
                     </button>
                 </div>
             </div>

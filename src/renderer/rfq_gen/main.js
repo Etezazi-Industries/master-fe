@@ -1299,7 +1299,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React7 = require_react(), Internals = {
+      var React8 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1317,7 +1317,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React7.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2859,7 +2859,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React7.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React8.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -16441,14 +16441,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React7 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React8 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
       Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
       Symbol.for("react.legacy_hidden");
       Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
       Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React7.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -19170,7 +19170,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React7.version;
+        var isomorphicReactPackageVersion = React8.version;
         if ("19.1.1" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.1.1\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -19311,11 +19311,12 @@ var require_client = __commonJS({
 });
 
 // src/renderer/rfq_gen/main.jsx
-var import_react6 = __toESM(require_react(), 1);
-var import_client = __toESM(require_client(), 1);
+var import_react7 = __toESM(require_react(), 1);
+var import_client2 = __toESM(require_client(), 1);
 
 // src/renderer/rfq_gen/components/rfq_app.jsx
-var import_react5 = __toESM(require_react(), 1);
+var import_react6 = __toESM(require_react(), 1);
+var import_client = __toESM(require_client(), 1);
 
 // src/renderer/rfq_gen/components/customer_buyer_panel.jsx
 var import_react = __toESM(require_react(), 1);
@@ -19354,6 +19355,15 @@ async function getBuyers(party_pk) {
   if (!res.ok) {
     console.error("Failed to users.", res.status);
     return {};
+  }
+  const data = await res.json();
+  return data;
+}
+async function parseExcelFiles(body) {
+  const res = await fetch("http://127.0.0.1:8000/rfq_gen/excel-files", { method: "POST", body });
+  if (!res.ok) {
+    console.error("422 detail:", await res.text());
+    throw new Error(`HTTP ${res.status}`);
   }
   const data = await res.json();
   return data;
@@ -19511,12 +19521,13 @@ function CustomerBuyerPanel({ value, onChange }) {
 
 // src/renderer/rfq_gen/components/file_input.jsx
 var import_react2 = __toESM(require_react(), 1);
-function ActionBar() {
+function ActionBar({ onPress }) {
   return /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-3 my-3" }, /* @__PURE__ */ import_react2.default.createElement(
     "button",
     {
       type: "button",
-      className: "btn btn-primary"
+      className: "btn btn-primary",
+      onClick: onPress
     },
     "Document Map"
   ), /* @__PURE__ */ import_react2.default.createElement("div", { className: "form-check" }, /* @__PURE__ */ import_react2.default.createElement(
@@ -19572,7 +19583,7 @@ function FileUpload({
     )
   ))));
 }
-function FileUploadSection({ onChange, onRemove, files = {} }) {
+function FileUploadSection({ onChange, onRemove, openDocMap, files = {} }) {
   return /* @__PURE__ */ import_react2.default.createElement("div", { className: "container my-4" }, /* @__PURE__ */ import_react2.default.createElement("h5", { className: "mb-3" }, "Upload Files"), /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-3 mt-3" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react2.default.createElement(
     FileUpload,
     {
@@ -19607,7 +19618,12 @@ function FileUploadSection({ onChange, onRemove, files = {} }) {
       onRemove,
       files: files.parts_requested || []
     }
-  ))), /* @__PURE__ */ import_react2.default.createElement(ActionBar, null));
+  ))), /* @__PURE__ */ import_react2.default.createElement(
+    ActionBar,
+    {
+      onPress: openDocMap
+    }
+  ));
 }
 
 // src/renderer/rfq_gen/components/date_picker.jsx
@@ -19667,25 +19683,120 @@ function ActionBar2({ onGenerate, onUpdate, onReset }) {
   ))));
 }
 
+// src/renderer/rfq_gen/components/modals/document_group.jsx
+var import_react5 = __toESM(require_react(), 1);
+function ModalShell({ open, title, onClose, onConfirm, children, confirmLabel = "OK" }) {
+  if (!open) return null;
+  return /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal d-block", tabIndex: "-1", role: "dialog", onClick: onClose }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-dialog modal-lg modal-dialog-centered", role: "document", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-content" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "modal-title m-0" }, title), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: onClose })), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-body" }, children), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn btn-secondary", onClick: onClose }, "Cancel"), /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn btn-primary", onClick: onConfirm }, confirmLabel))))), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-backdrop fade show" }));
+}
+function SelectList({
+  items = [],
+  multiple = false,
+  selected,
+  onSelect,
+  getKey = (x) => x && typeof x === "object" && "id" in x ? x.id : x,
+  getLabel = (x) => {
+    if (Array.isArray(x)) return String(x[0]);
+    if (x && typeof x === "object" && "label" in x) return String(x.label);
+    return String(x);
+  }
+}) {
+  const isActive = (key) => multiple ? selected?.has(key) : selected === key;
+  const handleClick = (key) => {
+    if (multiple) {
+      const next = new Set(selected ?? []);
+      next.has(key) ? next.delete(key) : next.add(key);
+      onSelect(next);
+    } else {
+      onSelect(key);
+    }
+  };
+  return /* @__PURE__ */ import_react5.default.createElement("ul", { className: "list-group border rounded overflow-auto", style: { maxHeight: "40vh" } }, items.map((item) => {
+    const key = Array.isArray(item) ? item[1] : item && typeof item === "object" && "id" in item ? item.id : item;
+    const label = getLabel(item);
+    return /* @__PURE__ */ import_react5.default.createElement(
+      "li",
+      {
+        key,
+        role: "button",
+        className: `list-group-item d-flex justify-content-between align-items-center ${isActive(key) ? "active" : ""}`,
+        onClick: () => handleClick(key)
+      },
+      label
+    );
+  }));
+}
+function DualListModal({
+  open,
+  title = "Select Documents for Part",
+  leftItems = [],
+  // e.g. ["PN-001","PN-002"] or [{id, label}]
+  rightMap = {},
+  // e.g. { "PN-001": ["Cert","Drawing", ["SpecSheet","spec.pdf"]] }
+  oneToOneOnly = false,
+  // SINGLE (true) vs MULTIPLE (false) on right side
+  onClose,
+  onSubmit
+  // ({ left, right }) => void
+}) {
+  const keyOf = (x) => Array.isArray(x) ? x[1] : x && typeof x === "object" && "id" in x ? x.id : x;
+  const labelOf = (x) => Array.isArray(x) ? x[0] : x && typeof x === "object" && "label" in x ? x.label : String(x);
+  const [leftSelected, setLeftSelected] = (0, import_react5.useState)(null);
+  const [rightSelected, setRightSelected] = (0, import_react5.useState)(oneToOneOnly ? null : /* @__PURE__ */ new Set());
+  (0, import_react5.useEffect)(() => {
+    if (!leftSelected && leftItems.length) setLeftSelected(keyOf(leftItems[0]));
+  }, [leftItems, leftSelected]);
+  (0, import_react5.useEffect)(() => {
+    setRightSelected(oneToOneOnly ? null : /* @__PURE__ */ new Set());
+  }, [leftSelected, oneToOneOnly]);
+  const rightItems = leftSelected != null ? rightMap[leftSelected] ?? [] : [];
+  const handleConfirm = () => {
+    const rightValue = oneToOneOnly ? rightSelected : Array.from(rightSelected ?? []);
+    onSubmit?.({ left: leftSelected, right: rightValue });
+    onClose?.();
+  };
+  return /* @__PURE__ */ import_react5.default.createElement(ModalShell, { open, title, onClose, onConfirm: handleConfirm, confirmLabel: "OK" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "container-fluid" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "col-12 col-md-6" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-2 fw-semibold" }, "Part Numbers"), /* @__PURE__ */ import_react5.default.createElement(
+    SelectList,
+    {
+      items: leftItems,
+      multiple: false,
+      selected: leftSelected,
+      onSelect: setLeftSelected,
+      getKey: keyOf,
+      getLabel: labelOf
+    }
+  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "col-12 col-md-6" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-2 fw-semibold" }, "Documents"), /* @__PURE__ */ import_react5.default.createElement(
+    SelectList,
+    {
+      items: rightItems,
+      multiple: !oneToOneOnly,
+      selected: rightSelected,
+      onSelect: setRightSelected,
+      getKey: keyOf,
+      getLabel: labelOf
+    }
+  )))));
+}
+
 // src/renderer/rfq_gen/components/rfq_app.jsx
 function HeaderBar({ title }) {
-  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "container-fluid bg-body border-bottom py-2 mb-3" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "mb-0 fw-bold" }, title)));
+  return /* @__PURE__ */ import_react6.default.createElement("div", { className: "container-fluid bg-body border-bottom py-2 mb-3" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react6.default.createElement("h5", { className: "mb-0 fw-bold" }, title)));
 }
 function PageHeading({ heading }) {
-  return /* @__PURE__ */ import_react5.default.createElement("h3", { className: "text-center mb-4 fw-bold" }, heading);
+  return /* @__PURE__ */ import_react6.default.createElement("h3", { className: "text-center mb-4 fw-bold" }, heading);
 }
 function RfqApp() {
-  const [state, setState] = (0, import_react5.useState)({
+  const [state, setState] = (0, import_react6.useState)({
     customer_pk: null,
     buyer_pk: null,
     customer_rfq_number: null,
     files: { excel: [], estimation: [], parts_requested: [] },
     dates: { inquiry: "", due: "" }
   });
-  const handlePanelChange = (0, import_react5.useCallback)((partial) => {
+  const handlePanelChange = (0, import_react6.useCallback)((partial) => {
     setState((prev) => ({ ...prev, ...partial }));
   }, []);
-  const handleFileUpload = (0, import_react5.useCallback)((name, newFiles) => {
+  const handleFileUpload = (0, import_react6.useCallback)((name, newFiles) => {
     setState((prev) => {
       const existing = prev.files[name] || [];
       const key = (f) => `${f.name}-${f.size}-${f.lastModified}`;
@@ -19697,30 +19808,73 @@ function RfqApp() {
       };
     });
   }, []);
-  const handleFileRemove = (0, import_react5.useCallback)((name, index) => {
+  const handleFileRemove = (0, import_react6.useCallback)((name, index) => {
     setState((prev) => {
       const list = (prev.files[name] || []).slice();
       list.splice(index, 1);
       return { ...prev, files: { ...prev.files, [name]: list } };
     });
   }, []);
-  (0, import_react5.useEffect)(() => {
-    console.log("state changed", state);
-  }, [state]);
-  return /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement(HeaderBar, { title: "RFQ Gen" }), /* @__PURE__ */ import_react5.default.createElement(PageHeading, { heading: "RFQ Gen" }), /* @__PURE__ */ import_react5.default.createElement(
+  const openDocumentMap = (0, import_react6.useCallback)(async () => {
+    const excelFiles = state?.files?.excel ?? [];
+    const fd = new FormData();
+    excelFiles.forEach((file) => fd.append("excel_files", file));
+    fd.append("customer_pk", String(state.customer_pk ?? ""));
+    fd.append("buyer_pk", String(state.buyer_pk ?? ""));
+    fd.append("customer_rfq_number", String(state.customer_rfq_number ?? ""));
+    const res = await parseExcelFiles(fd);
+    console.log(res);
+    const left = ["PN-001", "PN-002", "PN-003"];
+    const right = {
+      "PN-001": ["Cert", "Drawing", ["SpecSheet", "spec_001.pdf"]],
+      "PN-002": ["MSDS", "Work Instructions"],
+      "PN-003": ["Traveler"]
+    };
+    let host = document.getElementById("docmap-modal-host");
+    if (!host) {
+      host = document.createElement("div");
+      host.id = "docmap-modal-host";
+      document.body.appendChild(host);
+    }
+    const root2 = (0, import_client.createRoot)(host);
+    const close = () => {
+      root2.unmount();
+      host.remove();
+    };
+    root2.render(
+      /* @__PURE__ */ import_react6.default.createElement(
+        DualListModal,
+        {
+          open: true,
+          title: "Document Map",
+          leftItems: left,
+          rightMap: right,
+          oneToOneOnly: false,
+          onClose: close,
+          onSubmit: ({ left: l, right: r }) => {
+            console.log("DocMap selection:", { left: l, right: r, formData: fd });
+            close();
+          }
+        }
+      )
+    );
+    console.log("DocumentMap: prepared payload & fake lists", { excelFiles, left, right });
+  }, [state.files, state.customer_pk, state.buyer_pk, state.customer_rfq_number]);
+  return /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement(HeaderBar, { title: "RFQ Gen" }), /* @__PURE__ */ import_react6.default.createElement(PageHeading, { heading: "RFQ Gen" }), /* @__PURE__ */ import_react6.default.createElement(
     CustomerBuyerPanel,
     {
       value: { customer_pk: state.customer_pk, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number },
       onChange: handlePanelChange
     }
-  ), /* @__PURE__ */ import_react5.default.createElement(
+  ), /* @__PURE__ */ import_react6.default.createElement(
     FileUploadSection,
     {
       onChange: handleFileUpload,
       onRemove: handleFileRemove,
+      openDocMap: openDocumentMap,
       files: state.files
     }
-  ), /* @__PURE__ */ import_react5.default.createElement(DateSection, null), /* @__PURE__ */ import_react5.default.createElement(
+  ), /* @__PURE__ */ import_react6.default.createElement(DateSection, null), /* @__PURE__ */ import_react6.default.createElement(
     ActionBar2,
     {
       onGenerate: () => console.log("Generate RFQ clicked"),
@@ -19732,8 +19886,8 @@ function RfqApp() {
 
 // src/renderer/rfq_gen/main.jsx
 var container = document.getElementById("root");
-var root = (0, import_client.createRoot)(container);
-root.render(/* @__PURE__ */ import_react6.default.createElement(RfqApp, null));
+var root = (0, import_client2.createRoot)(container);
+root.render(/* @__PURE__ */ import_react7.default.createElement(RfqApp, null));
 /*! Bundled license information:
 
 react/cjs/react.development.js:

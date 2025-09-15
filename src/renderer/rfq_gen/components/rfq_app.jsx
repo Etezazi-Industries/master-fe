@@ -1,9 +1,12 @@
 //@ts-check
 import React, { useEffect, useState, useCallback } from "react";
+import { createRoot } from "react-dom/client";
 import CustomerBuyerPanel from "./customer_buyer_panel";
 import FileUploadSection from "./file_input";
 import DateSection from "./date_picker";
 import ActionBar from "./action_bar";
+import DualListModal from "./modals/document_group";
+import { parseExcelFiles } from "../../api_calls";
 
 function HeaderBar({ title }) {
     return (
@@ -58,9 +61,60 @@ export default function RfqApp() {
         });
     }, []);
 
-    useEffect(() => {
-        console.log("state changed", state);
-    }, [state]);
+    const openDocumentMap = useCallback(async () => {
+        // 1) Gather Excel files for future API
+        const excelFiles = state?.files?.excel ?? [];
+        const fd = new FormData();
+        excelFiles.forEach((file) => fd.append("excel_files", file));
+        fd.append("customer_pk", String(state.customer_pk ?? ""));
+        fd.append("buyer_pk", String(state.buyer_pk ?? ""));
+        fd.append("customer_rfq_number", String(state.customer_rfq_number ?? ""));
+        // TODO: await fetch(..., { method: "POST", body: fd })
+        //
+        const res = await parseExcelFiles(fd);
+        console.log(res);
+
+        // 2) Fake data for now (replace with API response later)
+        const left = ["PN-001", "PN-002", "PN-003"];
+        const right = {
+            "PN-001": ["Cert", "Drawing", ["SpecSheet", "spec_001.pdf"]],
+            "PN-002": ["MSDS", "Work Instructions"],
+            "PN-003": ["Traveler"],
+        };
+
+        // 3) Mount the modal (no other app state needed)
+        let host = document.getElementById("docmap-modal-host");
+        if (!host) {
+            host = document.createElement("div");
+            host.id = "docmap-modal-host";
+            document.body.appendChild(host);
+        }
+        const root = createRoot(host);
+
+        const close = () => {
+            // unmount and clean up container
+            root.unmount();
+            host.remove();
+        };
+
+        root.render(
+            <DualListModal
+                open={true}
+                title="Document Map"
+                leftItems={left}
+                rightMap={right}
+                oneToOneOnly={false}
+                onClose={close}
+                onSubmit={({ left: l, right: r }) => {
+                    console.log("DocMap selection:", { left: l, right: r, formData: fd });
+                    close();
+                }}
+            />
+        );
+
+        console.log("DocumentMap: prepared payload & fake lists", { excelFiles, left, right });
+    }, [state.files, state.customer_pk, state.buyer_pk, state.customer_rfq_number]);
+
 
     return (
         <div>
@@ -73,6 +127,7 @@ export default function RfqApp() {
             <FileUploadSection
                 onChange={handleFileUpload}
                 onRemove={handleFileRemove}
+                openDocMap={openDocumentMap}
                 files={state.files}
             />
             <DateSection />
