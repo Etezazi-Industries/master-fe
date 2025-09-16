@@ -67,7 +67,7 @@ async function apiFetch(endpoint, init = {}, timeoutMs = 20000) {
     }
 }
 
-async function requestJson(endpoint, init = {}, timeoutMs = 20000) {
+export async function requestJson(endpoint, init = {}, timeoutMs = 20000) {
     const res = await apiFetch(endpoint, {
         headers: { Accept: "application/json", ...(init.headers || {}) },
         ...init,

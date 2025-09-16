@@ -15,14 +15,35 @@ window.logout = logout;
 
 async function loadApp(url, appType = null) {
     const frame = document.getElementById('app-frame');
-    const reactRoot = document.getElementById('vendor-quoting-root');
+    const vendorQuotingRoot = document.getElementById('vendor-quoting-root');
+    const vacationRoot = document.getElementById('vacation-root');
+    
+    // Hide all containers first
+    if (frame) frame.style.display = 'none';
+    if (vendorQuotingRoot) vendorQuotingRoot.style.display = 'none';
+    if (vacationRoot) vacationRoot.style.display = 'none';
+    
+    // Unmount previous React apps
+    if (currentApp === 'vendor-quoting') {
+        try {
+            const { unmountVendorQuotingApp } = await import('../vendor_quoting/App.js');
+            unmountVendorQuotingApp();
+        } catch (error) {
+            console.error('Failed to unmount vendor quoting app:', error);
+        }
+    } else if (currentApp === 'vacation') {
+        try {
+            const { unmountVacationApp } = await import('../vacation/VacationApp.js');
+            unmountVacationApp();
+        } catch (error) {
+            console.error('Failed to unmount vacation app:', error);
+        }
+    }
     
     if (appType === 'vendor-quoting') {
-        // Hide iframe, show React app
-        if (frame) frame.style.display = 'none';
-        if (reactRoot) reactRoot.style.display = 'block';
+        // Show and mount vendor quoting React app
+        if (vendorQuotingRoot) vendorQuotingRoot.style.display = 'block';
         
-        // Import and mount the React app
         try {
             const { mountVendorQuotingApp } = await import('../vendor_quoting/App.js');
             mountVendorQuotingApp();
@@ -30,22 +51,22 @@ async function loadApp(url, appType = null) {
         } catch (error) {
             console.error('Failed to load vendor quoting app:', error);
         }
+    } else if (appType === 'vacation') {
+        // Show and mount vacation React app
+        if (vacationRoot) vacationRoot.style.display = 'block';
+        
+        try {
+            const { mountVacationApp } = await import('../vacation/VacationApp.js');
+            mountVacationApp();
+            currentApp = 'vacation';
+        } catch (error) {
+            console.error('Failed to load vacation app:', error);
+        }
     } else {
-        // Show iframe, hide React app
-        if (reactRoot) reactRoot.style.display = 'none';
+        // Show iframe for other apps
         if (frame) {
             frame.style.display = 'block';
             frame.src = url;
-        }
-        
-        // Unmount React app if it was mounted
-        if (currentApp === 'vendor-quoting') {
-            try {
-                const { unmountVendorQuotingApp } = await import('../vendor_quoting/App.js');
-                unmountVendorQuotingApp();
-            } catch (error) {
-                console.error('Failed to unmount vendor quoting app:', error);
-            }
         }
         currentApp = null;
     }

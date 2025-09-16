@@ -19314,49 +19314,51 @@ var require_client = __commonJS({
 var import_react10 = __toESM(require_react(), 1);
 var import_client5 = __toESM(require_client(), 1);
 
-// src/renderer/vendor_quoting/components/HeaderBar.jsx
+// src/renderer/components/shared/HeaderBar.jsx
 var import_react = __toESM(require_react(), 1);
-var headerStyle = {
-  background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)",
-  boxShadow: "0 2px 4px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
-  padding: "1rem 0",
-  marginBottom: "1rem",
-  position: "relative",
-  overflow: "hidden",
-  borderBottom: "3px solid #1976d2"
-};
-var headerIconStyle = {
-  width: "48px",
-  height: "48px",
-  background: "rgba(255,255,255,0.15)",
-  borderRadius: "50%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: "1.25rem",
-  color: "white",
-  backdropFilter: "blur(10px)"
-};
-var actionButtonStyle = {
-  borderRadius: "50%",
-  width: "40px",
-  height: "40px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  border: "none",
-  background: "transparent",
-  color: "white",
-  transition: "background-color 0.2s ease"
-};
-function HeaderBar() {
+function HeaderBar({ icon, title, subtitle, actions, sticky = false }) {
+  const headerStyle = {
+    background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
+    padding: "1rem 0",
+    marginBottom: "1.5rem",
+    paddingLeft: "1.5rem",
+    position: sticky ? "sticky" : "relative",
+    top: sticky ? "0" : "auto",
+    zIndex: sticky ? "100" : "auto",
+    overflow: "hidden"
+  };
+  const headerIconStyle = {
+    width: "48px",
+    height: "48px",
+    background: "rgba(255,255,255,0.15)",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1.25rem",
+    color: "white",
+    backdropFilter: "blur(10px)"
+  };
+  const actionButtonStyle = {
+    borderRadius: "50%",
+    width: "40px",
+    height: "40px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "none",
+    background: "transparent",
+    color: "white",
+    transition: "background-color 0.2s ease"
+  };
   const handleButtonHover = (e) => {
     e.target.style.backgroundColor = "rgba(255,255,255,0.1)";
   };
   const handleButtonLeave = (e) => {
     e.target.style.backgroundColor = "transparent";
   };
-  return /* @__PURE__ */ import_react.default.createElement("div", { style: headerStyle }, /* @__PURE__ */ import_react.default.createElement("div", { className: "container-fluid" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { style: headerIconStyle, className: "me-3" }, /* @__PURE__ */ import_react.default.createElement("i", { className: "bi bi-briefcase-fill" })), /* @__PURE__ */ import_react.default.createElement("div", null, /* @__PURE__ */ import_react.default.createElement("h4", { className: "mb-0 text-white fw-bold" }, "Vendor Quoting"), /* @__PURE__ */ import_react.default.createElement("small", { className: "text-white-50" }, "ProCure Hub - RFQ Management"))), /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react.default.createElement(
+  return /* @__PURE__ */ import_react.default.createElement("div", { style: headerStyle }, /* @__PURE__ */ import_react.default.createElement("div", { className: "container-fluid" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { style: headerIconStyle, className: "me-3" }, /* @__PURE__ */ import_react.default.createElement("i", { className: icon })), /* @__PURE__ */ import_react.default.createElement("div", null, /* @__PURE__ */ import_react.default.createElement("h4", { className: "mb-0 text-white fw-bold" }, title), /* @__PURE__ */ import_react.default.createElement("small", { className: "text-white-50" }, subtitle))), actions || /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react.default.createElement(
     "button",
     {
       style: actionButtonStyle,
@@ -19379,6 +19381,88 @@ function HeaderBar() {
 
 // src/renderer/vendor_quoting/components/SearchPanel.jsx
 var import_react2 = __toESM(require_react(), 1);
+
+// src/renderer/api_calls.js
+async function getApiBase() {
+  return "http://127.0.0.1:8000/";
+}
+function joinUrl(base, endpoint) {
+  const e = String(endpoint || "").replace(/^\/+/, "");
+  return base + e;
+}
+async function apiFetch(endpoint, init = {}, timeoutMs = 2e4) {
+  const base = await getApiBase();
+  console.log(base);
+  const url = joinUrl(base, endpoint);
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    return await fetch(url, { signal: ctrl.signal, ...init });
+  } finally {
+    clearTimeout(id);
+  }
+}
+async function requestJson(endpoint, init = {}, timeoutMs = 2e4) {
+  const res = await apiFetch(endpoint, {
+    headers: { Accept: "application/json", ...init.headers || {} },
+    ...init
+  }, timeoutMs);
+  let data;
+  const text = await res.text();
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
+  if (!res.ok) {
+    const msg = typeof data === "object" && data && "detail" in data ? data.detail : text || res.statusText;
+    throw new Error(`HTTP ${res.status}: ${msg}`);
+  }
+  return data;
+}
+async function searchRfqOrItem(rfqSearchValue, itemPk) {
+  if (rfqSearchValue != null && rfqSearchValue !== "") {
+    return requestJson(`rfqs/${encodeURIComponent(rfqSearchValue)}`);
+  }
+  throw new Error("Item search path not implemented yet");
+}
+async function getRfqDetails(rfqPk) {
+  if (!rfqPk) throw new Error("rfqPk is required");
+  return requestJson(`rfqs/${encodeURIComponent(rfqPk)}/line-items`);
+}
+async function getPartyData() {
+  const res = await apiFetch(`rfq_gen/party`, { headers: { Accept: "application/json" } });
+  if (!res.ok) {
+    console.error("Failed to users.", res.status);
+    return {};
+  }
+  const data = await res.json();
+  return data;
+}
+async function getBuyers(party_pk) {
+  const res = await apiFetch(`rfq_gen/${party_pk}/buyers`, { headers: { Accept: "application/json" } });
+  if (!res.ok) {
+    console.error("Failed to users.", res.status);
+    return {};
+  }
+  const data = await res.json();
+  return data;
+}
+async function createParty(body) {
+  const res = await fetch("http://127.0.0.1:8000/parties", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    // <-- add this
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    console.error("422 detail:", await res.text());
+    throw new Error(`HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+// src/renderer/vendor_quoting/components/SearchPanel.jsx
 function SearchPanel({
   onSearch,
   searchResults = [],
@@ -19390,14 +19474,131 @@ function SearchPanel({
 }) {
   const [searchType, setSearchType] = (0, import_react2.useState)("");
   const [searchQuery, setSearchQuery] = (0, import_react2.useState)("");
+  const [rfqSearchBy, setRfqSearchBy] = (0, import_react2.useState)("");
+  const [customerRfqNumber, setCustomerRfqNumber] = (0, import_react2.useState)("");
+  const [selectedParty, setSelectedParty] = (0, import_react2.useState)("");
+  const [selectedBuyer, setSelectedBuyer] = (0, import_react2.useState)("");
+  const [parties, setParties] = (0, import_react2.useState)([]);
+  const [buyers, setBuyers] = (0, import_react2.useState)([]);
+  const [loadingBuyers, setLoadingBuyers] = (0, import_react2.useState)(false);
+  const [buyersCache, setBuyersCache] = (0, import_react2.useState)({});
+  (0, import_react2.useEffect)(() => {
+    const loadParties = async () => {
+      try {
+        const partyData = await getPartyData();
+        const partyOptions = Object.entries(partyData).map(([pk, name]) => ({
+          value: Number(pk),
+          label: name
+        }));
+        setParties(partyOptions);
+      } catch (error) {
+        console.error("Failed to load parties:", error);
+        setParties([]);
+      }
+    };
+    loadParties();
+  }, []);
+  const loadBuyersForParty = (0, import_react2.useCallback)(async (partyId) => {
+    if (!partyId) {
+      setBuyers([]);
+      return;
+    }
+    if (buyersCache[partyId]) {
+      setBuyers(buyersCache[partyId]);
+      return;
+    }
+    setLoadingBuyers(true);
+    try {
+      const buyerData = await getBuyers(partyId);
+      const buyerOptions = Object.entries(buyerData).map(([pk, name]) => ({
+        value: Number(pk),
+        label: name
+      }));
+      setBuyers(buyerOptions);
+      setBuyersCache((prev) => ({
+        ...prev,
+        [partyId]: buyerOptions
+      }));
+    } catch (error) {
+      console.error("Failed to load buyers:", error);
+      setBuyers([]);
+    } finally {
+      setLoadingBuyers(false);
+    }
+  }, [buyersCache]);
+  const handlePartyChange = (partyId) => {
+    setSelectedParty(partyId);
+    setSelectedBuyer("");
+    if (partyId) {
+      loadBuyersForParty(partyId);
+    } else {
+      setBuyers([]);
+    }
+  };
+  const handleSearchTypeChange = (type) => {
+    setSearchType(type);
+    if (type !== "RFQ") {
+      setRfqSearchBy("");
+      setCustomerRfqNumber("");
+      setSelectedParty("");
+      setSelectedBuyer("");
+      setBuyers([]);
+    }
+    if (type === "RFQ") {
+      setSearchQuery("");
+    }
+  };
+  const handleRfqSearch = () => {
+    const params = new URLSearchParams();
+    switch (rfqSearchBy) {
+      case "customer_rfq_number":
+        if (!customerRfqNumber.trim()) return;
+        params.set("customer_rfq_number", customerRfqNumber.trim());
+        break;
+      case "customer":
+        if (!selectedParty) return;
+        params.set("customer_pk", selectedParty);
+        break;
+      case "buyer_by_party":
+        if (!selectedBuyer) return;
+        params.set("buyer_pk", selectedBuyer);
+        break;
+      case "customer_and_buyer":
+        if (!selectedParty || !selectedBuyer) return;
+        params.set("customer_pk", selectedParty);
+        params.set("buyer_pk", selectedBuyer);
+        break;
+      default:
+        return;
+    }
+    onSearch?.(params.toString(), "RFQ_PARAMS");
+  };
   const handleSearch = () => {
-    if (!searchQuery.trim() || !searchType) return;
-    onSearch?.(searchQuery.trim(), searchType);
+    if (searchType === "RFQ") {
+      handleRfqSearch();
+    } else {
+      if (!searchQuery.trim() || !searchType) return;
+      onSearch?.(searchQuery.trim(), searchType);
+    }
   };
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSearch();
+    }
+  };
+  const isRfqSearchReady = () => {
+    switch (rfqSearchBy) {
+      case "customer_rfq_number":
+        return customerRfqNumber.trim();
+      case "customer":
+        return selectedParty;
+      case "buyer_by_party":
+        return selectedBuyer;
+      case "customer_and_buyer":
+        return selectedParty && selectedBuyer;
+      default:
+        return false;
     }
   };
   const cardStyle = {
@@ -19422,12 +19623,30 @@ function SearchPanel({
       className: "form-select",
       id: "type-select-box",
       value: searchType,
-      onChange: (e) => setSearchType(e.target.value)
+      onChange: (e) => handleSearchTypeChange(e.target.value)
     },
     /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, "-- Select --"),
     /* @__PURE__ */ import_react2.default.createElement("option", { value: "Item" }, "Item"),
     /* @__PURE__ */ import_react2.default.createElement("option", { value: "RFQ" }, "RFQ")
-  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: searchType === "Item" ? "col-md-7" : "col-md-9" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "rfq-or-item-search", className: "form-label fw-medium", style: {
+  )), searchType === "RFQ" ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-9" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "rfq-search-by", className: "form-label fw-medium", style: {
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.5rem"
+  } }, "Search by"), /* @__PURE__ */ import_react2.default.createElement(
+    "select",
+    {
+      className: "form-select",
+      id: "rfq-search-by",
+      value: rfqSearchBy,
+      onChange: (e) => setRfqSearchBy(e.target.value)
+    },
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, "-- Select Search Method --"),
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "customer_rfq_number" }, "Customer RFQ #"),
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "customer" }, "Customer"),
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "buyer_by_party" }, "Buyer (by Party)"),
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "customer_and_buyer" }, "Customer + Buyer")
+  )) : /* @__PURE__ */ import_react2.default.createElement("div", { className: searchType === "Item" ? "col-md-7" : "col-md-9" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "rfq-or-item-search", className: "form-label fw-medium", style: {
     fontSize: "0.875rem",
     fontWeight: "500",
     color: "#374151",
@@ -19441,7 +19660,7 @@ function SearchPanel({
       placeholder: searchType ? `Enter ${searchType} identifier` : "Select type first",
       value: searchQuery,
       onChange: (e) => setSearchQuery(e.target.value),
-      onKeyPress: handleKeyPress
+      onKeyDown: handleKeyPress
     }
   ), /* @__PURE__ */ import_react2.default.createElement(
     "button",
@@ -19469,6 +19688,63 @@ function SearchPanel({
       value: quantity,
       onChange: (e) => onQuantityChange?.(parseInt(e.target.value) || 1)
     }
+  ))), searchType === "RFQ" && rfqSearchBy && /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-3 mb-3" }, rfqSearchBy === "customer_rfq_number" && /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-8" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "customer-rfq-number", className: "form-label fw-medium", style: {
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.5rem"
+  } }, "Customer RFQ Number"), /* @__PURE__ */ import_react2.default.createElement(
+    "input",
+    {
+      type: "text",
+      className: "form-control",
+      id: "customer-rfq-number",
+      placeholder: "Enter Customer RFQ Number",
+      value: customerRfqNumber,
+      onChange: (e) => setCustomerRfqNumber(e.target.value),
+      onKeyDown: handleKeyPress
+    }
+  )), (rfqSearchBy === "customer" || rfqSearchBy === "buyer_by_party" || rfqSearchBy === "customer_and_buyer") && /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "party-select", className: "form-label fw-medium", style: {
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.5rem"
+  } }, rfqSearchBy === "customer" ? "Customer" : "Party"), /* @__PURE__ */ import_react2.default.createElement(
+    "select",
+    {
+      className: "form-select",
+      id: "party-select",
+      value: selectedParty,
+      onChange: (e) => handlePartyChange(e.target.value)
+    },
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, "-- Select Party --"),
+    parties.map((party) => /* @__PURE__ */ import_react2.default.createElement("option", { key: party.value, value: party.value }, party.label))
+  )), (rfqSearchBy === "buyer_by_party" || rfqSearchBy === "customer_and_buyer") && /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: "buyer-select", className: "form-label fw-medium", style: {
+    fontSize: "0.875rem",
+    fontWeight: "500",
+    color: "#374151",
+    marginBottom: "0.5rem"
+  } }, "Buyer"), /* @__PURE__ */ import_react2.default.createElement(
+    "select",
+    {
+      className: "form-select",
+      id: "buyer-select",
+      value: selectedBuyer,
+      onChange: (e) => setSelectedBuyer(e.target.value),
+      disabled: !selectedParty || loadingBuyers
+    },
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, !selectedParty ? "-- Select Party First --" : loadingBuyers ? "Loading Buyers..." : "-- Select Buyer --"),
+    buyers.map((buyer) => /* @__PURE__ */ import_react2.default.createElement("option", { key: buyer.value, value: buyer.value }, buyer.label))
+  ), loadingBuyers && /* @__PURE__ */ import_react2.default.createElement("small", { className: "form-text text-muted" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "spinner-border spinner-border-sm me-1", role: "status", "aria-hidden": "true" }), "Loading buyers...")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-4 d-flex align-items-end" }, /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: `btn btn-success w-100 ${isSearching ? "disabled" : ""}`,
+      type: "button",
+      id: "rfq-search-button",
+      onClick: handleSearch,
+      disabled: isSearching || !isRfqSearchReady()
+    },
+    isSearching ? /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, /* @__PURE__ */ import_react2.default.createElement("span", { className: "spinner-border spinner-border-sm me-1", role: "status", "aria-hidden": "true" }), "Searching...") : "Search RFQs"
   ))), (isSearching || searchResults.length > 0) && /* @__PURE__ */ import_react2.default.createElement("div", { className: "row" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label fw-medium", style: {
     fontSize: "0.875rem",
     fontWeight: "500",
@@ -19486,9 +19762,16 @@ function SearchPanel({
         key: index,
         type: "button",
         className: `list-group-item list-group-item-action ${selectedResult === result.value ? "active" : ""}`,
-        onClick: () => onResultSelect?.(result.value)
+        onClick: () => onResultSelect?.(result.value),
+        style: { textAlign: "left" }
       },
-      result.label
+      result.rfqData ? (
+        // Enhanced display for RFQ search results
+        /* @__PURE__ */ import_react2.default.createElement("div", null, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex justify-content-between align-items-start" }, /* @__PURE__ */ import_react2.default.createElement("div", null, /* @__PURE__ */ import_react2.default.createElement("strong", null, "RFQ #", result.rfqData.pk), result.rfqData.customer_rfq_number && /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-muted ms-2" }, "(", result.rfqData.customer_rfq_number, ")")), /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, new Date(result.rfqData.created_at).toLocaleDateString())), /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-1" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-building me-1" }), result.rfqData.customer, result.rfqData.buyer && /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, /* @__PURE__ */ import_react2.default.createElement("span", { className: "mx-2" }, "\u2022"), /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-person me-1" }), result.rfqData.buyer))))
+      ) : (
+        // Standard display for other search results
+        result.label
+      )
     )))
   )))));
 }
@@ -19739,68 +20022,6 @@ function PreviewModal({ isOpen, onClose, children }) {
     },
     /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-dialog modal-dialog-centered modal-xl" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-content" }, children))
   );
-}
-
-// src/renderer/api_calls.js
-async function getApiBase() {
-  return "http://127.0.0.1:8000/";
-}
-function joinUrl(base, endpoint) {
-  const e = String(endpoint || "").replace(/^\/+/, "");
-  return base + e;
-}
-async function apiFetch(endpoint, init = {}, timeoutMs = 2e4) {
-  const base = await getApiBase();
-  console.log(base);
-  const url = joinUrl(base, endpoint);
-  const ctrl = new AbortController();
-  const id = setTimeout(() => ctrl.abort(), timeoutMs);
-  try {
-    return await fetch(url, { signal: ctrl.signal, ...init });
-  } finally {
-    clearTimeout(id);
-  }
-}
-async function requestJson(endpoint, init = {}, timeoutMs = 2e4) {
-  const res = await apiFetch(endpoint, {
-    headers: { Accept: "application/json", ...init.headers || {} },
-    ...init
-  }, timeoutMs);
-  let data;
-  const text = await res.text();
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = text;
-  }
-  if (!res.ok) {
-    const msg = typeof data === "object" && data && "detail" in data ? data.detail : text || res.statusText;
-    throw new Error(`HTTP ${res.status}: ${msg}`);
-  }
-  return data;
-}
-async function searchRfqOrItem(rfqSearchValue, itemPk) {
-  if (rfqSearchValue != null && rfqSearchValue !== "") {
-    return requestJson(`rfqs/${encodeURIComponent(rfqSearchValue)}`);
-  }
-  throw new Error("Item search path not implemented yet");
-}
-async function getRfqDetails(rfqPk) {
-  if (!rfqPk) throw new Error("rfqPk is required");
-  return requestJson(`rfqs/${encodeURIComponent(rfqPk)}/line-items`);
-}
-async function createParty(body) {
-  const res = await fetch("http://127.0.0.1:8000/parties", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    // <-- add this
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) {
-    console.error("422 detail:", await res.text());
-    throw new Error(`HTTP ${res.status}`);
-  }
-  return res.json();
 }
 
 // src/renderer/vendor_quoting/modals/reviewModal.js
@@ -59444,11 +59665,25 @@ function VendorQuotingApp() {
     setSearchResults([]);
     setSelectedResult("");
     try {
-      const results = await searchRfqOrItem(query);
-      const formattedResults = Object.entries(results.result || {}).map(([key, value]) => ({
-        value: key,
-        label: `${key} - ${value}`
-      }));
+      let results;
+      let formattedResults = [];
+      if (type === "RFQ_PARAMS") {
+        results = await requestJson(`rfqs?${query}`);
+        if (results.rfqs && Array.isArray(results.rfqs)) {
+          formattedResults = results.rfqs.map((rfq) => ({
+            value: rfq.pk.toString(),
+            label: `RFQ #${rfq.pk} - ${rfq.customer} (${rfq.customer_rfq_number || "No RFQ#"})`,
+            rfqData: rfq
+            // Store the full RFQ data for potential future use
+          }));
+        }
+      } else {
+        results = await searchRfqOrItem(query);
+        formattedResults = Object.entries(results.result || {}).map(([key, value]) => ({
+          value: key,
+          label: `${key} - ${value}`
+        }));
+      }
       setSearchResults(formattedResults);
     } catch (error) {
       console.error("Search failed:", error);
@@ -59500,11 +59735,21 @@ function VendorQuotingApp() {
   }, []);
   return /* @__PURE__ */ import_react10.default.createElement("div", { className: "bg-white text-dark", style: {
     fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif',
-    letterSpacing: "-0.01em",
-    height: "100vh",
+    letterSpacing: "-0.01em"
+  } }, /* @__PURE__ */ import_react10.default.createElement("div", { style: {
+    height: "calc(100vh - 32px)",
+    // Full height minus title bar
     display: "flex",
     flexDirection: "column"
-  } }, /* @__PURE__ */ import_react10.default.createElement(HeaderBar, null), /* @__PURE__ */ import_react10.default.createElement(
+  } }, /* @__PURE__ */ import_react10.default.createElement(
+    HeaderBar,
+    {
+      icon: "bi bi-briefcase-fill",
+      title: "Vendor Quoting",
+      subtitle: "Auto Gen - RFQ Management",
+      sticky: false
+    }
+  ), /* @__PURE__ */ import_react10.default.createElement(
     "div",
     {
       className: "flex-grow-1",
@@ -59557,7 +59802,7 @@ function VendorQuotingApp() {
       isOpen: isPreviewModalOpen,
       onClose: handleClosePreview
     }
-  ));
+  )));
 }
 var appRoot = null;
 function mountVendorQuotingApp() {

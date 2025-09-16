@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
-import HeaderBar from './components/HeaderBar.jsx';
+import SharedHeaderBar from '../components/shared/HeaderBar.jsx';
 import SearchPanel from './components/SearchPanel.jsx';
 import AttachmentsPanel from './components/AttachmentsPanel.jsx';
 import ActionBar from './components/ActionBar.jsx';
 import FooterActions from './components/FooterActions.jsx';
 import PreviewModal from './components/PreviewModal.jsx';
-import { searchRfqOrItem, getRfqDetails } from '../api_calls.js';
+import { searchRfqOrItem, getRfqDetails, requestJson } from '../api_calls.js';
 import { renderRecipientsModalReact } from './modals/reviewModal.js';
 import { SharedModalState } from './shared-state.js';
 import { openBoeingFinishModal } from './components/BoeingFinishModal.js';
@@ -36,11 +36,30 @@ function VendorQuotingApp() {
         setSelectedResult('');
 
         try {
-            const results = await searchRfqOrItem(query);
-            const formattedResults = Object.entries(results.result || {}).map(([key, value]) => ({
-                value: key,
-                label: `${key} - ${value}`
-            }));
+            let results;
+            let formattedResults = [];
+            
+            if (type === 'RFQ_PARAMS') {
+                // For RFQ parameter searches, use requestJson directly with query params
+                results = await requestJson(`rfqs?${query}`);
+                
+                // Handle the new RfqSearchResponse format
+                if (results.rfqs && Array.isArray(results.rfqs)) {
+                    formattedResults = results.rfqs.map(rfq => ({
+                        value: rfq.pk.toString(),
+                        label: `RFQ #${rfq.pk} - ${rfq.customer} (${rfq.customer_rfq_number || 'No RFQ#'})`,
+                        rfqData: rfq // Store the full RFQ data for potential future use
+                    }));
+                }
+            } else {
+                // For regular RFQ/Item searches, use the existing function
+                results = await searchRfqOrItem(query);
+                formattedResults = Object.entries(results.result || {}).map(([key, value]) => ({
+                    value: key,
+                    label: `${key} - ${value}`
+                }));
+            }
+            
             setSearchResults(formattedResults);
         } catch (error) {
             console.error('Search failed:', error);
@@ -109,21 +128,29 @@ function VendorQuotingApp() {
     return (
         <div className="bg-white text-dark" style={{ 
             fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif',
-            letterSpacing: '-0.01em',
-            height: '100vh',
-            display: 'flex',
-            flexDirection: 'column'
+            letterSpacing: '-0.01em'
         }}>
-            <HeaderBar />
-            
-            {/* Main content with scrolling */}
-            <div 
-                className="flex-grow-1"
-                style={{ 
-                    overflowY: 'auto',
-                    overflowX: 'hidden'
-                }}
-            >
+            {/* Fixed container that stays below title bar */}
+            <div style={{
+                height: 'calc(100vh - 32px)', // Full height minus title bar
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
+                <SharedHeaderBar
+                    icon="bi bi-briefcase-fill"
+                    title="Vendor Quoting"
+                    subtitle="Auto Gen - RFQ Management"
+                    sticky={false}
+                />
+                
+                {/* Main content with scrolling */}
+                <div 
+                    className="flex-grow-1"
+                    style={{ 
+                        overflowY: 'auto',
+                        overflowX: 'hidden'
+                    }}
+                >
                 <div className="container" style={{ 
                     maxWidth: '1200px',
                     margin: '0 auto',
@@ -165,12 +192,13 @@ function VendorQuotingApp() {
                 </div>
             </div>
 
-            <PreviewModal
-                isOpen={isPreviewModalOpen}
-                onClose={handleClosePreview}
-            >
-                {/* Modal content will be rendered by renderRecipientsModalReact */}
-            </PreviewModal>
+                <PreviewModal
+                    isOpen={isPreviewModalOpen}
+                    onClose={handleClosePreview}
+                >
+                    {/* Modal content will be rendered by renderRecipientsModalReact */}
+                </PreviewModal>
+            </div>
         </div>
     );
 }
