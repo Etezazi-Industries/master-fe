@@ -11,7 +11,7 @@ import { renderRecipientsModalReact } from './modals/reviewModal.js';
 import { SharedModalState } from './shared-state.js';
 import { openBoeingFinishModal } from './components/BoeingFinishModal.js';
 import { openAddPartyModal } from './modals/addParty.jsx';
-import { createParty } from '../api_calls.js';
+import { createBuyer } from '../api_calls.js';
 
 function VendorQuotingApp() {
     // Search state
@@ -113,14 +113,14 @@ function VendorQuotingApp() {
 
     const handleOpenAddParty = useCallback(() => {
         openAddPartyModal({
-            createParty,
+            createBuyer,
             notify: (msg) => {
                 // You can add a toast notification here if needed
-                console.log('Party created:', msg);
+                console.log('Buyer created:', msg);
             },
             onCreated: (data, payload) => {
-                console.log('New party created:', data);
-                // You could refresh any party lists here if needed
+                console.log('New buyer created:', data);
+                // You could refresh any buyer lists here if needed
             }
         });
     }, []);

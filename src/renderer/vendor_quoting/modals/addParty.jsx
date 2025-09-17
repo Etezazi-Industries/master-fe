@@ -1,17 +1,18 @@
-// addParty.jsx
+// addParty.jsx (now Add Buyer modal)
 // @ts-check
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { getPartyData } from '../../api_calls.js';
 
 /**
- * Imperatively open the Add Party modal.
- * Pass your real API function as `createParty`.
+ * Imperatively open the Add Buyer modal.
+ * Pass your real API function as `createBuyer`.
  *
  * Example:
  * openAddPartyModal({
- *   createParty: (payload) => requestJson("/parties", { method: "POST", body: payload }),
+ *   createBuyer: (partyPk, payload) => requestJson(`/parties/${partyPk}/buyers`, { method: "POST", body: payload }),
  *   notify: (msg) => toast.success(msg),
- *   onCreated: (data, payload) => { /* refresh UI, select new party, etc. *-/ },
+ *   onCreated: (data, payload) => { // refresh UI, select new buyer, etc. },
  * });
  */
 export function openAddPartyModal(opts = {}) {
@@ -29,20 +30,20 @@ export function openAddPartyModal(opts = {}) {
             onFinish={finish}
             onCreated={opts.onCreated}
             notify={opts.notify}
-            createParty={opts.createParty}
+            createBuyer={opts.createBuyer}
         />
     );
 }
 
 /**
- * AddPartyModal
+ * AddPartyModal (now Add Buyer Modal)
  * Props:
  * - onFinish: () => void                 // unmount/cleanup (called after BS hides)
  * - onCreated?: (result:any, payload:any) => void
  * - notify?: (msg:string) => void
- * - createParty?: (payload:any) => Promise<any>  // your API function (optional but recommended)
+ * - createBuyer?: (partyPk:number, payload:any) => Promise<any>  // your API function (optional but recommended)
  */
-export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
+export function AddPartyModal({ onFinish, onCreated, notify, createBuyer }) {
     const [form, setForm] = useState({
         name: "",
         short_name: "",
@@ -56,12 +57,40 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
     });
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
+    
+    // Party selection state
+    const [selectedParty, setSelectedParty] = useState('');
+    const [parties, setParties] = useState([]);
+    const [loadingParties, setLoadingParties] = useState(false);
 
-    const canSubmit = useMemo(() => form.name.trim().length > 0, [form.name]);
+    const canSubmit = useMemo(() => form.name.trim().length > 0 && selectedParty, [form.name, selectedParty]);
     const setField = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
     // Unique modal id for Bootstrap instance
     const [modalId] = useState(() => `add-party-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+
+    // Load parties on mount
+    useEffect(() => {
+        const loadParties = async () => {
+            setLoadingParties(true);
+            try {
+                const partyData = await getPartyData();
+                const partyOptions = Object.entries(partyData).map(([pk, name]) => ({
+                    value: Number(pk),
+                    label: name
+                }));
+                setParties(partyOptions);
+            } catch (error) {
+                console.error('Failed to load parties:', error);
+                setError('Failed to load parties. Please try again.');
+                setParties([]);
+            } finally {
+                setLoadingParties(false);
+            }
+        };
+        
+        loadParties();
+    }, []);
 
     // Bootstrap show/hide + cleanup wiring
     useEffect(() => {
@@ -115,14 +144,14 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
 
         try {
             const submitter =
-                createParty ??
+                createBuyer ??
                 (async () => {
-                    throw new Error("createParty function not provided. Pass it via openAddPartyModal({ createParty }) or as a prop.");
+                    throw new Error("createBuyer function not provided. Pass it via openAddPartyModal({ createBuyer }) or as a prop.");
                 });
 
-            const result = await submitter(payload);
+            const result = await submitter(Number(selectedParty), payload);
             onCreated?.(result, payload);
-            (notify ?? ((m) => console.log(m)))("Party added successfully.");
+            (notify ?? ((m) => console.log(m)))("Buyer added successfully.");
             close(); // Let Bootstrap hide -> 'hidden.bs.modal' -> onFinish unmounts
         } catch (err) {
             setError(err?.message || "Failed to create party.");
@@ -171,7 +200,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                     <div className="modal-header text-white" style={materialHeaderStyle}>
                         <h5 className="modal-title fw-bold" id={`${modalId}-label`}>
                             <i className="bi bi-person-plus me-2" />
-                            Add New Party
+                            Add New Buyer
                         </h5>
                         <button 
                             type="button" 
@@ -190,6 +219,36 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                             )}
 
                             <div className="row g-3">
+                                {/* Party Selection */}
+                                <div className="col-12">
+                                    <label className="form-label text-dark fw-semibold" htmlFor={`${modalId}-party`}>
+                                        Select Party <span className="text-danger">*</span>
+                                    </label>
+                                    <select 
+                                        id={`${modalId}-party`}
+                                        className="form-select"
+                                        value={selectedParty}
+                                        onChange={(e) => setSelectedParty(e.target.value)}
+                                        disabled={loadingParties}
+                                        required
+                                    >
+                                        <option value="">
+                                            {loadingParties ? 'Loading parties...' : '-- Select Party --'}
+                                        </option>
+                                        {parties.map(party => (
+                                            <option key={party.value} value={party.value}>
+                                                {party.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {loadingParties && (
+                                        <small className="form-text text-muted">
+                                            <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                            Loading parties...
+                                        </small>
+                                    )}
+                                </div>
+
                                 {/* Core */}
                                 <div className="col-12">
                                     <label className="form-label text-dark fw-semibold" htmlFor={`${modalId}-name`}>
@@ -333,7 +392,7 @@ export function AddPartyModal({ onFinish, onCreated, notify, createParty }) {
                                 ) : (
                                     <>
                                         <i className="bi bi-plus-circle me-1"></i>
-                                        Create Party
+                                        Create Buyer
                                     </>
                                 )}
                             </button>

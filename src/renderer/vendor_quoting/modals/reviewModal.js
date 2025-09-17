@@ -19366,11 +19366,20 @@ async function prepareRfqEmails(rfqId, payload) {
     body: JSON.stringify(payload ?? {})
   });
 }
-async function createParty(body) {
-  const res = await fetch("http://127.0.0.1:8000/parties", {
+async function getPartyData() {
+  const res = await apiFetch(`rfq_gen/party`, { headers: { Accept: "application/json" } });
+  if (!res.ok) {
+    console.error("Failed to users.", res.status);
+    return {};
+  }
+  const data = await res.json();
+  return data;
+}
+async function createBuyer(partyPk, body) {
+  if (!partyPk) throw new Error("Party PK is required");
+  const res = await fetch(`http://127.0.0.1:8000/parties/${partyPk}/buyers`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    // <-- add this
     body: JSON.stringify(body)
   });
   if (!res.ok) {
@@ -19498,11 +19507,176 @@ function Chip({ email }) {
   return /* @__PURE__ */ import_react2.default.createElement("span", { className: "badge rounded-pill text-bg-light border me-1 mb-1" }, val);
 }
 function ItemRow({ it }) {
-  const name = it?.name ?? it?.part_number ?? "";
-  return /* @__PURE__ */ import_react2.default.createElement("li", { className: "list-group-item d-flex justify-content-between" }, /* @__PURE__ */ import_react2.default.createElement("div", null, /* @__PURE__ */ import_react2.default.createElement("strong", null, name)), /* @__PURE__ */ import_react2.default.createElement("span", { className: "badge text-bg-secondary" }, "Qty ", it?.qty));
+  const name = it?.name ?? it?.part_number ?? it?.PartNumber ?? "";
+  const description = it?.Description ?? it?.description ?? "";
+  const quantity = it?.qty ?? it?.QuantityRequired ?? 0;
+  const emailCategory = it?.EmailCategory ?? it?.email_category ?? "";
+  const [isEditingCategory, setIsEditingCategory] = import_react2.default.useState(false);
+  const [isEditingQty, setIsEditingQty] = import_react2.default.useState(false);
+  const [editCategory, setEditCategory] = import_react2.default.useState(emailCategory);
+  const [editQty, setEditQty] = import_react2.default.useState(quantity);
+  const emailCategories = [
+    "ALUMINUM",
+    "STEEL",
+    "PLASTIC",
+    "ELECTRONICS",
+    "HARDWARE",
+    "CUSTOM",
+    "UNCODED"
+  ];
+  const handleCategoryEdit = () => {
+    setIsEditingCategory(true);
+  };
+  const handleCategorySave = () => {
+    setIsEditingCategory(false);
+    console.log("Category updated:", editCategory);
+  };
+  const handleCategoryCancel = () => {
+    setIsEditingCategory(false);
+    setEditCategory(emailCategory);
+  };
+  const handleQtyEdit = () => {
+    setIsEditingQty(true);
+  };
+  const handleQtySave = () => {
+    setIsEditingQty(false);
+    console.log("Quantity updated:", editQty);
+  };
+  const handleQtyCancel = () => {
+    setIsEditingQty(false);
+    setEditQty(quantity);
+  };
+  const buildDimensions = () => {
+    const dimensions = [];
+    if (it?.PartLength) dimensions.push(`L: ${it.PartLength}`);
+    if (it?.PartWidth) dimensions.push(`W: ${it.PartWidth}`);
+    if (it?.Thickness) dimensions.push(`T: ${it.Thickness}`);
+    if (dimensions.length === 0) {
+      if (it?.StockLength) dimensions.push(`Stock L: ${it.StockLength}`);
+      if (it?.StockWidth) dimensions.push(`Stock W: ${it.StockWidth}`);
+    }
+    return dimensions.length > 0 ? dimensions.join(" \xD7 ") : null;
+  };
+  const dimensionsStr = buildDimensions();
+  return /* @__PURE__ */ import_react2.default.createElement("li", { className: "list-group-item" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex flex-column" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-3 mb-2" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "flex-grow-1" }, /* @__PURE__ */ import_react2.default.createElement("strong", { className: "text-dark" }, name)), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, "Category:"), isEditingCategory ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement(
+    "select",
+    {
+      className: "form-select form-select-sm",
+      style: { width: "120px", fontSize: "0.75rem" },
+      value: editCategory || "",
+      onChange: (e) => setEditCategory(e.target.value),
+      autoFocus: true
+    },
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, "Select..."),
+    emailCategories.map((cat) => /* @__PURE__ */ import_react2.default.createElement("option", { key: cat, value: cat }, cat))
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn btn-sm btn-success",
+      style: { padding: "2px 6px" },
+      onClick: handleCategorySave,
+      title: "Save"
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-check", style: { fontSize: "0.75rem" } })
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn btn-sm btn-outline-secondary",
+      style: { padding: "2px 6px" },
+      onClick: handleCategoryCancel,
+      title: "Cancel"
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-x", style: { fontSize: "0.75rem" } })
+  )) : /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement(
+    "span",
+    {
+      className: "form-control form-control-sm bg-light",
+      style: {
+        width: "120px",
+        fontSize: "0.75rem",
+        border: "1px solid #dee2e6",
+        display: "flex",
+        alignItems: "center",
+        height: "28px"
+      }
+    },
+    emailCategory || "Not set"
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn btn-sm btn-outline-primary",
+      style: { padding: "2px 6px" },
+      onClick: handleCategoryEdit,
+      title: "Edit Category"
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-pencil", style: { fontSize: "0.75rem" } })
+  ))), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, "Qty:"), isEditingQty ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement(
+    "input",
+    {
+      type: "number",
+      className: "form-control form-control-sm",
+      style: { width: "80px", fontSize: "0.75rem" },
+      value: editQty || 0,
+      onChange: (e) => setEditQty(Number(e.target.value)),
+      min: "0",
+      step: "1",
+      autoFocus: true
+    }
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn btn-sm btn-success",
+      style: { padding: "2px 6px" },
+      onClick: handleQtySave,
+      title: "Save"
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-check", style: { fontSize: "0.75rem" } })
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn btn-sm btn-outline-secondary",
+      style: { padding: "2px 6px" },
+      onClick: handleQtyCancel,
+      title: "Cancel"
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-x", style: { fontSize: "0.75rem" } })
+  )) : /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement(
+    "span",
+    {
+      className: "form-control form-control-sm bg-light",
+      style: {
+        width: "80px",
+        fontSize: "0.75rem",
+        border: "1px solid #dee2e6",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "28px"
+      }
+    },
+    quantity || 0
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn btn-sm btn-outline-primary",
+      style: { padding: "2px 6px" },
+      onClick: handleQtyEdit,
+      title: "Edit Quantity"
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-pencil", style: { fontSize: "0.75rem" } })
+  )))), description && /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-muted", style: { fontSize: "0.875rem" } }, description), dimensionsStr && /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-2" }, /* @__PURE__ */ import_react2.default.createElement(
+    "span",
+    {
+      className: "badge bg-light text-dark border",
+      style: { fontSize: "0.75rem" },
+      title: "Dimensions"
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-rulers me-1" }),
+    dimensionsStr
+  ))));
 }
 function GroupCard({ code, items = [], emails = [] }) {
-  const recipients = emails?.length > 0 ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-2" }, emails.map((e, i) => /* @__PURE__ */ import_react2.default.createElement(Chip, { key: i, email: e.email_id || e.email || "" }))) : /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-muted" }, "No recipients");
+  const recipients = emails?.length > 0 ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-2" }, emails.map((e, i) => /* @__PURE__ */ import_react2.default.createElement(Chip, { key: i, email: e.email_id || e.email || "" }))) : null;
   return /* @__PURE__ */ import_react2.default.createElement("div", { className: "card mb-4" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center justify-content-between" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "fw-semibold" }, code)), /* @__PURE__ */ import_react2.default.createElement("span", { className: "badge text-bg-primary rounded-pill" }, items.length, " item", items.length === 1 ? "" : "s")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-2" }, recipients), /* @__PURE__ */ import_react2.default.createElement("hr", { className: "my-3" }), /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-4" }, /* @__PURE__ */ import_react2.default.createElement("div", null, /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group list-group-flush" }, items.map((it) => /* @__PURE__ */ import_react2.default.createElement(ItemRow, { key: String(it.item_pk ?? it.part_number ?? Math.random()), it })))))));
 }
 function CodeOptions({ codes = [], selected = "" }) {
@@ -19560,7 +19734,23 @@ function normalizeFromYourApi(raw) {
     item_pk,
     name: it.PartNumber,
     qty: it.QuantityRequired,
-    code: it.EmailCategory
+    code: it.EmailCategory,
+    // Preserve all the original data for ItemRow to use
+    ...it,
+    // Spread all original fields
+    // Ensure consistent field names for backward compatibility
+    PartNumber: it.PartNumber,
+    QuantityRequired: it.QuantityRequired,
+    Description: it.Description,
+    EmailCategory: it.EmailCategory,
+    PartLength: it.PartLength,
+    PartWidth: it.PartWidth,
+    Thickness: it.Thickness,
+    StockLength: it.StockLength,
+    StockWidth: it.StockWidth,
+    ItemTypeFK: it.ItemTypeFK,
+    PurchaseOrderComment: it.PurchaseOrderComment,
+    Category: it.Category
   }));
   const byCode = /* @__PURE__ */ new Map();
   for (const it of items) {
@@ -19589,12 +19779,12 @@ function openAddPartyModal(opts = {}) {
         onFinish: finish,
         onCreated: opts.onCreated,
         notify: opts.notify,
-        createParty: opts.createParty
+        createBuyer: opts.createBuyer
       }
     )
   );
 }
-function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 }) {
+function AddPartyModal({ onFinish, onCreated, notify, createBuyer: createBuyer2 }) {
   const [form, setForm] = (0, import_react3.useState)({
     name: "",
     short_name: "",
@@ -19608,9 +19798,32 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
   });
   const [submitting, setSubmitting] = (0, import_react3.useState)(false);
   const [error, setError] = (0, import_react3.useState)("");
-  const canSubmit = (0, import_react3.useMemo)(() => form.name.trim().length > 0, [form.name]);
+  const [selectedParty, setSelectedParty] = (0, import_react3.useState)("");
+  const [parties, setParties] = (0, import_react3.useState)([]);
+  const [loadingParties, setLoadingParties] = (0, import_react3.useState)(false);
+  const canSubmit = (0, import_react3.useMemo)(() => form.name.trim().length > 0 && selectedParty, [form.name, selectedParty]);
   const setField = (k, v) => setForm((p) => ({ ...p, [k]: v }));
   const [modalId] = (0, import_react3.useState)(() => `add-party-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  (0, import_react3.useEffect)(() => {
+    const loadParties = async () => {
+      setLoadingParties(true);
+      try {
+        const partyData = await getPartyData();
+        const partyOptions = Object.entries(partyData).map(([pk, name]) => ({
+          value: Number(pk),
+          label: name
+        }));
+        setParties(partyOptions);
+      } catch (error2) {
+        console.error("Failed to load parties:", error2);
+        setError("Failed to load parties. Please try again.");
+        setParties([]);
+      } finally {
+        setLoadingParties(false);
+      }
+    };
+    loadParties();
+  }, []);
   (0, import_react3.useEffect)(() => {
     const el = document.getElementById(modalId);
     const bs = window.bootstrap?.Modal?.getOrCreateInstance(el, {
@@ -19656,12 +19869,12 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
     setError("");
     const payload = normalizePayload(form);
     try {
-      const submitter = createParty2 ?? (async () => {
-        throw new Error("createParty function not provided. Pass it via openAddPartyModal({ createParty }) or as a prop.");
+      const submitter = createBuyer2 ?? (async () => {
+        throw new Error("createBuyer function not provided. Pass it via openAddPartyModal({ createBuyer }) or as a prop.");
       });
-      const result = await submitter(payload);
+      const result = await submitter(Number(selectedParty), payload);
       onCreated?.(result, payload);
-      (notify ?? ((m) => console.log(m)))("Party added successfully.");
+      (notify ?? ((m) => console.log(m)))("Buyer added successfully.");
       close();
     } catch (err) {
       setError(err?.message || "Failed to create party.");
@@ -19702,7 +19915,7 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
         "aria-labelledby": `${modalId}-label`,
         "data-bs-focus": "true"
       },
-      /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-dialog modal-lg modal-dialog-centered" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-content", style: materialModalStyle }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-header text-white", style: materialHeaderStyle }, /* @__PURE__ */ import_react3.default.createElement("h5", { className: "modal-title fw-bold", id: `${modalId}-label` }, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-person-plus me-2" }), "Add New Party"), /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-dialog modal-lg modal-dialog-centered" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-content", style: materialModalStyle }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-header text-white", style: materialHeaderStyle }, /* @__PURE__ */ import_react3.default.createElement("h5", { className: "modal-title fw-bold", id: `${modalId}-label` }, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-person-plus me-2" }), "Add New Buyer"), /* @__PURE__ */ import_react3.default.createElement(
         "button",
         {
           type: "button",
@@ -19710,7 +19923,19 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
           onClick: close,
           "aria-label": "Close"
         }
-      )), /* @__PURE__ */ import_react3.default.createElement("form", { onSubmit: submit, noValidate: true }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-body", style: materialBodyStyle }, error && /* @__PURE__ */ import_react3.default.createElement("div", { className: "alert alert-danger", role: "alert", "aria-live": "assertive" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold", htmlFor: `${modalId}-name` }, "Name ", /* @__PURE__ */ import_react3.default.createElement("span", { className: "text-danger" }, "*")), /* @__PURE__ */ import_react3.default.createElement(
+      )), /* @__PURE__ */ import_react3.default.createElement("form", { onSubmit: submit, noValidate: true }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-body", style: materialBodyStyle }, error && /* @__PURE__ */ import_react3.default.createElement("div", { className: "alert alert-danger", role: "alert", "aria-live": "assertive" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold", htmlFor: `${modalId}-party` }, "Select Party ", /* @__PURE__ */ import_react3.default.createElement("span", { className: "text-danger" }, "*")), /* @__PURE__ */ import_react3.default.createElement(
+        "select",
+        {
+          id: `${modalId}-party`,
+          className: "form-select",
+          value: selectedParty,
+          onChange: (e) => setSelectedParty(e.target.value),
+          disabled: loadingParties,
+          required: true
+        },
+        /* @__PURE__ */ import_react3.default.createElement("option", { value: "" }, loadingParties ? "Loading parties..." : "-- Select Party --"),
+        parties.map((party) => /* @__PURE__ */ import_react3.default.createElement("option", { key: party.value, value: party.value }, party.label))
+      ), loadingParties && /* @__PURE__ */ import_react3.default.createElement("small", { className: "form-text text-muted" }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "spinner-border spinner-border-sm me-1", role: "status", "aria-hidden": "true" }), "Loading parties...")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label text-dark fw-semibold", htmlFor: `${modalId}-name` }, "Name ", /* @__PURE__ */ import_react3.default.createElement("span", { className: "text-danger" }, "*")), /* @__PURE__ */ import_react3.default.createElement(
         "input",
         {
           id: `${modalId}-name`,
@@ -19813,7 +20038,7 @@ function AddPartyModal({ onFinish, onCreated, notify, createParty: createParty2 
             fontWeight: "600"
           }
         },
-        submitting ? /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("span", { className: "spinner-border spinner-border-sm me-2", role: "status", "aria-hidden": "true" }), "Creating\u2026") : /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-plus-circle me-1" }), "Create Party")
+        submitting ? /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("span", { className: "spinner-border spinner-border-sm me-2", role: "status", "aria-hidden": "true" }), "Creating\u2026") : /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("i", { className: "bi bi-plus-circle me-1" }), "Create Buyer")
       )))))
     )
   );
@@ -19938,14 +20163,14 @@ function RecipientsModal({ rawData, rfqId }) {
       type: "button",
       className: "btn btn-success",
       onClick: () => openAddPartyModal({
-        createParty,
+        createBuyer,
         notify: (m) => console.log("[Notify]", m),
         onCreated: (data) => console.log("[API] response:", data)
       }),
-      title: "Add a new party to Mie Trak"
+      title: "Add a new buyer to an existing party"
     },
     /* @__PURE__ */ import_react4.default.createElement("i", { className: "bi bi-person-plus me-1" }),
-    "Add New Party"
+    "Add New Buyer"
   ))));
 }
 export {

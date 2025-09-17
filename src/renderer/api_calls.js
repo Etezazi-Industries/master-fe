@@ -157,6 +157,21 @@ export async function createParty(body) {
     return res.json();
 }
 
+export async function createBuyer(partyPk, body) {
+    if (!partyPk) throw new Error("Party PK is required");
+    
+    const res = await fetch(`http://127.0.0.1:8000/parties/${partyPk}/buyers`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+        console.error("422 detail:", await res.text());
+        throw new Error(`HTTP ${res.status}`);
+    }
+    return res.json();
+}
+
 export async function searchBoeingFinishCode(finishCode) {
     if (!finishCode || !finishCode.trim()) {
         throw new Error("Finish code is required");

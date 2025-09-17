@@ -37,7 +37,7 @@ export default function ActionBar({ onOpenBoeingFinish, onOpenAddParty }) {
                         onClick={onOpenAddParty}
                     >
                         <i className="bi bi-person-plus me-1"></i>
-                        Add New Party
+                        Add New Buyer
                     </button>
                     {/* Future action buttons can be added here */}
                 </div>

@@ -8,7 +8,7 @@ import {
     UncodedCard,
     normalizeFromYourApi,
 } from "../components/itemGroups.jsx";
-import { prepareRfqEmails, createParty } from "../../api_calls.js"
+import { prepareRfqEmails, createBuyer } from "../../api_calls.js"
 import { openAddPartyModal } from "./addParty.jsx";
 
 
@@ -194,15 +194,15 @@ function RecipientsModal({ rawData, rfqId }) {
                         className="btn btn-success"
                         onClick={() =>
                             openAddPartyModal({
-                                createParty: createParty,
+                                createBuyer: createBuyer,
                                 notify: (m) => console.log("[Notify]", m),
                                 onCreated: (data) => console.log("[API] response:", data),
                             })
                         }
-                        title="Add a new party to Mie Trak"
+                        title="Add a new buyer to an existing party"
                     >
                         <i className="bi bi-person-plus me-1"></i>
-                        Add New Party
+                        Add New Buyer
                     </button>
                 </div>
             </div>

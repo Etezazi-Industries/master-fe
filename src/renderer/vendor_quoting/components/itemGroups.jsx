@@ -21,13 +21,231 @@ function Chip({ email }) {
 export const pendingAssignments = new Map(); // if you still want this handle around
 
 function ItemRow({ it }) {
-    const name = it?.name ?? it?.part_number ?? "";
+    const name = it?.name ?? it?.part_number ?? it?.PartNumber ?? "";
+    const description = it?.Description ?? it?.description ?? "";
+    const quantity = it?.qty ?? it?.QuantityRequired ?? 0;
+    const emailCategory = it?.EmailCategory ?? it?.email_category ?? "";
+    
+    // Edit states
+    const [isEditingCategory, setIsEditingCategory] = React.useState(false);
+    const [isEditingQty, setIsEditingQty] = React.useState(false);
+    const [editCategory, setEditCategory] = React.useState(emailCategory);
+    const [editQty, setEditQty] = React.useState(quantity);
+    
+    // Available email categories (you might want to get this from props or global state)
+    const emailCategories = [
+        'ALUMINUM',
+        'STEEL',
+        'PLASTIC',
+        'ELECTRONICS', 
+        'HARDWARE',
+        'CUSTOM',
+        'UNCODED'
+    ];
+    
+    // Edit handlers
+    const handleCategoryEdit = () => {
+        setIsEditingCategory(true);
+    };
+    
+    const handleCategorySave = () => {
+        setIsEditingCategory(false);
+        // TODO: Implement save logic - update the item data
+        console.log('Category updated:', editCategory);
+    };
+    
+    const handleCategoryCancel = () => {
+        setIsEditingCategory(false);
+        setEditCategory(emailCategory); // Reset to original
+    };
+    
+    const handleQtyEdit = () => {
+        setIsEditingQty(true);
+    };
+    
+    const handleQtySave = () => {
+        setIsEditingQty(false);
+        // TODO: Implement save logic - update the item data
+        console.log('Quantity updated:', editQty);
+    };
+    
+    const handleQtyCancel = () => {
+        setIsEditingQty(false);
+        setEditQty(quantity); // Reset to original
+    };
+    
+    // Build dimensions string from available dimension fields
+    const buildDimensions = () => {
+        const dimensions = [];
+        
+        // Check for part dimensions
+        if (it?.PartLength) dimensions.push(`L: ${it.PartLength}`);
+        if (it?.PartWidth) dimensions.push(`W: ${it.PartWidth}`);
+        if (it?.Thickness) dimensions.push(`T: ${it.Thickness}`);
+        
+        // If no part dimensions, check for stock dimensions
+        if (dimensions.length === 0) {
+            if (it?.StockLength) dimensions.push(`Stock L: ${it.StockLength}`);
+            if (it?.StockWidth) dimensions.push(`Stock W: ${it.StockWidth}`);
+        }
+        
+        return dimensions.length > 0 ? dimensions.join(' × ') : null;
+    };
+    
+    const dimensionsStr = buildDimensions();
+    
     return (
-        <li className="list-group-item d-flex justify-content-between">
-            <div>
-                <strong>{name}</strong>
+        <li className="list-group-item">
+            <div className="d-flex flex-column">
+                {/* Top row: Part Number + Email Category + Quantity (all editable) */}
+                <div className="d-flex align-items-center gap-3 mb-2">
+                    <div className="flex-grow-1">
+                        <strong className="text-dark">{name}</strong>
+                    </div>
+                    
+                    {/* Email Category - Editable */}
+                    <div className="d-flex align-items-center gap-1">
+                        <small className="text-muted">Category:</small>
+                        {isEditingCategory ? (
+                            <div className="d-flex align-items-center gap-1">
+                                <select 
+                                    className="form-select form-select-sm" 
+                                    style={{ width: '120px', fontSize: '0.75rem' }}
+                                    value={editCategory || ''}
+                                    onChange={(e) => setEditCategory(e.target.value)}
+                                    autoFocus
+                                >
+                                    <option value="">Select...</option>
+                                    {emailCategories.map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
+                                </select>
+                                <button 
+                                    className="btn btn-sm btn-success" 
+                                    style={{ padding: '2px 6px' }}
+                                    onClick={handleCategorySave}
+                                    title="Save"
+                                >
+                                    <i className="bi bi-check" style={{ fontSize: '0.75rem' }}></i>
+                                </button>
+                                <button 
+                                    className="btn btn-sm btn-outline-secondary" 
+                                    style={{ padding: '2px 6px' }}
+                                    onClick={handleCategoryCancel}
+                                    title="Cancel"
+                                >
+                                    <i className="bi bi-x" style={{ fontSize: '0.75rem' }}></i>
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="d-flex align-items-center gap-1">
+                                <span 
+                                    className="form-control form-control-sm bg-light" 
+                                    style={{ 
+                                        width: '120px', 
+                                        fontSize: '0.75rem',
+                                        border: '1px solid #dee2e6',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        height: '28px'
+                                    }}
+                                >
+                                    {emailCategory || 'Not set'}
+                                </span>
+                                <button 
+                                    className="btn btn-sm btn-outline-primary" 
+                                    style={{ padding: '2px 6px' }}
+                                    onClick={handleCategoryEdit}
+                                    title="Edit Category"
+                                >
+                                    <i className="bi bi-pencil" style={{ fontSize: '0.75rem' }}></i>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Quantity - Editable */}
+                    <div className="d-flex align-items-center gap-1">
+                        <small className="text-muted">Qty:</small>
+                        {isEditingQty ? (
+                            <div className="d-flex align-items-center gap-1">
+                                <input 
+                                    type="number" 
+                                    className="form-control form-control-sm" 
+                                    style={{ width: '80px', fontSize: '0.75rem' }}
+                                    value={editQty || 0}
+                                    onChange={(e) => setEditQty(Number(e.target.value))}
+                                    min="0"
+                                    step="1"
+                                    autoFocus
+                                />
+                                <button 
+                                    className="btn btn-sm btn-success" 
+                                    style={{ padding: '2px 6px' }}
+                                    onClick={handleQtySave}
+                                    title="Save"
+                                >
+                                    <i className="bi bi-check" style={{ fontSize: '0.75rem' }}></i>
+                                </button>
+                                <button 
+                                    className="btn btn-sm btn-outline-secondary" 
+                                    style={{ padding: '2px 6px' }}
+                                    onClick={handleQtyCancel}
+                                    title="Cancel"
+                                >
+                                    <i className="bi bi-x" style={{ fontSize: '0.75rem' }}></i>
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="d-flex align-items-center gap-1">
+                                <span 
+                                    className="form-control form-control-sm bg-light" 
+                                    style={{ 
+                                        width: '80px', 
+                                        fontSize: '0.75rem',
+                                        border: '1px solid #dee2e6',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        height: '28px'
+                                    }}
+                                >
+                                    {quantity || 0}
+                                </span>
+                                <button 
+                                    className="btn btn-sm btn-outline-primary" 
+                                    style={{ padding: '2px 6px' }}
+                                    onClick={handleQtyEdit}
+                                    title="Edit Quantity"
+                                >
+                                    <i className="bi bi-pencil" style={{ fontSize: '0.75rem' }}></i>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                
+                {/* Description row */}
+                {description && (
+                    <div className="text-muted" style={{ fontSize: '0.875rem' }}>
+                        {description}
+                    </div>
+                )}
+                
+                {/* Dimensions row */}
+                {dimensionsStr && (
+                    <div className="mt-2">
+                        <span 
+                            className="badge bg-light text-dark border" 
+                            style={{ fontSize: '0.75rem' }}
+                            title="Dimensions"
+                        >
+                            <i className="bi bi-rulers me-1"></i>
+                            {dimensionsStr}
+                        </span>
+                    </div>
+                )}
             </div>
-            <span className="badge text-bg-secondary">Qty {it?.qty}</span>
         </li>
     );
 }
@@ -43,9 +261,7 @@ export function GroupCard({ code, items = [], emails = [] }) {
                     <Chip key={i} email={e.email_id || e.email || ""} />
                 ))}
             </div>
-        ) : (
-            <span className="text-muted">No recipients</span>
-        );
+        ) : null; // Remove "No recipients" label
 
     return (
         <div className="card mb-4">
@@ -199,6 +415,21 @@ export function normalizeFromYourApi(raw) {
         name: it.PartNumber,
         qty: it.QuantityRequired,
         code: it.EmailCategory,
+        // Preserve all the original data for ItemRow to use
+        ...it,  // Spread all original fields
+        // Ensure consistent field names for backward compatibility
+        PartNumber: it.PartNumber,
+        QuantityRequired: it.QuantityRequired,
+        Description: it.Description,
+        EmailCategory: it.EmailCategory,
+        PartLength: it.PartLength,
+        PartWidth: it.PartWidth,
+        Thickness: it.Thickness,
+        StockLength: it.StockLength,
+        StockWidth: it.StockWidth,
+        ItemTypeFK: it.ItemTypeFK,
+        PurchaseOrderComment: it.PurchaseOrderComment,
+        Category: it.Category,
     }));
 
     const byCode = new Map();
