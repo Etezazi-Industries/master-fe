@@ -133,10 +133,36 @@ export async function getBuyers(party_pk) {
     return data;
 }
 
-export async function parseExcelFiles(body) {
-    const res = await fetch("http://127.0.0.1:8000/rfq_gen/excel-files", { method: "POST", body: body });
+export async function parseExcelFiles(filePaths) {
+    const res = await fetch("http://127.0.0.1:8000/rfq_gen/excel-files", { 
+        method: "POST", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(filePaths)
+    });
     if (!res.ok) {
         console.error("422 detail:", await res.text()); // FastAPI explains what's missing
+        throw new Error(`HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return data;
+}
+
+export async function getDocGroups() {
+    return requestJson("rfq_gen/doc-groups");
+}
+
+export async function getQuoteTemplates() {
+    return requestJson("rfq_gen/quote_templates");
+}
+
+export async function generateRfq(payload) {
+    const res = await fetch("http://127.0.0.1:8000/rfq_gen/rfq", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+        console.error("RFQ generation failed:", await res.text());
         throw new Error(`HTTP ${res.status}`);
     }
     const data = await res.json();

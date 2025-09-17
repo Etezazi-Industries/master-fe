@@ -98,22 +98,19 @@ function stopBackend() {
 }
 
 async function createWindow() {
-    // 1) Make sure backend is up before window loads
-    // const base = await startBackend();
+    // Simple preload path - use process.cwd() which works reliably
+    const preloadPath = path.join(process.cwd(), 'src', 'preload.js');
 
-    // ipcMain.handle('get-api-base', () => apiBase);
-
-    // 2) Create the browser window
+    // Create the browser window
     const win = new BrowserWindow({
         width: 1500,
         height: 1000,
         titleBarStyle: 'hidden',
         titleBarOverlay: { color: '#1f1f1f', symbolColor: '#ffffff', height: 32 },
         webPreferences: {
-            preload: path.join(app.getAppPath(), 'src', 'preload.js'),
+            preload: preloadPath,
             contextIsolation: true,
             nodeIntegration: false,
-            //additionalArguments: [`--apiBase=${base}`], // <— pass backend URL to preload
         },
     });
 
@@ -129,8 +126,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
-    // mark that we’re quitting to ignore “unexpected” backend exit logs
+    // mark that we're quitting to ignore "unexpected" backend exit logs
     app.isQuiting = true;
     stopBackend();
 });
-

@@ -80,11 +80,11 @@ function normalizeParties(obj) {
 
 /**
  * Props:
- * - value: { customer_pk, buyer_pk, customer_rfq_number }
+ * - value: { customer_pk, customer_name, buyer_pk, customer_rfq_number }
  * - onChange: (partial) => void
  */
 export default function CustomerBuyerPanel({ value, onChange }) {
-    const { customer_pk = null, buyer_pk = null, customer_rfq_number = null } = value ?? {};
+    const { customer_pk = null, customer_name = null, buyer_pk = null, customer_rfq_number = null } = value ?? {};
 
     const [customers, setCustomers] = useState([]);
     const [customersLoading, setCustomersLoading] = useState(false);
@@ -154,7 +154,9 @@ export default function CustomerBuyerPanel({ value, onChange }) {
                         loading={customersLoading}
                         onChange={(v) => {
                             const next = parseId(v);
-                            onChange?.({ customer_pk: next, buyer_pk: null });
+                            const selectedCustomer = customers.find(c => c.id === String(next));
+                            const customerName = selectedCustomer ? selectedCustomer.label : null;
+                            onChange?.({ customer_pk: next, customer_name: customerName, buyer_pk: null });
                         }}
                         placeholder="Choose customer."
                         disabledHint=""

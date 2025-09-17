@@ -3,10 +3,11 @@ import React, { useEffect, useState, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import CustomerBuyerPanel from "./customer_buyer_panel";
 import FileUploadSection from "./file_input";
-import DateSection from "./date_picker";
+import DateSection from "./date_picker.jsx";
 import ActionBar from "./action_bar";
 import DualListModal from "./modals/document_group";
-import { parseExcelFiles } from "../../api_calls";
+import DocumentMapModal from "./DocumentMapModal";
+import { parseExcelFiles, generateRfq } from "../../api_calls";
 
 function HeaderBar({ title }) {
     return (
@@ -27,10 +28,27 @@ function PageHeading({ heading }) {
 export default function RfqApp() {
     const [state, setState] = useState({
         customer_pk: null,
+        customer_name: null, // Store the party name
         buyer_pk: null,
         customer_rfq_number: null,
-        files: { excel: [], estimation: [], parts_requested: [] },
+        files: { 
+            excel: /** @type {Array<File & {path?: string}>} */ ([]), 
+            estimation: /** @type {Array<File & {path?: string}>} */ ([]), 
+            parts_requested: /** @type {Array<File & {path?: string}>} */ ([])
+        },
         dates: { inquiry: "", due: "" },
+        // Store mapping results
+        mappings: {
+            partToDoc: /** @type {Record<string, string[]>} */ ({}), // { [partNo]: documentKeys[] }
+            partToTemplate: /** @type {Record<string, string[]>} */ ({}), // { [partNo]: templateKeys[] }
+            docToGroup: /** @type {Record<string, string[]>} */ ({}) // { [docKey]: groupKeys[] }
+        }
+    });
+    
+    // New modal state
+    const [documentMapModal, setDocumentMapModal] = useState({
+        open: false,
+        mode: "part-doc"
     });
 
     const handlePanelChange = useCallback((partial) => {
@@ -61,26 +79,138 @@ export default function RfqApp() {
         });
     }, []);
 
+    // Handle date changes
+    const handleDateChange = useCallback((field, value) => {
+        setState(prev => ({
+            ...prev,
+            dates: { ...prev.dates, [field]: value }
+        }));
+    }, []);
+
+    // Handle opening the new document map modal
+    const handleMapPress = useCallback((mode) => {
+        setDocumentMapModal({ open: true, mode });
+    }, []);
+
+    // Handle closing the modal
+    const handleMapClose = useCallback(() => {
+        setDocumentMapModal(prev => ({ ...prev, open: false }));
+    }, []);
+
+    // Handle saving mappings
+    const handleMapSave = useCallback((result) => {
+        console.log("Document mappings saved:", result);
+        
+        setState(prev => {
+            const newMappings = { ...prev.mappings };
+            
+            if (result.mode === "part-doc") {
+                newMappings.partToDoc = result.mappings;
+            } else if (result.mode === "template") {
+                newMappings.partToTemplate = result.mappings;
+            } else if (result.mode === "doc-group") {
+                newMappings.docToGroup = result.mappings;
+            }
+            
+            return { ...prev, mappings: newMappings };
+        });
+        
+        setDocumentMapModal(prev => ({ ...prev, open: false }));
+    }, []);
+
+
+    // Build RfqRequest payload from in-memory data
+    const buildRfqRequestPayload = useCallback(() => {
+        // Create part_to_quote_map: { [partNo]: quotePK } (use template mappings as quote mappings)
+        const part_to_quote_map = {};
+        Object.entries(state.mappings.partToTemplate).forEach(([partNo, templateKeys]) => {
+            if (templateKeys.length > 0) {
+                part_to_quote_map[partNo] = templateKeys[0]; // Use template as quote identifier
+            }
+        });
+        
+        // Create part_to_template_map: { [partNo]: templatePK } (same as quote for now)
+        const part_to_template_map = {};
+        Object.entries(state.mappings.partToTemplate).forEach(([partNo, templateKeys]) => {
+            if (templateKeys.length > 0) {
+                part_to_template_map[partNo] = templateKeys[0]; // Take first template if multiple
+            }
+        });
+        
+        // Create part_to_doc_map: { [partNo]: Document[] } where Document = { url, group_pk }
+        const part_to_doc_map = {};
+        Object.entries(state.mappings.partToDoc).forEach(([partNo, docKeys]) => {
+            part_to_doc_map[partNo] = docKeys.map(docKey => {
+                // Find corresponding group_pk from doc→group map
+                const groupKeys = state.mappings.docToGroup[docKey] || [];
+                const group_pk = groupKeys.length > 0 ? groupKeys[0] : null; // Take first group if multiple
+                
+                // Find the file object to get the full path
+                const allFiles = [...(state.files.estimation || []), ...(state.files.parts_requested || [])];
+                const fileObj = allFiles.find(f => f.name === docKey);
+                
+                return {
+                    url: fileObj?.path || docKey, // Use full path if available, fallback to docKey
+                    group_pk: group_pk
+                };
+            });
+        });
+        
+        // Prepare file arrays
+        const excel_files = (state.files.excel || []).map(file => file.path || file.name);
+        const estimation_files = (state.files.estimation || []).map(file => {
+            // Find group_pk for this file
+            const groupKeys = state.mappings.docToGroup[file.name] || [];
+            const group_pk = groupKeys.length > 0 ? groupKeys[0] : null;
+            
+            return {
+                url: file.path || file.name, // Use full path if available
+                group_pk: group_pk
+            };
+        });
+        
+        // Build rfq_metadata
+        const currentDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+        const rfq_metadata = {
+            customer_rfq_number: state.customer_rfq_number,
+            buyer_fk: state.buyer_pk,
+            party_pk: state.customer_pk,
+            party_name: state.customer_name, // Use stored customer name
+            itar: false, // TODO: Add ITAR field to form if needed
+            inquiry_date: state.dates.inquiry || currentDate,
+            due_date: state.dates.due || currentDate,
+            current_date: currentDate,
+            update_rfq_pk: null // For updates, this would be populated
+        };
+        
+        const payload = {
+            part_to_quote_map,
+            part_to_template_map,
+            part_to_doc_map,
+            excel_files,
+            estimation_files,
+            rfq_metadata
+        };
+        
+        return payload;
+    }, [state]);
+
     const openDocumentMap = useCallback(async () => {
         // 1) Gather Excel files for future API
         const excelFiles = state?.files?.excel ?? [];
-        const fd = new FormData();
-        excelFiles.forEach((file) => fd.append("excel_files", file));
-        fd.append("customer_pk", String(state.customer_pk ?? ""));
-        fd.append("buyer_pk", String(state.buyer_pk ?? ""));
-        fd.append("customer_rfq_number", String(state.customer_rfq_number ?? ""));
-        // TODO: await fetch(..., { method: "POST", body: fd })
-        //
-        const res = await parseExcelFiles(fd);
+        // Extract file paths from the file objects
+        const filePaths = excelFiles.map(file => file.path || file.name);
+        
+        const res = await parseExcelFiles(filePaths);
         console.log(res);
 
         // 2) Fake data for now (replace with API response later)
-        const left = ["PN-001", "PN-002", "PN-003"];
-        const right = {
+        const left = /** @type {string[]} */ (["PN-001", "PN-002", "PN-003"]);
+        const right = /** @type {Record<string, any[]>} */ ({
             "PN-001": ["Cert", "Drawing", ["SpecSheet", "spec_001.pdf"]],
             "PN-002": ["MSDS", "Work Instructions"],
             "PN-003": ["Traveler"],
-        };
+        });
 
         // 3) Mount the modal (no other app state needed)
         let host = document.getElementById("docmap-modal-host");
@@ -101,7 +231,7 @@ export default function RfqApp() {
             <DualListModal
                 open={true}
                 title="Document Map"
-                leftItems={left}
+                leftItems={/** @type {any[]} */ (left)}
                 rightMap={right}
                 oneToOneOnly={false}
                 onClose={close}
@@ -121,20 +251,45 @@ export default function RfqApp() {
             <HeaderBar title="RFQ Gen" />
             <PageHeading heading="RFQ Gen" />
             <CustomerBuyerPanel
-                value={{ customer_pk: state.customer_pk, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number }}
+                value={{ customer_pk: state.customer_pk, customer_name: state.customer_name, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number }}
                 onChange={handlePanelChange}
             />
             <FileUploadSection
                 onChange={handleFileUpload}
                 onRemove={handleFileRemove}
-                openDocMap={openDocumentMap}
+                onMapPress={handleMapPress}
                 files={state.files}
             />
-            <DateSection />
+            <DateSection 
+                inquiryDate={state.dates.inquiry}
+                dueDate={state.dates.due}
+                onDateChange={handleDateChange}
+            />
             <ActionBar
-                onGenerate={() => console.log("Generate RFQ clicked")}
-                onUpdate={() => console.log("Update RFQ clicked")}
+                onGenerate={async () => {
+                    try {
+                        const payload = buildRfqRequestPayload();
+                        console.log("Generate RFQ payload:", JSON.stringify(payload, null, 2));
+                        const result = await generateRfq(payload);
+                        console.log("RFQ generated successfully:", result);
+                    } catch (error) {
+                        console.error("Failed to generate RFQ:", error);
+                    }
+                }}
+                onUpdate={() => {
+                    const payload = buildRfqRequestPayload();
+                    console.log("Update RFQ payload:", JSON.stringify(payload, null, 2));
+                }}
                 onReset={() => console.log("Reset GUI clicked")}
+            />
+            
+            {/* Document Map Modal */}
+            <DocumentMapModal
+                open={documentMapModal.open}
+                mode={documentMapModal.mode}
+                onClose={handleMapClose}
+                onSave={handleMapSave}
+                uploadedFiles={state.files}
             />
         </div>
     );

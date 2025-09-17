@@ -1299,7 +1299,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React8 = require_react(), Internals = {
+      var React9 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1317,16 +1317,16 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
       exports.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = Internals;
-      exports.createPortal = function(children, container2) {
+      exports.createPortal = function(children, container) {
         var key = 2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : null;
-        if (!container2 || 1 !== container2.nodeType && 9 !== container2.nodeType && 11 !== container2.nodeType)
+        if (!container || 1 !== container.nodeType && 9 !== container.nodeType && 11 !== container.nodeType)
           throw Error("Target container is not a DOM element.");
-        return createPortal$1(children, container2, null, key);
+        return createPortal$1(children, container, null, key);
       };
       exports.flushSync = function(fn) {
         var previousTransition = ReactSharedInternals.T, previousUpdatePriority = Internals.p;
@@ -2859,7 +2859,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React8.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React9.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -13080,8 +13080,8 @@ var require_react_dom_client_development = __commonJS({
             if (null === targetInst$jscomp$0) return;
             var nodeTag = targetInst$jscomp$0.tag;
             if (3 === nodeTag || 4 === nodeTag) {
-              var container2 = targetInst$jscomp$0.stateNode.containerInfo;
-              if (container2 === targetContainer) break;
+              var container = targetInst$jscomp$0.stateNode.containerInfo;
+              if (container === targetContainer) break;
               if (4 === nodeTag)
                 for (nodeTag = targetInst$jscomp$0.return; null !== nodeTag; ) {
                   var grandTag = nodeTag.tag;
@@ -13089,15 +13089,15 @@ var require_react_dom_client_development = __commonJS({
                     return;
                   nodeTag = nodeTag.return;
                 }
-              for (; null !== container2; ) {
-                nodeTag = getClosestInstanceFromNode(container2);
+              for (; null !== container; ) {
+                nodeTag = getClosestInstanceFromNode(container);
                 if (null === nodeTag) return;
                 grandTag = nodeTag.tag;
                 if (5 === grandTag || 6 === grandTag || 26 === grandTag || 27 === grandTag) {
                   targetInst$jscomp$0 = ancestorInst = nodeTag;
                   continue a;
                 }
-                container2 = container2.parentNode;
+                container = container.parentNode;
               }
             }
             targetInst$jscomp$0 = targetInst$jscomp$0.return;
@@ -15196,8 +15196,8 @@ var require_react_dom_client_development = __commonJS({
       function removeChild(parentInstance, child) {
         parentInstance.removeChild(child);
       }
-      function removeChildFromContainer(container2, child) {
-        (9 === container2.nodeType ? container2.body : "HTML" === container2.nodeName ? container2.ownerDocument.body : container2).removeChild(child);
+      function removeChildFromContainer(container, child) {
+        (9 === container.nodeType ? container.body : "HTML" === container.nodeName ? container.ownerDocument.body : container).removeChild(child);
       }
       function clearSuspenseBoundary(parentInstance, suspenseInstance) {
         var node = suspenseInstance, possiblePreambleContribution = 0, depth = 0;
@@ -15246,8 +15246,8 @@ var require_react_dom_client_development = __commonJS({
       function unhideTextInstance(textInstance, text) {
         textInstance.nodeValue = text;
       }
-      function clearContainerSparingly(container2) {
-        var nextNode = container2.firstChild;
+      function clearContainerSparingly(container) {
+        var nextNode = container.firstChild;
         nextNode && 10 === nextNode.nodeType && (nextNode = nextNode.nextSibling);
         for (; nextNode; ) {
           var node = nextNode;
@@ -15265,7 +15265,7 @@ var require_react_dom_client_development = __commonJS({
             case "LINK":
               if ("stylesheet" === node.rel.toLowerCase()) continue;
           }
-          container2.removeChild(node);
+          container.removeChild(node);
         }
       }
       function canHydrateInstance(instance, type, props, inRootOrSingleton) {
@@ -15391,8 +15391,8 @@ var require_react_dom_client_development = __commonJS({
         }
         return null;
       }
-      function commitHydratedContainer(container2) {
-        retryIfBlockedOn(container2);
+      function commitHydratedContainer(container) {
+        retryIfBlockedOn(container);
       }
       function commitHydratedSuspenseInstance(suspenseInstance) {
         retryIfBlockedOn(suspenseInstance);
@@ -15459,8 +15459,8 @@ var require_react_dom_client_development = __commonJS({
           instance.removeAttributeNode(attributes[0]);
         detachDeletedInstance(instance);
       }
-      function getHoistableRoot(container2) {
-        return "function" === typeof container2.getRootNode ? container2.getRootNode() : 9 === container2.nodeType ? container2 : container2.ownerDocument;
+      function getHoistableRoot(container) {
+        return "function" === typeof container.getRootNode ? container.getRootNode() : 9 === container.nodeType ? container : container.ownerDocument;
       }
       function preconnectAs(rel, href, crossOrigin) {
         var ownerDocument = globalDocument;
@@ -15937,10 +15937,10 @@ var require_react_dom_client_development = __commonJS({
         parentComponent = emptyContextObject;
         return parentComponent;
       }
-      function updateContainerImpl(rootFiber, lane, element, container2, parentComponent, callback) {
+      function updateContainerImpl(rootFiber, lane, element, container, parentComponent, callback) {
         if (injectedHook && "function" === typeof injectedHook.onScheduleFiberRoot)
           try {
-            injectedHook.onScheduleFiberRoot(rendererID, container2, element);
+            injectedHook.onScheduleFiberRoot(rendererID, container, element);
           } catch (err) {
             hasLoggedError || (hasLoggedError = true, console.error(
               "React instrumentation encountered an error: %s",
@@ -15949,19 +15949,19 @@ var require_react_dom_client_development = __commonJS({
           }
         null !== injectedProfilingHooks && "function" === typeof injectedProfilingHooks.markRenderScheduled && injectedProfilingHooks.markRenderScheduled(lane);
         parentComponent = getContextForSubtree(parentComponent);
-        null === container2.context ? container2.context = parentComponent : container2.pendingContext = parentComponent;
+        null === container.context ? container.context = parentComponent : container.pendingContext = parentComponent;
         isRendering && null !== current && !didWarnAboutNestedUpdates && (didWarnAboutNestedUpdates = true, console.error(
           "Render methods should be a pure function of props and state; triggering nested component updates from render is not allowed. If necessary, trigger nested updates in componentDidUpdate.\n\nCheck the render method of %s.",
           getComponentNameFromFiber(current) || "Unknown"
         ));
-        container2 = createUpdate(lane);
-        container2.payload = { element };
+        container = createUpdate(lane);
+        container.payload = { element };
         callback = void 0 === callback ? null : callback;
         null !== callback && ("function" !== typeof callback && console.error(
           "Expected the last optional `callback` argument to be a function. Instead received: %s.",
           callback
-        ), container2.callback = callback);
-        element = enqueueUpdate(rootFiber, container2, lane);
+        ), container.callback = callback);
+        element = enqueueUpdate(rootFiber, container, lane);
         null !== element && (scheduleUpdateOnFiber(element, rootFiber, lane), entangleTransitions(element, rootFiber, lane));
       }
       function markRetryLaneImpl(fiber, retryLane) {
@@ -15993,22 +15993,22 @@ var require_react_dom_client_development = __commonJS({
         }
         return map;
       }
-      function dispatchDiscreteEvent(domEventName, eventSystemFlags, container2, nativeEvent) {
+      function dispatchDiscreteEvent(domEventName, eventSystemFlags, container, nativeEvent) {
         var prevTransition = ReactSharedInternals.T;
         ReactSharedInternals.T = null;
         var previousPriority = ReactDOMSharedInternals.p;
         try {
-          ReactDOMSharedInternals.p = DiscreteEventPriority, dispatchEvent(domEventName, eventSystemFlags, container2, nativeEvent);
+          ReactDOMSharedInternals.p = DiscreteEventPriority, dispatchEvent(domEventName, eventSystemFlags, container, nativeEvent);
         } finally {
           ReactDOMSharedInternals.p = previousPriority, ReactSharedInternals.T = prevTransition;
         }
       }
-      function dispatchContinuousEvent(domEventName, eventSystemFlags, container2, nativeEvent) {
+      function dispatchContinuousEvent(domEventName, eventSystemFlags, container, nativeEvent) {
         var prevTransition = ReactSharedInternals.T;
         ReactSharedInternals.T = null;
         var previousPriority = ReactDOMSharedInternals.p;
         try {
-          ReactDOMSharedInternals.p = ContinuousEventPriority, dispatchEvent(domEventName, eventSystemFlags, container2, nativeEvent);
+          ReactDOMSharedInternals.p = ContinuousEventPriority, dispatchEvent(domEventName, eventSystemFlags, container, nativeEvent);
         } finally {
           ReactDOMSharedInternals.p = previousPriority, ReactSharedInternals.T = prevTransition;
         }
@@ -16433,22 +16433,22 @@ var require_react_dom_client_development = __commonJS({
       function ReactDOMHydrationRoot(internalRoot) {
         this._internalRoot = internalRoot;
       }
-      function warnIfReactDOMContainerInDEV(container2) {
-        container2[internalContainerInstanceKey] && (container2._reactRootContainer ? console.error(
+      function warnIfReactDOMContainerInDEV(container) {
+        container[internalContainerInstanceKey] && (container._reactRootContainer ? console.error(
           "You are calling ReactDOMClient.createRoot() on a container that was previously passed to ReactDOM.render(). This is not supported."
         ) : console.error(
           "You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it."
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React8 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React9 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
       Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
       Symbol.for("react.legacy_hidden");
       Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
       Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -19151,13 +19151,13 @@ var require_react_dom_client_development = __commonJS({
         args = this._internalRoot;
         if (null !== args) {
           this._internalRoot = null;
-          var container2 = args.containerInfo;
+          var container = args.containerInfo;
           (executionContext & (RenderContext | CommitContext)) !== NoContext && console.error(
             "Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition."
           );
           updateContainerImpl(args.current, 2, null, args, null, null);
           flushSyncWork$1();
-          container2[internalContainerInstanceKey] = null;
+          container[internalContainerInstanceKey] = null;
         }
       };
       ReactDOMHydrationRoot.prototype.unstable_scheduleHydration = function(target) {
@@ -19170,7 +19170,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React8.version;
+        var isomorphicReactPackageVersion = React9.version;
         if ("19.1.1" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.1.1\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -19225,10 +19225,10 @@ var require_react_dom_client_development = __commonJS({
           "font-weight:bold"
         );
       }
-      exports.createRoot = function(container2, options) {
-        if (!isValidContainer(container2))
+      exports.createRoot = function(container, options) {
+        if (!isValidContainer(container))
           throw Error("Target container is not a DOM element.");
-        warnIfReactDOMContainerInDEV(container2);
+        warnIfReactDOMContainerInDEV(container);
         var isStrictMode = false, identifierPrefix = "", onUncaughtError = defaultOnUncaughtError, onCaughtError = defaultOnCaughtError, onRecoverableError = defaultOnRecoverableError, transitionCallbacks = null;
         null !== options && void 0 !== options && (options.hydrate ? console.warn(
           "hydrate through createRoot is deprecated. Use ReactDOMClient.hydrateRoot(container, <App />) instead."
@@ -19236,7 +19236,7 @@ var require_react_dom_client_development = __commonJS({
           "You passed a JSX element to createRoot. You probably meant to call root.render instead. Example usage:\n\n  let root = createRoot(domContainer);\n  root.render(<App />);"
         ), true === options.unstable_strictMode && (isStrictMode = true), void 0 !== options.identifierPrefix && (identifierPrefix = options.identifierPrefix), void 0 !== options.onUncaughtError && (onUncaughtError = options.onUncaughtError), void 0 !== options.onCaughtError && (onCaughtError = options.onCaughtError), void 0 !== options.onRecoverableError && (onRecoverableError = options.onRecoverableError), void 0 !== options.unstable_transitionCallbacks && (transitionCallbacks = options.unstable_transitionCallbacks));
         options = createFiberRoot(
-          container2,
+          container,
           1,
           false,
           null,
@@ -19249,21 +19249,21 @@ var require_react_dom_client_development = __commonJS({
           transitionCallbacks,
           null
         );
-        container2[internalContainerInstanceKey] = options.current;
-        listenToAllSupportedEvents(container2);
+        container[internalContainerInstanceKey] = options.current;
+        listenToAllSupportedEvents(container);
         return new ReactDOMRoot(options);
       };
-      exports.hydrateRoot = function(container2, initialChildren, options) {
-        if (!isValidContainer(container2))
+      exports.hydrateRoot = function(container, initialChildren, options) {
+        if (!isValidContainer(container))
           throw Error("Target container is not a DOM element.");
-        warnIfReactDOMContainerInDEV(container2);
+        warnIfReactDOMContainerInDEV(container);
         void 0 === initialChildren && console.error(
           "Must provide initial children as second argument to hydrateRoot. Example usage: hydrateRoot(domContainer, <App />)"
         );
         var isStrictMode = false, identifierPrefix = "", onUncaughtError = defaultOnUncaughtError, onCaughtError = defaultOnCaughtError, onRecoverableError = defaultOnRecoverableError, transitionCallbacks = null, formState = null;
         null !== options && void 0 !== options && (true === options.unstable_strictMode && (isStrictMode = true), void 0 !== options.identifierPrefix && (identifierPrefix = options.identifierPrefix), void 0 !== options.onUncaughtError && (onUncaughtError = options.onUncaughtError), void 0 !== options.onCaughtError && (onCaughtError = options.onCaughtError), void 0 !== options.onRecoverableError && (onRecoverableError = options.onRecoverableError), void 0 !== options.unstable_transitionCallbacks && (transitionCallbacks = options.unstable_transitionCallbacks), void 0 !== options.formState && (formState = options.formState));
         initialChildren = createFiberRoot(
-          container2,
+          container,
           1,
           true,
           initialChildren,
@@ -19287,8 +19287,8 @@ var require_react_dom_client_development = __commonJS({
         initialChildren.current.lanes = options;
         markRootUpdated$1(initialChildren, options);
         ensureRootIsScheduled(initialChildren);
-        container2[internalContainerInstanceKey] = initialChildren.current;
-        listenToAllSupportedEvents(container2);
+        container[internalContainerInstanceKey] = initialChildren.current;
+        listenToAllSupportedEvents(container);
         return new ReactDOMHydrationRoot(initialChildren);
       };
       exports.version = "19.1.1";
@@ -19311,11 +19311,11 @@ var require_client = __commonJS({
 });
 
 // src/renderer/rfq_gen/main.jsx
-var import_react7 = __toESM(require_react(), 1);
+var import_react8 = __toESM(require_react(), 1);
 var import_client2 = __toESM(require_client(), 1);
 
 // src/renderer/rfq_gen/components/rfq_app.jsx
-var import_react6 = __toESM(require_react(), 1);
+var import_react7 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
 // src/renderer/rfq_gen/components/customer_buyer_panel.jsx
@@ -19341,6 +19341,24 @@ async function apiFetch(endpoint, init = {}, timeoutMs = 2e4) {
     clearTimeout(id);
   }
 }
+async function requestJson(endpoint, init = {}, timeoutMs = 2e4) {
+  const res = await apiFetch(endpoint, {
+    headers: { Accept: "application/json", ...init.headers || {} },
+    ...init
+  }, timeoutMs);
+  let data;
+  const text = await res.text();
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
+  if (!res.ok) {
+    const msg = typeof data === "object" && data && "detail" in data ? data.detail : text || res.statusText;
+    throw new Error(`HTTP ${res.status}: ${msg}`);
+  }
+  return data;
+}
 async function getPartyData() {
   const res = await apiFetch(`rfq_gen/party`, { headers: { Accept: "application/json" } });
   if (!res.ok) {
@@ -19359,10 +19377,33 @@ async function getBuyers(party_pk) {
   const data = await res.json();
   return data;
 }
-async function parseExcelFiles(body) {
-  const res = await fetch("http://127.0.0.1:8000/rfq_gen/excel-files", { method: "POST", body });
+async function parseExcelFiles(filePaths) {
+  const res = await fetch("http://127.0.0.1:8000/rfq_gen/excel-files", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(filePaths)
+  });
   if (!res.ok) {
     console.error("422 detail:", await res.text());
+    throw new Error(`HTTP ${res.status}`);
+  }
+  const data = await res.json();
+  return data;
+}
+async function getDocGroups() {
+  return requestJson("rfq_gen/doc-groups");
+}
+async function getQuoteTemplates() {
+  return requestJson("rfq_gen/quote_templates");
+}
+async function generateRfq(payload) {
+  const res = await fetch("http://127.0.0.1:8000/rfq_gen/rfq", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    console.error("RFQ generation failed:", await res.text());
     throw new Error(`HTTP ${res.status}`);
   }
   const data = await res.json();
@@ -19431,7 +19472,7 @@ function normalizeParties(obj) {
   }));
 }
 function CustomerBuyerPanel({ value, onChange }) {
-  const { customer_pk = null, buyer_pk = null, customer_rfq_number = null } = value ?? {};
+  const { customer_pk = null, customer_name = null, buyer_pk = null, customer_rfq_number = null } = value ?? {};
   const [customers, setCustomers] = (0, import_react.useState)([]);
   const [customersLoading, setCustomersLoading] = (0, import_react.useState)(false);
   const [err, setErr] = (0, import_react.useState)(null);
@@ -19485,7 +19526,9 @@ function CustomerBuyerPanel({ value, onChange }) {
       loading: customersLoading,
       onChange: (v) => {
         const next = parseId(v);
-        onChange?.({ customer_pk: next, buyer_pk: null });
+        const selectedCustomer = customers.find((c) => c.id === String(next));
+        const customerName = selectedCustomer ? selectedCustomer.label : null;
+        onChange?.({ customer_pk: next, customer_name: customerName, buyer_pk: null });
       },
       placeholder: "Choose customer.",
       disabledHint: "",
@@ -19521,16 +19564,32 @@ function CustomerBuyerPanel({ value, onChange }) {
 
 // src/renderer/rfq_gen/components/file_input.jsx
 var import_react2 = __toESM(require_react(), 1);
-function ActionBar({ onPress }) {
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-3 my-3" }, /* @__PURE__ */ import_react2.default.createElement(
+function ActionBar({ onMapPress }) {
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-3 my-3 flex-wrap" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex gap-2" }, /* @__PURE__ */ import_react2.default.createElement(
     "button",
     {
       type: "button",
-      className: "btn btn-primary",
-      onClick: onPress
+      className: "btn btn-primary btn-sm",
+      onClick: () => onMapPress("part-doc")
     },
-    "Document Map"
-  ), /* @__PURE__ */ import_react2.default.createElement("div", { className: "form-check" }, /* @__PURE__ */ import_react2.default.createElement(
+    "Part\u2013Doc Map"
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "btn btn-outline-primary btn-sm",
+      onClick: () => onMapPress("doc-group")
+    },
+    "Doc Group Map"
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "btn btn-outline-primary btn-sm",
+      onClick: () => onMapPress("template")
+    },
+    "Template Map"
+  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "form-check" }, /* @__PURE__ */ import_react2.default.createElement(
     "input",
     {
       className: "form-check-input",
@@ -19549,27 +19608,80 @@ function FileUpload({
   onRemove,
   files = []
 }) {
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "mb-3 w-100" }, label && /* @__PURE__ */ import_react2.default.createElement("label", { htmlFor: id, className: "form-label" }, label), /* @__PURE__ */ import_react2.default.createElement(
-    "input",
-    {
-      type: "file",
-      className: "form-control",
-      id,
-      accept,
-      multiple,
-      onChange: (e) => {
-        const list = Array.from(e.target.files || []);
-        onFiles?.(name, list);
-        e.target.value = "";
+  const handleFileSelection = async () => {
+    try {
+      if (!/** @type {any} */
+      window.electronAPI || !/** @type {any} */
+      window.electronAPI.selectFiles) {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = accept;
+        input.multiple = multiple;
+        input.onchange = (e) => {
+          const files2 = Array.from(
+            /** @type {any} */
+            e.target?.files || []
+          );
+          if (files2.length > 0) {
+            onFiles?.(name, files2);
+          }
+        };
+        input.click();
+        return;
       }
+      const filters = [];
+      if (accept) {
+        if (accept.includes(".xlsx") || accept.includes(".xls") || accept.includes(".csv")) {
+          filters.push({ name: "Excel Files", extensions: ["xlsx", "xls", "csv"] });
+        } else {
+          filters.push({ name: "All Files", extensions: ["*"] });
+        }
+      } else {
+        filters.push({ name: "All Files", extensions: ["*"] });
+      }
+      const result = await /** @type {any} */
+      window.electronAPI.selectFiles({
+        title: `Select ${label}`,
+        filters,
+        allowMultipleSelection: multiple
+      });
+      if (!result.canceled && result.files.length > 0) {
+        onFiles?.(name, result.files);
+      }
+    } catch (error) {
+      console.error("Error selecting files:", error);
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = accept;
+      input.multiple = multiple;
+      input.onchange = (e) => {
+        const files2 = Array.from(
+          /** @type {any} */
+          e.target?.files || []
+        );
+        if (files2.length > 0) {
+          onFiles?.(name, files2);
+        }
+      };
+      input.click();
     }
-  ), files.length > 0 && /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group mt-2" }, files.map((f, i) => /* @__PURE__ */ import_react2.default.createElement(
+  };
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "mb-3 w-100" }, label && /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label" }, label), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-grid" }, /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "btn btn-outline-primary",
+      onClick: handleFileSelection
+    },
+    "\u{1F4C1} Select ",
+    label
+  )), files.length > 0 && /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group mt-2" }, files.map((f, i) => /* @__PURE__ */ import_react2.default.createElement(
     "li",
     {
       key: `${f.name}-${f.size}-${f.lastModified}-${i}`,
       className: "list-group-item py-2 d-flex justify-content-between align-items-center"
     },
-    /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-truncate", style: { maxWidth: "75%" } }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-truncate d-block" }, f.name), /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, (f.size / 1024 / 1024).toFixed(2), " MB")),
+    /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-truncate", style: { maxWidth: "75%" } }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-truncate d-block" }, f.name), f.path && /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted d-block text-truncate", title: f.path }, "\u{1F4C2} ", f.path), /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, (f.size / 1024 / 1024).toFixed(2), " MB")),
     /* @__PURE__ */ import_react2.default.createElement(
       "button",
       {
@@ -19583,7 +19695,7 @@ function FileUpload({
     )
   ))));
 }
-function FileUploadSection({ onChange, onRemove, openDocMap, files = {} }) {
+function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: [], estimation: [], parts_requested: [] } }) {
   return /* @__PURE__ */ import_react2.default.createElement("div", { className: "container my-4" }, /* @__PURE__ */ import_react2.default.createElement("h5", { className: "mb-3" }, "Upload Files"), /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-3 mt-3" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react2.default.createElement(
     FileUpload,
     {
@@ -19594,7 +19706,7 @@ function FileUploadSection({ onChange, onRemove, openDocMap, files = {} }) {
       multiple: true,
       onFiles: onChange,
       onRemove,
-      files: files.excel || []
+      files: files.excel
     }
   )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react2.default.createElement(
     FileUpload,
@@ -19605,7 +19717,7 @@ function FileUploadSection({ onChange, onRemove, openDocMap, files = {} }) {
       multiple: true,
       onFiles: onChange,
       onRemove,
-      files: files.estimation || []
+      files: files.estimation
     }
   )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react2.default.createElement(
     FileUpload,
@@ -19616,33 +19728,92 @@ function FileUploadSection({ onChange, onRemove, openDocMap, files = {} }) {
       multiple: true,
       onFiles: onChange,
       onRemove,
-      files: files.parts_requested || []
+      files: files.parts_requested
     }
   ))), /* @__PURE__ */ import_react2.default.createElement(
     ActionBar,
     {
-      onPress: openDocMap
+      onMapPress
     }
   ));
 }
 
 // src/renderer/rfq_gen/components/date_picker.jsx
 var import_react3 = __toESM(require_react(), 1);
-function DateField({ label, value = "", onCalClick }) {
-  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "fw-bold" }, label), /* @__PURE__ */ import_react3.default.createElement("div", { className: "flex-grow-1" }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "form-control-plaintext border rounded px-2 w-100" }, value)), /* @__PURE__ */ import_react3.default.createElement(
-    "button",
+function DateField({ label, value = "", onDateChange, fieldName }) {
+  const [showPicker, setShowPicker] = (0, import_react3.useState)(false);
+  const inputRef = (0, import_react3.useRef)(
+    /** @type {HTMLInputElement | null} */
+    null
+  );
+  const handleCalClick = () => {
+    setShowPicker(true);
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 0);
+  };
+  const handleDateInputChange = (e) => {
+    const selectedDate = e.target.value;
+    onDateChange(fieldName, selectedDate);
+  };
+  const handleInputBlur = () => {
+    setTimeout(() => setShowPicker(false), 150);
+  };
+  const formatDisplayDate = (dateStr) => {
+    if (!dateStr) return "Select date...";
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "fw-bold" }, label), /* @__PURE__ */ import_react3.default.createElement("div", { className: "flex-grow-1 position-relative" }, !showPicker ? /* @__PURE__ */ import_react3.default.createElement(
+    "span",
     {
-      type: "button",
-      className: "btn btn-outline-secondary btn-sm",
-      onClick: onCalClick
+      className: "form-control border rounded px-2 w-100 d-block",
+      style: { minHeight: "38px", cursor: "pointer", lineHeight: "1.5", paddingTop: "6px", paddingBottom: "6px" },
+      onClick: handleCalClick
     },
-    "Cal"
-  ));
+    formatDisplayDate(value)
+  ) : /* @__PURE__ */ import_react3.default.createElement(
+    "input",
+    {
+      ref: inputRef,
+      type: "date",
+      className: "form-control",
+      value,
+      onChange: handleDateInputChange,
+      onBlur: handleInputBlur,
+      style: { width: "100%" }
+    }
+  )));
 }
-function DateSection() {
-  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "container my-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement(DateField, { label: "Inquiry Date:", onCalClick: () => {
-  } })), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement(DateField, { label: "Due Date:", onCalClick: () => {
-  } }))));
+function DateSection({ inquiryDate = "", dueDate = "", onDateChange = () => {
+} }) {
+  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "container my-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement(
+    DateField,
+    {
+      label: "Inquiry Date:",
+      value: inquiryDate,
+      onDateChange,
+      fieldName: "inquiry"
+    }
+  )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement(
+    DateField,
+    {
+      label: "Due Date:",
+      value: dueDate,
+      onDateChange,
+      fieldName: "due"
+    }
+  ))));
 }
 
 // src/renderer/rfq_gen/components/action_bar.jsx
@@ -19687,10 +19858,13 @@ function ActionBar2({ onGenerate, onUpdate, onReset }) {
 var import_react5 = __toESM(require_react(), 1);
 function ModalShell({ open, title, onClose, onConfirm, children, confirmLabel = "OK" }) {
   if (!open) return null;
-  return /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal d-block", tabIndex: "-1", role: "dialog", onClick: onClose }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-dialog modal-lg modal-dialog-centered", role: "document", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-content" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "modal-title m-0" }, title), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: onClose })), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-body" }, children), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn btn-secondary", onClick: onClose }, "Cancel"), /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn btn-primary", onClick: onConfirm }, confirmLabel))))), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-backdrop fade show" }));
+  return /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal d-block", tabIndex: "-1", role: "dialog", onClick: onClose }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-dialog modal-xl modal-dialog-centered", role: "document", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-content" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "modal-title m-0" }, title), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: onClose })), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-body" }, children), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn btn-secondary", onClick: onClose }, "Cancel"), /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn btn-primary", onClick: onConfirm }, confirmLabel))))), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-backdrop fade show" }));
 }
 function SelectList({
-  items = [],
+  items = (
+    /** @type {any[]} */
+    []
+  ),
   multiple = false,
   selected,
   onSelect,
@@ -19729,7 +19903,10 @@ function SelectList({
 function DualListModal({
   open,
   title = "Select Documents for Part",
-  leftItems = [],
+  leftItems = (
+    /** @type {any[]} */
+    []
+  ),
   // e.g. ["PN-001","PN-002"] or [{id, label}]
   rightMap = {},
   // e.g. { "PN-001": ["Cert","Drawing", ["SpecSheet","spec.pdf"]] }
@@ -19778,25 +19955,546 @@ function DualListModal({
   )))));
 }
 
+// src/renderer/rfq_gen/components/DocumentMapModal.jsx
+var import_react6 = __toESM(require_react(), 1);
+function SearchableList({
+  items = (
+    /** @type {any[]} */
+    []
+  ),
+  multiple = false,
+  selected,
+  onSelect,
+  title = "Items",
+  loading = false,
+  error = (
+    /** @type {string | null} */
+    null
+  ),
+  onRetry = (
+    /** @type {(() => void) | null} */
+    null
+  ),
+  searchPlaceholder = "Search items...",
+  mappedItems = (
+    /** @type {Set | undefined} */
+    void 0
+  ),
+  // Items that are already mapped
+  getKey = (x) => {
+    if (x && typeof x === "object") {
+      if ("id" in x) return x.id;
+      if ("part_number" in x) return x.part_number;
+    }
+    return x;
+  },
+  getLabel = (x) => {
+    if (Array.isArray(x)) return String(x[0]);
+    if (x && typeof x === "object") {
+      if ("part_number" in x) return String(x.part_number);
+      if ("label" in x) return String(x.label);
+    }
+    return String(x);
+  }
+}) {
+  const [searchTerm, setSearchTerm] = (0, import_react6.useState)("");
+  const filteredItems = items.filter((item) => {
+    const label = getLabel(item).toLowerCase();
+    return label.includes(searchTerm.toLowerCase());
+  });
+  const isActive = (key) => {
+    if (multiple) {
+      return selected && typeof selected.has === "function" ? selected.has(key) : false;
+    } else {
+      return selected === key;
+    }
+  };
+  const isMapped = (key) => mappedItems?.has(key) || false;
+  const handleClick = (key) => {
+    if (multiple) {
+      const currentSet = selected && typeof selected.has === "function" ? selected : /* @__PURE__ */ new Set();
+      const next = new Set(currentSet);
+      next.has(key) ? next.delete(key) : next.add(key);
+      onSelect(next);
+    } else {
+      onSelect(key);
+    }
+  };
+  return /* @__PURE__ */ import_react6.default.createElement("div", { className: "d-flex flex-column", style: { height: "800px" } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "mb-2 fw-semibold d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react6.default.createElement("span", null, title), multiple && selected && typeof selected.has === "function" && selected.size > 0 && /* @__PURE__ */ import_react6.default.createElement("small", { className: "text-muted" }, "(", selected.size, " selected)")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "mb-2" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "position-relative" }, /* @__PURE__ */ import_react6.default.createElement(
+    "input",
+    {
+      type: "text",
+      className: "form-control form-control-sm",
+      placeholder: searchPlaceholder,
+      value: searchTerm,
+      onChange: (e) => setSearchTerm(e.target.value),
+      style: { paddingRight: searchTerm ? "35px" : void 0 }
+    }
+  ), searchTerm && /* @__PURE__ */ import_react6.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "btn btn-sm position-absolute",
+      style: {
+        right: "5px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        border: "none",
+        background: "none",
+        padding: "0",
+        width: "20px",
+        height: "20px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#6c757d"
+      },
+      onClick: () => setSearchTerm(""),
+      title: "Clear search"
+    },
+    "\xD7"
+  ))), /* @__PURE__ */ import_react6.default.createElement("div", { style: { height: "650px", position: "relative" } }, loading && /* @__PURE__ */ import_react6.default.createElement("div", { className: "d-flex justify-content-center align-items-center h-100" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "spinner-border spinner-border-sm", role: "status" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "visually-hidden" }, "Loading..."))), error && /* @__PURE__ */ import_react6.default.createElement("div", { className: "alert alert-danger d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react6.default.createElement("small", null, error), onRetry && /* @__PURE__ */ import_react6.default.createElement("button", { className: "btn btn-sm btn-outline-danger", onClick: onRetry }, "Retry")), !loading && !error && /* @__PURE__ */ import_react6.default.createElement("div", { className: "border rounded overflow-auto", style: { height: "650px", maxHeight: "650px" } }, /* @__PURE__ */ import_react6.default.createElement("ul", { className: "list-group list-group-flush m-0" }, filteredItems.length === 0 ? /* @__PURE__ */ import_react6.default.createElement("li", { className: "list-group-item text-muted text-center" }, searchTerm ? "No items match your search" : "No items available") : filteredItems.map((item) => {
+    const key = getKey(item);
+    const label = getLabel(item);
+    const mapped = isMapped(key);
+    const active = isActive(key);
+    let className = "list-group-item d-flex justify-content-between align-items-center";
+    if (active) {
+      className += " active";
+    } else if (mapped) {
+      className += " list-group-item-success";
+    }
+    return /* @__PURE__ */ import_react6.default.createElement(
+      "li",
+      {
+        key,
+        role: "button",
+        className,
+        onClick: () => handleClick(key)
+      },
+      /* @__PURE__ */ import_react6.default.createElement("span", { className: "text-truncate" }, label),
+      multiple && active && /* @__PURE__ */ import_react6.default.createElement("span", { className: "badge bg-primary" }, "\u2713"),
+      multiple && mapped && !active && /* @__PURE__ */ import_react6.default.createElement("span", { className: "badge bg-success" }, "\u{1F4CE}")
+    );
+  })))));
+}
+function DocumentMapModal({
+  open,
+  mode = "part-doc",
+  // "part-doc" | "doc-group" | "template"
+  onClose,
+  onSave,
+  uploadedFiles = (
+    /** @type {{excel?: any[], estimation?: any[], parts_requested?: any[]}} */
+    {}
+  )
+  // { excel: [], estimation: [], parts_requested: [] }
+}) {
+  const [leftItems, setLeftItems] = (0, import_react6.useState)(
+    /** @type {any[]} */
+    []
+  );
+  const [rightItems, setRightItems] = (0, import_react6.useState)(
+    /** @type {any[]} */
+    []
+  );
+  const [leftLoading, setLeftLoading] = (0, import_react6.useState)(false);
+  const [rightLoading, setRightLoading] = (0, import_react6.useState)(false);
+  const [leftError, setLeftError] = (0, import_react6.useState)(
+    /** @type {string | null} */
+    null
+  );
+  const [rightError, setRightError] = (0, import_react6.useState)(
+    /** @type {string | null} */
+    null
+  );
+  const [leftSelected, setLeftSelected] = (0, import_react6.useState)(
+    /** @type {Set | string | null} */
+    /* @__PURE__ */ new Set()
+  );
+  const [rightSelected, setRightSelected] = (0, import_react6.useState)(
+    /** @type {Set | string | null} */
+    /* @__PURE__ */ new Set()
+  );
+  const [mappings, setMappings] = (0, import_react6.useState)(/* @__PURE__ */ new Map());
+  const getModalConfig = () => {
+    switch (mode) {
+      case "part-doc":
+        return {
+          title: "Part\u2013Document Map",
+          leftTitle: "Parts",
+          rightTitle: "Documents",
+          leftPlaceholder: "Search parts...",
+          rightPlaceholder: "Search documents..."
+        };
+      case "doc-group":
+        return {
+          title: "Document Group Map",
+          leftTitle: "Document Groups",
+          rightTitle: "Documents",
+          leftPlaceholder: "Search groups...",
+          rightPlaceholder: "Search documents..."
+        };
+      case "template":
+        return {
+          title: "Template Map",
+          leftTitle: "Templates",
+          rightTitle: "Parts",
+          leftPlaceholder: "Search templates...",
+          rightPlaceholder: "Search parts..."
+        };
+      default:
+        return {
+          title: "Document Map",
+          leftTitle: "Left Items",
+          rightTitle: "Right Items",
+          leftPlaceholder: "Search...",
+          rightPlaceholder: "Search..."
+        };
+    }
+  };
+  const config = getModalConfig();
+  const fetchLeftItems = async () => {
+    setLeftLoading(true);
+    setLeftError(null);
+    try {
+      if (mode === "part-doc") {
+        if (uploadedFiles.excel?.length) {
+          const filePaths = uploadedFiles.excel.map((file) => file.path || file.name);
+          const result = await parseExcelFiles(filePaths);
+          setLeftItems(result.parts || []);
+        } else {
+          setLeftItems([]);
+        }
+      } else if (mode === "template") {
+        try {
+          const templates = await getQuoteTemplates();
+          const formattedTemplates = (templates || []).map(([label, id]) => ({
+            id: id.toString(),
+            label: `${label} (ID: ${id})`
+          }));
+          setLeftItems(formattedTemplates);
+        } catch (apiError) {
+          console.error("Failed to fetch quote templates:", apiError);
+          setLeftError("No data could be fetched, restart the API or contact developer");
+        }
+      } else if (mode === "doc-group") {
+        try {
+          const groups = await getDocGroups();
+          const formattedGroups = (groups || []).map(([label, id]) => ({
+            id: id.toString(),
+            label: `${label} (ID: ${id})`
+          }));
+          setLeftItems(formattedGroups);
+        } catch (apiError) {
+          console.error("Failed to fetch document groups:", apiError);
+          setLeftError("No data could be fetched, restart the API or contact developer");
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching left items:", error);
+      setLeftError(error.message);
+    } finally {
+      setLeftLoading(false);
+    }
+  };
+  const fetchRightItems = async () => {
+    setRightLoading(true);
+    setRightError(null);
+    try {
+      if (mode === "part-doc") {
+        const allDocs = [
+          ...(uploadedFiles.excel || []).map((f) => ({ id: f.name, label: f.name, type: "excel" })),
+          ...(uploadedFiles.estimation || []).map((f) => ({ id: f.name, label: f.name, type: "estimation" })),
+          ...(uploadedFiles.parts_requested || []).map((f) => ({ id: f.name, label: f.name, type: "parts_requested" }))
+        ];
+        setRightItems(allDocs);
+      } else if (mode === "doc-group") {
+        const allDocs = [
+          ...(uploadedFiles.excel || []).map((f) => ({ id: f.name, label: f.name, type: "excel" })),
+          ...(uploadedFiles.estimation || []).map((f) => ({ id: f.name, label: f.name, type: "estimation" })),
+          ...(uploadedFiles.parts_requested || []).map((f) => ({ id: f.name, label: f.name, type: "parts_requested" }))
+        ];
+        setRightItems(allDocs);
+      } else if (mode === "template") {
+        if (uploadedFiles.excel?.length) {
+          const filePaths = uploadedFiles.excel.map((file) => file.path || file.name);
+          const result = await parseExcelFiles(filePaths);
+          setRightItems(result.parts || []);
+        } else {
+          setRightItems([]);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching right items:", error);
+      setRightError(error.message);
+    } finally {
+      setRightLoading(false);
+    }
+  };
+  (0, import_react6.useEffect)(() => {
+    if (open) {
+      fetchLeftItems();
+      fetchRightItems();
+      if (mode === "part-doc") {
+        setLeftSelected(null);
+        setRightSelected(/* @__PURE__ */ new Set());
+      } else if (mode === "doc-group" || mode === "template") {
+        setLeftSelected(null);
+        setRightSelected(/* @__PURE__ */ new Set());
+      } else {
+        setLeftSelected(/* @__PURE__ */ new Set());
+        setRightSelected(/* @__PURE__ */ new Set());
+      }
+      setMappings(/* @__PURE__ */ new Map());
+    }
+  }, [open, mode]);
+  const handleAssign = () => {
+    if (mode === "part-doc") {
+      const rightSet = rightSelected && typeof rightSelected === "object" && "has" in rightSelected ? (
+        /** @type {Set} */
+        rightSelected
+      ) : /* @__PURE__ */ new Set();
+      if (!leftSelected || rightSet.size === 0) return;
+      const newMappings = new Map(mappings);
+      if (!newMappings.has(leftSelected)) {
+        newMappings.set(leftSelected, /* @__PURE__ */ new Set());
+      }
+      const existing = newMappings.get(leftSelected);
+      rightSet.forEach((rightKey) => existing.add(rightKey));
+      setMappings(newMappings);
+    } else if (mode === "doc-group") {
+      const rightSet = rightSelected && typeof rightSelected === "object" && "has" in rightSelected ? (
+        /** @type {Set} */
+        rightSelected
+      ) : /* @__PURE__ */ new Set();
+      if (!leftSelected || rightSet.size === 0) return;
+      const newMappings = new Map(mappings);
+      rightSet.forEach((docKey) => {
+        for (const [existingDocKey, groups] of newMappings.entries()) {
+          if (existingDocKey === docKey) {
+            groups.clear();
+          }
+        }
+        if (!newMappings.has(docKey)) {
+          newMappings.set(docKey, /* @__PURE__ */ new Set());
+        }
+        const existing = newMappings.get(docKey);
+        existing.clear();
+        existing.add(leftSelected);
+      });
+      setMappings(newMappings);
+    } else if (mode === "template") {
+      const rightSet = rightSelected && typeof rightSelected === "object" && "has" in rightSelected ? (
+        /** @type {Set} */
+        rightSelected
+      ) : /* @__PURE__ */ new Set();
+      if (!leftSelected || rightSet.size === 0) return;
+      const newMappings = new Map(mappings);
+      rightSet.forEach((partKey) => {
+        for (const [existingPartKey, templates] of newMappings.entries()) {
+          if (existingPartKey === partKey) {
+            templates.clear();
+          }
+        }
+        if (!newMappings.has(partKey)) {
+          newMappings.set(partKey, /* @__PURE__ */ new Set());
+        }
+        const existing = newMappings.get(partKey);
+        existing.clear();
+        existing.add(leftSelected);
+      });
+      setMappings(newMappings);
+    }
+  };
+  const handleUnassign = () => {
+    if (mode === "part-doc") {
+      const rightSet = rightSelected && typeof rightSelected === "object" && "has" in rightSelected ? (
+        /** @type {Set} */
+        rightSelected
+      ) : /* @__PURE__ */ new Set();
+      if (!leftSelected || rightSet.size === 0) return;
+      const newMappings = new Map(mappings);
+      if (newMappings.has(leftSelected)) {
+        const existing = newMappings.get(leftSelected);
+        rightSet.forEach((rightKey) => existing.delete(rightKey));
+        if (existing.size === 0) {
+          newMappings.delete(leftSelected);
+        }
+      }
+      setMappings(newMappings);
+    } else if (mode === "doc-group") {
+      const rightSet = rightSelected && typeof rightSelected === "object" && "has" in rightSelected ? (
+        /** @type {Set} */
+        rightSelected
+      ) : /* @__PURE__ */ new Set();
+      if (!leftSelected || rightSet.size === 0) return;
+      const newMappings = new Map(mappings);
+      rightSet.forEach((docKey) => {
+        if (newMappings.has(docKey)) {
+          const existing = newMappings.get(docKey);
+          existing.delete(leftSelected);
+          if (existing.size === 0) {
+            newMappings.delete(docKey);
+          }
+        }
+      });
+      setMappings(newMappings);
+    } else if (mode === "template") {
+      const rightSet = rightSelected && typeof rightSelected === "object" && "has" in rightSelected ? (
+        /** @type {Set} */
+        rightSelected
+      ) : /* @__PURE__ */ new Set();
+      if (!leftSelected || rightSet.size === 0) return;
+      const newMappings = new Map(mappings);
+      rightSet.forEach((partKey) => {
+        if (newMappings.has(partKey)) {
+          const existing = newMappings.get(partKey);
+          existing.delete(leftSelected);
+          if (existing.size === 0) {
+            newMappings.delete(partKey);
+          }
+        }
+      });
+      setMappings(newMappings);
+    }
+  };
+  const handleSave = () => {
+    const mappingResult = {};
+    mappings.forEach((rightKeys, leftKey) => {
+      mappingResult[leftKey] = Array.from(rightKeys);
+    });
+    onSave?.({
+      mode,
+      mappings: mappingResult,
+      leftItems,
+      rightItems
+    });
+    onClose?.();
+  };
+  const getMappingCount = () => {
+    let totalMappings = 0;
+    mappings.forEach((rightKeys) => {
+      totalMappings += rightKeys.size;
+    });
+    return totalMappings;
+  };
+  return /* @__PURE__ */ import_react6.default.createElement(
+    ModalShell,
+    {
+      open,
+      title: config.title,
+      onClose,
+      onConfirm: handleSave,
+      confirmLabel: "Save Mappings"
+    },
+    /* @__PURE__ */ import_react6.default.createElement("div", { className: "container-fluid", style: { height: "900px" } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "row g-3", style: { height: "750px" } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12 col-md-5" }, /* @__PURE__ */ import_react6.default.createElement(
+      SearchableList,
+      {
+        items: leftItems,
+        multiple: mode === "part-doc" || mode === "doc-group" || mode === "template" ? false : true,
+        selected: leftSelected,
+        onSelect: setLeftSelected,
+        title: config.leftTitle,
+        loading: leftLoading,
+        error: leftError,
+        onRetry: () => fetchLeftItems(),
+        searchPlaceholder: config.leftPlaceholder
+      }
+    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12 col-md-2 d-flex flex-column justify-content-center align-items-center" }, /* @__PURE__ */ import_react6.default.createElement(
+      "button",
+      {
+        className: "btn btn-primary btn-sm mb-2",
+        onClick: handleAssign,
+        disabled: mode === "part-doc" || mode === "doc-group" || mode === "template" ? !leftSelected || typeof rightSelected === "object" && rightSelected && rightSelected.size === 0 || false : !leftSelected || !(typeof leftSelected === "object" && "has" in leftSelected) || /** @type {Set} */
+        leftSelected.size === 0 || typeof rightSelected === "object" && rightSelected && rightSelected.size === 0 || false,
+        title: "Assign selected items"
+      },
+      "\u2192"
+    ), /* @__PURE__ */ import_react6.default.createElement(
+      "button",
+      {
+        className: "btn btn-outline-secondary btn-sm mb-3",
+        onClick: handleUnassign,
+        disabled: mode === "part-doc" || mode === "doc-group" || mode === "template" ? !leftSelected || typeof rightSelected === "object" && rightSelected && rightSelected.size === 0 || false : !leftSelected || !(typeof leftSelected === "object" && "has" in leftSelected) || /** @type {Set} */
+        leftSelected.size === 0 || typeof rightSelected === "object" && rightSelected && rightSelected.size === 0 || false,
+        title: "Unassign selected items"
+      },
+      "\u2190"
+    ), /* @__PURE__ */ import_react6.default.createElement("small", { className: "text-muted text-center" }, getMappingCount(), " mappings")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12 col-md-5" }, /* @__PURE__ */ import_react6.default.createElement(
+      SearchableList,
+      {
+        items: rightItems,
+        multiple: true,
+        selected: rightSelected,
+        onSelect: setRightSelected,
+        title: config.rightTitle,
+        loading: rightLoading,
+        error: rightError,
+        onRetry: () => fetchRightItems(),
+        searchPlaceholder: config.rightPlaceholder,
+        mappedItems: mode === "part-doc" && leftSelected ? mappings.get(leftSelected) : (mode === "doc-group" || mode === "template") && leftSelected ? new Set(Array.from(mappings.entries()).filter(([itemKey, mappedTo]) => mappedTo.has(leftSelected)).map(([itemKey]) => itemKey)) : void 0
+      }
+    ))), mappings.size > 0 && /* @__PURE__ */ import_react6.default.createElement("div", { className: "row mt-3" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "card" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "card-header py-2" }, /* @__PURE__ */ import_react6.default.createElement("small", { className: "fw-semibold" }, "Current Mappings (", mappings.size, ")")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "card-body py-1", style: { height: "80px", overflow: "auto" } }, Array.from(mappings.entries()).map(([leftKey, rightKeys]) => /* @__PURE__ */ import_react6.default.createElement("div", { key: leftKey, className: "mb-1", style: { fontSize: "0.85rem" } }, /* @__PURE__ */ import_react6.default.createElement("strong", null, leftKey), " \u2192 ", Array.from(rightKeys).join(", "))))))))
+  );
+}
+
 // src/renderer/rfq_gen/components/rfq_app.jsx
 function HeaderBar({ title }) {
-  return /* @__PURE__ */ import_react6.default.createElement("div", { className: "container-fluid bg-body border-bottom py-2 mb-3" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react6.default.createElement("h5", { className: "mb-0 fw-bold" }, title)));
+  return /* @__PURE__ */ import_react7.default.createElement("div", { className: "container-fluid bg-body border-bottom py-2 mb-3" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react7.default.createElement("h5", { className: "mb-0 fw-bold" }, title)));
 }
 function PageHeading({ heading }) {
-  return /* @__PURE__ */ import_react6.default.createElement("h3", { className: "text-center mb-4 fw-bold" }, heading);
+  return /* @__PURE__ */ import_react7.default.createElement("h3", { className: "text-center mb-4 fw-bold" }, heading);
 }
 function RfqApp() {
-  const [state, setState] = (0, import_react6.useState)({
+  const [state, setState] = (0, import_react7.useState)({
     customer_pk: null,
+    customer_name: null,
+    // Store the party name
     buyer_pk: null,
     customer_rfq_number: null,
-    files: { excel: [], estimation: [], parts_requested: [] },
-    dates: { inquiry: "", due: "" }
+    files: {
+      excel: (
+        /** @type {Array<File & {path?: string}>} */
+        []
+      ),
+      estimation: (
+        /** @type {Array<File & {path?: string}>} */
+        []
+      ),
+      parts_requested: (
+        /** @type {Array<File & {path?: string}>} */
+        []
+      )
+    },
+    dates: { inquiry: "", due: "" },
+    // Store mapping results
+    mappings: {
+      partToDoc: (
+        /** @type {Record<string, string[]>} */
+        {}
+      ),
+      // { [partNo]: documentKeys[] }
+      partToTemplate: (
+        /** @type {Record<string, string[]>} */
+        {}
+      ),
+      // { [partNo]: templateKeys[] }
+      docToGroup: (
+        /** @type {Record<string, string[]>} */
+        {}
+      )
+      // { [docKey]: groupKeys[] }
+    }
   });
-  const handlePanelChange = (0, import_react6.useCallback)((partial) => {
+  const [documentMapModal, setDocumentMapModal] = (0, import_react7.useState)({
+    open: false,
+    mode: "part-doc"
+  });
+  const handlePanelChange = (0, import_react7.useCallback)((partial) => {
     setState((prev) => ({ ...prev, ...partial }));
   }, []);
-  const handleFileUpload = (0, import_react6.useCallback)((name, newFiles) => {
+  const handleFileUpload = (0, import_react7.useCallback)((name, newFiles) => {
     setState((prev) => {
       const existing = prev.files[name] || [];
       const key = (f) => `${f.name}-${f.size}-${f.lastModified}`;
@@ -19808,28 +20506,119 @@ function RfqApp() {
       };
     });
   }, []);
-  const handleFileRemove = (0, import_react6.useCallback)((name, index) => {
+  const handleFileRemove = (0, import_react7.useCallback)((name, index) => {
     setState((prev) => {
       const list = (prev.files[name] || []).slice();
       list.splice(index, 1);
       return { ...prev, files: { ...prev.files, [name]: list } };
     });
   }, []);
-  const openDocumentMap = (0, import_react6.useCallback)(async () => {
-    const excelFiles = state?.files?.excel ?? [];
-    const fd = new FormData();
-    excelFiles.forEach((file) => fd.append("excel_files", file));
-    fd.append("customer_pk", String(state.customer_pk ?? ""));
-    fd.append("buyer_pk", String(state.buyer_pk ?? ""));
-    fd.append("customer_rfq_number", String(state.customer_rfq_number ?? ""));
-    const res = await parseExcelFiles(fd);
-    console.log(res);
-    const left = ["PN-001", "PN-002", "PN-003"];
-    const right = {
-      "PN-001": ["Cert", "Drawing", ["SpecSheet", "spec_001.pdf"]],
-      "PN-002": ["MSDS", "Work Instructions"],
-      "PN-003": ["Traveler"]
+  const handleDateChange = (0, import_react7.useCallback)((field, value) => {
+    setState((prev) => ({
+      ...prev,
+      dates: { ...prev.dates, [field]: value }
+    }));
+  }, []);
+  const handleMapPress = (0, import_react7.useCallback)((mode) => {
+    setDocumentMapModal({ open: true, mode });
+  }, []);
+  const handleMapClose = (0, import_react7.useCallback)(() => {
+    setDocumentMapModal((prev) => ({ ...prev, open: false }));
+  }, []);
+  const handleMapSave = (0, import_react7.useCallback)((result) => {
+    console.log("Document mappings saved:", result);
+    setState((prev) => {
+      const newMappings = { ...prev.mappings };
+      if (result.mode === "part-doc") {
+        newMappings.partToDoc = result.mappings;
+      } else if (result.mode === "template") {
+        newMappings.partToTemplate = result.mappings;
+      } else if (result.mode === "doc-group") {
+        newMappings.docToGroup = result.mappings;
+      }
+      return { ...prev, mappings: newMappings };
+    });
+    setDocumentMapModal((prev) => ({ ...prev, open: false }));
+  }, []);
+  const buildRfqRequestPayload = (0, import_react7.useCallback)(() => {
+    const part_to_quote_map = {};
+    Object.entries(state.mappings.partToTemplate).forEach(([partNo, templateKeys]) => {
+      if (templateKeys.length > 0) {
+        part_to_quote_map[partNo] = templateKeys[0];
+      }
+    });
+    const part_to_template_map = {};
+    Object.entries(state.mappings.partToTemplate).forEach(([partNo, templateKeys]) => {
+      if (templateKeys.length > 0) {
+        part_to_template_map[partNo] = templateKeys[0];
+      }
+    });
+    const part_to_doc_map = {};
+    Object.entries(state.mappings.partToDoc).forEach(([partNo, docKeys]) => {
+      part_to_doc_map[partNo] = docKeys.map((docKey) => {
+        const groupKeys = state.mappings.docToGroup[docKey] || [];
+        const group_pk = groupKeys.length > 0 ? groupKeys[0] : null;
+        const allFiles = [...state.files.estimation || [], ...state.files.parts_requested || []];
+        const fileObj = allFiles.find((f) => f.name === docKey);
+        return {
+          url: fileObj?.path || docKey,
+          // Use full path if available, fallback to docKey
+          group_pk
+        };
+      });
+    });
+    const excel_files = (state.files.excel || []).map((file) => file.path || file.name);
+    const estimation_files = (state.files.estimation || []).map((file) => {
+      const groupKeys = state.mappings.docToGroup[file.name] || [];
+      const group_pk = groupKeys.length > 0 ? groupKeys[0] : null;
+      return {
+        url: file.path || file.name,
+        // Use full path if available
+        group_pk
+      };
+    });
+    const currentDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+    const rfq_metadata = {
+      customer_rfq_number: state.customer_rfq_number,
+      buyer_fk: state.buyer_pk,
+      party_pk: state.customer_pk,
+      party_name: state.customer_name,
+      // Use stored customer name
+      itar: false,
+      // TODO: Add ITAR field to form if needed
+      inquiry_date: state.dates.inquiry || currentDate,
+      due_date: state.dates.due || currentDate,
+      current_date: currentDate,
+      update_rfq_pk: null
+      // For updates, this would be populated
     };
+    const payload = {
+      part_to_quote_map,
+      part_to_template_map,
+      part_to_doc_map,
+      excel_files,
+      estimation_files,
+      rfq_metadata
+    };
+    return payload;
+  }, [state]);
+  const openDocumentMap = (0, import_react7.useCallback)(async () => {
+    const excelFiles = state?.files?.excel ?? [];
+    const filePaths = excelFiles.map((file) => file.path || file.name);
+    const res = await parseExcelFiles(filePaths);
+    console.log(res);
+    const left = (
+      /** @type {string[]} */
+      ["PN-001", "PN-002", "PN-003"]
+    );
+    const right = (
+      /** @type {Record<string, any[]>} */
+      {
+        "PN-001": ["Cert", "Drawing", ["SpecSheet", "spec_001.pdf"]],
+        "PN-002": ["MSDS", "Work Instructions"],
+        "PN-003": ["Traveler"]
+      }
+    );
     let host = document.getElementById("docmap-modal-host");
     if (!host) {
       host = document.createElement("div");
@@ -19842,12 +20631,15 @@ function RfqApp() {
       host.remove();
     };
     root2.render(
-      /* @__PURE__ */ import_react6.default.createElement(
+      /* @__PURE__ */ import_react7.default.createElement(
         DualListModal,
         {
           open: true,
           title: "Document Map",
-          leftItems: left,
+          leftItems: (
+            /** @type {any[]} */
+            left
+          ),
           rightMap: right,
           oneToOneOnly: false,
           onClose: close,
@@ -19860,34 +20652,77 @@ function RfqApp() {
     );
     console.log("DocumentMap: prepared payload & fake lists", { excelFiles, left, right });
   }, [state.files, state.customer_pk, state.buyer_pk, state.customer_rfq_number]);
-  return /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement(HeaderBar, { title: "RFQ Gen" }), /* @__PURE__ */ import_react6.default.createElement(PageHeading, { heading: "RFQ Gen" }), /* @__PURE__ */ import_react6.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement(HeaderBar, { title: "RFQ Gen" }), /* @__PURE__ */ import_react7.default.createElement(PageHeading, { heading: "RFQ Gen" }), /* @__PURE__ */ import_react7.default.createElement(
     CustomerBuyerPanel,
     {
-      value: { customer_pk: state.customer_pk, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number },
+      value: { customer_pk: state.customer_pk, customer_name: state.customer_name, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number },
       onChange: handlePanelChange
     }
-  ), /* @__PURE__ */ import_react6.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     FileUploadSection,
     {
       onChange: handleFileUpload,
       onRemove: handleFileRemove,
-      openDocMap: openDocumentMap,
+      onMapPress: handleMapPress,
       files: state.files
     }
-  ), /* @__PURE__ */ import_react6.default.createElement(DateSection, null), /* @__PURE__ */ import_react6.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
+    DateSection,
+    {
+      inquiryDate: state.dates.inquiry,
+      dueDate: state.dates.due,
+      onDateChange: handleDateChange
+    }
+  ), /* @__PURE__ */ import_react7.default.createElement(
     ActionBar2,
     {
-      onGenerate: () => console.log("Generate RFQ clicked"),
-      onUpdate: () => console.log("Update RFQ clicked"),
+      onGenerate: async () => {
+        try {
+          const payload = buildRfqRequestPayload();
+          console.log("Generate RFQ payload:", JSON.stringify(payload, null, 2));
+          const result = await generateRfq(payload);
+          console.log("RFQ generated successfully:", result);
+        } catch (error) {
+          console.error("Failed to generate RFQ:", error);
+        }
+      },
+      onUpdate: () => {
+        const payload = buildRfqRequestPayload();
+        console.log("Update RFQ payload:", JSON.stringify(payload, null, 2));
+      },
       onReset: () => console.log("Reset GUI clicked")
+    }
+  ), /* @__PURE__ */ import_react7.default.createElement(
+    DocumentMapModal,
+    {
+      open: documentMapModal.open,
+      mode: documentMapModal.mode,
+      onClose: handleMapClose,
+      onSave: handleMapSave,
+      uploadedFiles: state.files
     }
   ));
 }
 
 // src/renderer/rfq_gen/main.jsx
-var container = document.getElementById("root");
-var root = (0, import_client2.createRoot)(container);
-root.render(/* @__PURE__ */ import_react7.default.createElement(RfqApp, null));
+var root = null;
+function mountRfqGenApp() {
+  const container = document.getElementById("rfq-gen-root");
+  if (container && !root) {
+    root = (0, import_client2.createRoot)(container);
+    root.render(/* @__PURE__ */ import_react8.default.createElement(RfqApp, null));
+  }
+}
+function unmountRfqGenApp() {
+  if (root) {
+    root.unmount();
+    root = null;
+  }
+}
+export {
+  mountRfqGenApp,
+  unmountRfqGenApp
+};
 /*! Bundled license information:
 
 react/cjs/react.development.js:

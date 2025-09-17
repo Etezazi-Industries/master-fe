@@ -7,7 +7,7 @@ export function ModalShell({ open, title, onClose, onConfirm, children, confirmL
     return (
         <>
             <div className="modal d-block" tabIndex="-1" role="dialog" onClick={onClose}>
-                <div className="modal-dialog modal-lg modal-dialog-centered" role="document" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-dialog modal-xl modal-dialog-centered" role="document" onClick={(e) => e.stopPropagation()}>
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title m-0">{title}</h5>
@@ -28,7 +28,7 @@ export function ModalShell({ open, title, onClose, onConfirm, children, confirmL
 
 /** Reusable list (child) */
 function SelectList({
-    items = [],
+    items = /** @type {any[]} */ ([]),
     multiple = false,
     selected,
     onSelect,
@@ -79,7 +79,7 @@ function SelectList({
 export default function DualListModal({
     open,
     title = "Select Documents for Part",
-    leftItems = [],                         // e.g. ["PN-001","PN-002"] or [{id, label}]
+    leftItems = /** @type {any[]} */ ([]),                         // e.g. ["PN-001","PN-002"] or [{id, label}]
     rightMap = {},                          // e.g. { "PN-001": ["Cert","Drawing", ["SpecSheet","spec.pdf"]] }
     oneToOneOnly = false,                   // SINGLE (true) vs MULTIPLE (false) on right side
     onClose,

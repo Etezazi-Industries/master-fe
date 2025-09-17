@@ -2,18 +2,33 @@
 import React from "react";
 
 
-// TODO: wire this up to change app state.
-function ActionBar({ onPress }) {
+function ActionBar({ onMapPress }) {
     return (
-        <div className="d-flex align-items-center gap-3 my-3">
-            {/* Document Map button */}
-            <button
-                type="button"
-                className="btn btn-primary"
-                onClick={onPress}
-            >
-                Document Map
-            </button>
+        <div className="d-flex align-items-center gap-3 my-3 flex-wrap">
+            {/* Three mapping buttons */}
+            <div className="d-flex gap-2">
+                <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    onClick={() => onMapPress("part-doc")}
+                >
+                    Part–Doc Map
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-outline-primary btn-sm"
+                    onClick={() => onMapPress("doc-group")}
+                >
+                    Doc Group Map
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-outline-primary btn-sm"
+                    onClick={() => onMapPress("template")}
+                >
+                    Template Map
+                </button>
+            </div>
 
             {/* ITAR restricted checkbox */}
             <div className="form-check">
@@ -32,24 +47,81 @@ function ActionBar({ onPress }) {
 
 
 
+/**
+ * @param {{label: string, id: string, accept?: string, multiple?: boolean, name: string, onFiles: Function, onRemove: Function, files?: any[]}} props
+ */
 function FileUpload({
     label, id, accept = "", multiple = false, name, onFiles, onRemove, files = []
 }) {
+    const handleFileSelection = async () => {
+        try {
+            // Check if electronAPI is available
+            if (!/** @type {any} */ (window).electronAPI || !/** @type {any} */ (window).electronAPI.selectFiles) {
+                // Fallback to creating a hidden file input
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = accept;
+                input.multiple = multiple;
+                input.onchange = (e) => {
+                    const files = Array.from(/** @type {any} */ (e.target)?.files || []);
+                    if (files.length > 0) {
+                        onFiles?.(name, files);
+                    }
+                };
+                input.click();
+                return;
+            }
+
+            // Convert accept string to dialog filters
+            const filters = [];
+            if (accept) {
+                if (accept.includes('.xlsx') || accept.includes('.xls') || accept.includes('.csv')) {
+                    filters.push({ name: 'Excel Files', extensions: ['xlsx', 'xls', 'csv'] });
+                } else {
+                    filters.push({ name: 'All Files', extensions: ['*'] });
+                }
+            } else {
+                filters.push({ name: 'All Files', extensions: ['*'] });
+            }
+
+            const result = await /** @type {any} */ (window).electronAPI.selectFiles({
+                title: `Select ${label}`,
+                filters,
+                allowMultipleSelection: multiple
+            });
+
+            if (!result.canceled && result.files.length > 0) {
+                onFiles?.(name, result.files);
+            }
+        } catch (error) {
+            console.error('Error selecting files:', error);
+            // Fallback to regular file input on error
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = accept;
+            input.multiple = multiple;
+            input.onchange = (e) => {
+                const files = Array.from(/** @type {any} */ (e.target)?.files || []);
+                if (files.length > 0) {
+                    onFiles?.(name, files);
+                }
+            };
+            input.click();
+        }
+    };
+
     return (
         <div className="mb-3 w-100">
-            {label && <label htmlFor={id} className="form-label">{label}</label>}
-            <input
-                type="file"
-                className="form-control"
-                id={id}
-                accept={accept}
-                multiple={multiple}
-                onChange={(e) => {
-                    const list = Array.from(e.target.files || []);
-                    onFiles?.(name, list);   // append handled by parent now
-                    e.target.value = "";     // allow re-selecting same file
-                }}
-            />
+            {label && <label className="form-label">{label}</label>}
+            <div className="d-grid">
+                <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={handleFileSelection}
+                >
+                    📁 Select {label}
+                </button>
+            </div>
 
             {files.length > 0 && (
                 <ul className="list-group mt-2">
@@ -60,6 +132,11 @@ function FileUpload({
                         >
                             <div className="text-truncate" style={{ maxWidth: "75%" }}>
                                 <span className="text-truncate d-block">{f.name}</span>
+                                {f.path && (
+                                    <small className="text-muted d-block text-truncate" title={f.path}>
+                                        📂 {f.path}
+                                    </small>
+                                )}
                                 <small className="text-muted">
                                     {(f.size / 1024 / 1024).toFixed(2)} MB
                                 </small>
@@ -81,7 +158,10 @@ function FileUpload({
     );
 }
 
-export default function FileUploadSection({ onChange, onRemove, openDocMap, files = {} }) {
+/**
+ * @param {{onChange: Function, onRemove: Function, onMapPress: Function, files: {excel?: any[], estimation?: any[], parts_requested?: any[]}}} props
+ */
+export default function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: [], estimation: [], parts_requested: [] } }) {
     return (
         <div className="container my-4">
             <h5 className="mb-3">Upload Files</h5>
@@ -95,7 +175,7 @@ export default function FileUploadSection({ onChange, onRemove, openDocMap, file
                         multiple
                         onFiles={onChange}
                         onRemove={onRemove}
-                        files={files.excel || []}
+                        files={files.excel}
                     />
                 </div>
                 <div className="col-12 col-md-4">
@@ -106,7 +186,7 @@ export default function FileUploadSection({ onChange, onRemove, openDocMap, file
                         multiple
                         onFiles={onChange}
                         onRemove={onRemove}
-                        files={files.estimation || []}
+                        files={files.estimation}
                     />
                 </div>
                 <div className="col-12 col-md-4">
@@ -117,12 +197,12 @@ export default function FileUploadSection({ onChange, onRemove, openDocMap, file
                         multiple
                         onFiles={onChange}
                         onRemove={onRemove}
-                        files={files.parts_requested || []}
+                        files={files.parts_requested}
                     />
                 </div>
             </div>
             <ActionBar
-                onPress={openDocMap}
+                onMapPress={onMapPress}
             />
         </div>
     );

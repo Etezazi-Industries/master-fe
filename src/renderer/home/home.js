@@ -17,11 +17,13 @@ async function loadApp(url, appType = null) {
     const frame = document.getElementById('app-frame');
     const vendorQuotingRoot = document.getElementById('vendor-quoting-root');
     const vacationRoot = document.getElementById('vacation-root');
+    const rfqGenRoot = document.getElementById('rfq-gen-root');
     
     // Hide all containers first
     if (frame) frame.style.display = 'none';
     if (vendorQuotingRoot) vendorQuotingRoot.style.display = 'none';
     if (vacationRoot) vacationRoot.style.display = 'none';
+    if (rfqGenRoot) rfqGenRoot.style.display = 'none';
     
     // Unmount previous React apps
     if (currentApp === 'vendor-quoting') {
@@ -37,6 +39,13 @@ async function loadApp(url, appType = null) {
             unmountVacationApp();
         } catch (error) {
             console.error('Failed to unmount vacation app:', error);
+        }
+    } else if (currentApp === 'rfq-gen') {
+        try {
+            const { unmountRfqGenApp } = await import('../rfq_gen/main.js');
+            unmountRfqGenApp();
+        } catch (error) {
+            console.error('Failed to unmount RFQ Gen app:', error);
         }
     }
     
@@ -61,6 +70,17 @@ async function loadApp(url, appType = null) {
             currentApp = 'vacation';
         } catch (error) {
             console.error('Failed to load vacation app:', error);
+        }
+    } else if (appType === 'rfq-gen') {
+        // Show and mount RFQ Gen React app
+        if (rfqGenRoot) rfqGenRoot.style.display = 'block';
+        
+        try {
+            const { mountRfqGenApp } = await import('../rfq_gen/main.js');
+            mountRfqGenApp();
+            currentApp = 'rfq-gen';
+        } catch (error) {
+            console.error('Failed to load RFQ Gen app:', error);
         }
     } else {
         // Show iframe for other apps
