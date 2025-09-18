@@ -51,6 +51,9 @@ export default function RfqApp() {
         mode: "part-doc"
     });
 
+    // Loading state for RFQ generation
+    const [isGenerating, setIsGenerating] = useState(false);
+
     const handlePanelChange = useCallback((partial) => {
         setState(prev => ({ ...prev, ...partial }));
     }, []);
@@ -119,6 +122,7 @@ export default function RfqApp() {
     }, []);
 
 
+
     // Build RfqRequest payload from in-memory data
     const buildRfqRequestPayload = useCallback(() => {
         // Create part_to_quote_map: { [partNo]: quotePK } (use template mappings as quote mappings)
@@ -141,16 +145,17 @@ export default function RfqApp() {
         const part_to_doc_map = {};
         Object.entries(state.mappings.partToDoc).forEach(([partNo, docKeys]) => {
             part_to_doc_map[partNo] = docKeys.map(docKey => {
-                // Find corresponding group_pk from doc→group map
-                const groupKeys = state.mappings.docToGroup[docKey] || [];
+                // Find the file object to get the full path
+                const allFiles = [...(state.files.excel || []), ...(state.files.estimation || []), ...(state.files.parts_requested || [])];
+                const fileObj = allFiles.find(f => f.name === docKey);
+                const fullPath = fileObj?.path || docKey;
+                
+                // Find corresponding group_pk from doc→group map using the full path
+                const groupKeys = state.mappings.docToGroup[fullPath] || state.mappings.docToGroup[docKey] || [];
                 const group_pk = groupKeys.length > 0 ? groupKeys[0] : null; // Take first group if multiple
                 
-                // Find the file object to get the full path
-                const allFiles = [...(state.files.estimation || []), ...(state.files.parts_requested || [])];
-                const fileObj = allFiles.find(f => f.name === docKey);
-                
                 return {
-                    url: fileObj?.path || docKey, // Use full path if available, fallback to docKey
+                    url: fullPath, // Use full path
                     group_pk: group_pk
                 };
             });
@@ -159,12 +164,13 @@ export default function RfqApp() {
         // Prepare file arrays
         const excel_files = (state.files.excel || []).map(file => file.path || file.name);
         const estimation_files = (state.files.estimation || []).map(file => {
-            // Find group_pk for this file
-            const groupKeys = state.mappings.docToGroup[file.name] || [];
+            // Find group_pk for this file using full path first, then fallback to name
+            const fullPath = file.path || file.name;
+            const groupKeys = state.mappings.docToGroup[fullPath] || state.mappings.docToGroup[file.name] || [];
             const group_pk = groupKeys.length > 0 ? groupKeys[0] : null;
             
             return {
-                url: file.path || file.name, // Use full path if available
+                url: fullPath, // Use full path
                 group_pk: group_pk
             };
         });
@@ -204,7 +210,7 @@ export default function RfqApp() {
         const res = await parseExcelFiles(filePaths);
         console.log(res);
 
-        // 2) Fake data for now (replace with API response later)
+        // TODO: Why is this here? 
         const left = /** @type {string[]} */ (["PN-001", "PN-002", "PN-003"]);
         const right = /** @type {Record<string, any[]>} */ ({
             "PN-001": ["Cert", "Drawing", ["SpecSheet", "spec_001.pdf"]],
@@ -236,7 +242,7 @@ export default function RfqApp() {
                 oneToOneOnly={false}
                 onClose={close}
                 onSubmit={({ left: l, right: r }) => {
-                    console.log("DocMap selection:", { left: l, right: r, formData: fd });
+                    console.log("DocMap selection:", { left: l, right: r });
                     close();
                 }}
             />
@@ -247,7 +253,7 @@ export default function RfqApp() {
 
 
     return (
-        <div>
+        <div style={{ position: 'relative' }}>
             <HeaderBar title="RFQ Gen" />
             <PageHeading heading="RFQ Gen" />
             <CustomerBuyerPanel
@@ -267,13 +273,24 @@ export default function RfqApp() {
             />
             <ActionBar
                 onGenerate={async () => {
+                    setIsGenerating(true);
                     try {
                         const payload = buildRfqRequestPayload();
                         console.log("Generate RFQ payload:", JSON.stringify(payload, null, 2));
                         const result = await generateRfq(payload);
                         console.log("RFQ generated successfully:", result);
+                        
+                        // Show success message with generated RFQ PK
+                        if (result && result.generated) {
+                            alert(`RFQ generated successfully! RFQ PK: ${result.generated}`);
+                        } else {
+                            alert("RFQ generated successfully!");
+                        }
                     } catch (error) {
                         console.error("Failed to generate RFQ:", error);
+                        alert(`Failed to generate RFQ: ${error.message || error}`);
+                    } finally {
+                        setIsGenerating(false);
                     }
                 }}
                 onUpdate={() => {
@@ -290,7 +307,39 @@ export default function RfqApp() {
                 onClose={handleMapClose}
                 onSave={handleMapSave}
                 uploadedFiles={state.files}
+                existingMappings={state.mappings}
             />
+            
+            {/* Loading Overlay */}
+            {isGenerating && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 9999
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '30px',
+                        borderRadius: '8px',
+                        textAlign: 'center',
+                        minWidth: '200px'
+                    }}>
+                        <div className="spinner-border text-primary mb-3" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                        <div style={{ fontSize: '16px', fontWeight: '500' }}>
+                            Generating RFQ...
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

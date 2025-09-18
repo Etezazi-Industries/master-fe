@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ModalShell } from "./modals/document_group";
 import { parseExcelFiles, requestJson, getDocGroups, getQuoteTemplates } from "../../api_calls";
+import { autoAssignPartsToDocuments, autoAssignDocumentsToGroups } from "./file_input";
 
 /**
  * Reusable list component with search functionality
@@ -189,6 +190,7 @@ export default function DocumentMapModal({
     onClose,
     onSave,
     uploadedFiles = /** @type {{excel?: any[], estimation?: any[], parts_requested?: any[]}} */ ({}), // { excel: [], estimation: [], parts_requested: [] }
+    existingMappings = /** @type {{partToDoc?: Record<string, string[]>, docToGroup?: Record<string, string[]>, partToTemplate?: Record<string, string[]>}} */ ({}),
 }) {
     const [leftItems, setLeftItems] = useState(/** @type {any[]} */ ([]));
     const [rightItems, setRightItems] = useState(/** @type {any[]} */ ([]));
@@ -196,6 +198,7 @@ export default function DocumentMapModal({
     const [rightLoading, setRightLoading] = useState(false);
     const [leftError, setLeftError] = useState(/** @type {string | null} */ (null));
     const [rightError, setRightError] = useState(/** @type {string | null} */ (null));
+    const [autoAssignLoading, setAutoAssignLoading] = useState(false);
     
     const [leftSelected, setLeftSelected] = useState(/** @type {Set | string | null} */ (new Set()));
     const [rightSelected, setRightSelected] = useState(/** @type {Set | string | null} */ (new Set()));
@@ -333,6 +336,91 @@ export default function DocumentMapModal({
         }
     };
 
+    // Load existing mappings and auto-populate defaults
+    const loadMappings = async () => {
+        const newMappings = new Map();
+        
+        // Load existing mappings based on mode
+        let existingMap = {};
+        if (mode === "part-doc" && existingMappings.partToDoc) {
+            existingMap = existingMappings.partToDoc;
+        } else if (mode === "doc-group" && existingMappings.docToGroup) {
+            existingMap = existingMappings.docToGroup;
+        } else if (mode === "template" && existingMappings.partToTemplate) {
+            existingMap = existingMappings.partToTemplate;
+        }
+        
+        // Convert existing mappings to Map format
+        Object.entries(existingMap).forEach(([key, values]) => {
+            if (values && values.length > 0) {
+                newMappings.set(key, new Set(values));
+            }
+        });
+        
+        // Auto-populate defaults for part-doc mode if no existing mappings
+        if (mode === "part-doc" && newMappings.size === 0) {
+            try {
+                // Get parts from Excel files
+                if (uploadedFiles.excel?.length) {
+                    setAutoAssignLoading(true);
+                    const filePaths = uploadedFiles.excel.map(file => file.path || file.name);
+                    const result = await parseExcelFiles(filePaths);
+                    const parts = result.parts || [];
+                    
+                    if (parts.length > 0) {
+                        // Generate auto-assignment mapping
+                        const defaultMapping = autoAssignPartsToDocuments(parts, uploadedFiles);
+                        
+                        // Add default mappings to newMappings
+                        Object.entries(defaultMapping).forEach(([partNo, docNames]) => {
+                            if (docNames && docNames.length > 0) {
+                                newMappings.set(partNo, new Set(docNames));
+                            }
+                        });
+                        
+                        console.log("Auto-populated default part-doc mappings:", defaultMapping);
+                    }
+                }
+            } catch (error) {
+                console.error("Error auto-populating defaults:", error);
+            } finally {
+                setAutoAssignLoading(false);
+            }
+        }
+        
+        // Auto-populate defaults for doc-group mode if no existing mappings
+        if (mode === "doc-group" && newMappings.size === 0) {
+            try {
+                // Check if we have any files to process
+                const totalFiles = (uploadedFiles.excel?.length || 0) + 
+                                 (uploadedFiles.estimation?.length || 0) + 
+                                 (uploadedFiles.parts_requested?.length || 0);
+                
+                if (totalFiles > 0) {
+                    setAutoAssignLoading(true);
+                    
+                    // Generate auto-assignment mapping based on file extensions
+                    const defaultMapping = autoAssignDocumentsToGroups(uploadedFiles);
+                    
+                    // Add default mappings to newMappings
+                    Object.entries(defaultMapping).forEach(([docName, groupIds]) => {
+                        if (groupIds && groupIds.length > 0) {
+                            newMappings.set(docName, new Set(groupIds));
+                        }
+                    });
+                    
+                    console.log("Auto-populated default doc-group mappings:", defaultMapping);
+                }
+            } catch (error) {
+                console.error("Error auto-populating doc-group defaults:", error);
+            } finally {
+                setAutoAssignLoading(false);
+            }
+        }
+        
+        setMappings(newMappings);
+    };
+
     // Load data when modal opens or mode changes
     useEffect(() => {
         if (open) {
@@ -351,9 +439,10 @@ export default function DocumentMapModal({
                 setRightSelected(new Set()); // Multiple selection for other modes
             }
             
-            setMappings(new Map());
+            // Load existing mappings and auto-populate defaults
+            loadMappings();
         }
-    }, [open, mode]);
+    }, [open, mode, existingMappings, uploadedFiles]);
 
     // Handle assign operation
     const handleAssign = () => {
@@ -612,6 +701,37 @@ export default function DocumentMapModal({
                     </div>
                 )}
             </div>
+            
+            {/* Auto-assign Loading Overlay */}
+            {autoAssignLoading && (
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    borderRadius: '8px'
+                }}>
+                    <div style={{
+                        textAlign: 'center',
+                        padding: '20px'
+                    }}>
+                        <div className="spinner-border text-primary mb-3" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                        <div style={{ fontSize: '16px', fontWeight: '500', color: '#333' }}>
+                            {mode === "part-doc" ? "Auto-assigning documents..." : 
+                             mode === "doc-group" ? "Auto-assigning document groups..." : 
+                             "Auto-assigning..."}
+                        </div>
+                    </div>
+                </div>
+            )}
         </ModalShell>
     );
 }

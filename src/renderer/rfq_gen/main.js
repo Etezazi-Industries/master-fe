@@ -19569,7 +19569,7 @@ function ActionBar({ onMapPress }) {
     "button",
     {
       type: "button",
-      className: "btn btn-primary btn-sm",
+      className: "btn btn-outline-dark btn-sm",
       onClick: () => onMapPress("part-doc")
     },
     "Part\u2013Doc Map"
@@ -19577,7 +19577,7 @@ function ActionBar({ onMapPress }) {
     "button",
     {
       type: "button",
-      className: "btn btn-outline-primary btn-sm",
+      className: "btn btn-outline-dark btn-sm",
       onClick: () => onMapPress("doc-group")
     },
     "Doc Group Map"
@@ -19585,7 +19585,7 @@ function ActionBar({ onMapPress }) {
     "button",
     {
       type: "button",
-      className: "btn btn-outline-primary btn-sm",
+      className: "btn btn-outline-dark btn-sm",
       onClick: () => onMapPress("template")
     },
     "Template Map"
@@ -19670,30 +19670,45 @@ function FileUpload({
     "button",
     {
       type: "button",
-      className: "btn btn-outline-primary",
+      className: "btn btn-outline-dark",
       onClick: handleFileSelection
     },
     "\u{1F4C1} Select ",
     label
-  )), files.length > 0 && /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group mt-2" }, files.map((f, i) => /* @__PURE__ */ import_react2.default.createElement(
-    "li",
+  )), files.length > 0 && /* @__PURE__ */ import_react2.default.createElement(
+    "div",
     {
-      key: `${f.name}-${f.size}-${f.lastModified}-${i}`,
-      className: "list-group-item py-2 d-flex justify-content-between align-items-center"
+      className: "mt-2 border rounded",
+      style: {
+        maxHeight: "200px",
+        overflowY: "auto",
+        fontSize: "0.75rem"
+        // Smaller text size
+      }
     },
-    /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-truncate", style: { maxWidth: "75%" } }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-truncate d-block" }, f.name), f.path && /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted d-block text-truncate", title: f.path }, "\u{1F4C2} ", f.path), /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, (f.size / 1024 / 1024).toFixed(2), " MB")),
-    /* @__PURE__ */ import_react2.default.createElement(
-      "button",
+    /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group list-group-flush" }, files.map((f, i) => /* @__PURE__ */ import_react2.default.createElement(
+      "li",
       {
-        type: "button",
-        className: "btn btn-sm btn-outline-danger",
-        "aria-label": `Remove ${f.name}`,
-        onClick: () => onRemove?.(name, i),
-        title: "Remove"
+        key: `${f.name}-${f.size}-${f.lastModified}-${i}`,
+        className: "list-group-item py-1 d-flex justify-content-between align-items-center",
+        style: { fontSize: "0.75rem" }
       },
-      "\xD7"
-    )
-  ))));
+      /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-truncate", style: { maxWidth: "75%" } }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-truncate d-block fw-medium" }, f.name), f.path && /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted d-block text-truncate", title: f.path, style: { fontSize: "0.65rem" } }, "\u{1F4C2} ", f.path)),
+      /* @__PURE__ */ import_react2.default.createElement(
+        "button",
+        {
+          type: "button",
+          className: "btn btn-sm btn-outline-danger p-1",
+          style: { fontSize: "0.65rem", lineHeight: "1" },
+          "aria-label": `Remove ${f.name}`,
+          onClick: () => onRemove?.(name, i),
+          title: "Remove"
+        },
+        "\xD7"
+      )
+    ))),
+    files.length > 5 && /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-center p-1 bg-light border-top" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted", style: { fontSize: "0.65rem" } }, "Showing all ", files.length, " files - scroll to see more"))
+  ));
 }
 function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: [], estimation: [], parts_requested: [] } }) {
   return /* @__PURE__ */ import_react2.default.createElement("div", { className: "container my-4" }, /* @__PURE__ */ import_react2.default.createElement("h5", { className: "mb-3" }, "Upload Files"), /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-3 mt-3" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react2.default.createElement(
@@ -19736,6 +19751,69 @@ function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: []
       onMapPress
     }
   ));
+}
+function autoAssignPartsToDocuments(parts, files) {
+  const mapping = {};
+  const allFiles = [
+    ...files.excel || [],
+    ...files.estimation || [],
+    ...files.parts_requested || []
+  ];
+  parts.forEach((part) => {
+    let partNo;
+    if (typeof part === "string") {
+      partNo = part;
+    } else if (part && typeof part === "object") {
+      partNo = part.part_number || part.partNumber || part.pn || part.id || String(part);
+    } else {
+      partNo = String(part);
+    }
+    if (!partNo || typeof partNo !== "string") {
+      console.warn("Invalid part number:", part);
+      return;
+    }
+    const matchingFiles = allFiles.filter((file) => {
+      const filePath = file.path || file.name || "";
+      const fileName = file.name || "";
+      return filePath.toLowerCase().includes(partNo.toLowerCase()) || fileName.toLowerCase().includes(partNo.toLowerCase());
+    });
+    if (matchingFiles.length > 0) {
+      mapping[partNo] = matchingFiles.map((file) => file.name);
+    }
+  });
+  return mapping;
+}
+function autoAssignDocumentsToGroups(files) {
+  const mapping = {};
+  const allFiles = [
+    ...files.excel || [],
+    ...files.estimation || [],
+    ...files.parts_requested || []
+  ];
+  const extensionGroupMap = {
+    // CATIA extensions -> Group ID 29
+    ".catia": "29",
+    ".catpart": "29",
+    ".catproduct": "29",
+    ".catdrawing": "29",
+    ".catshape": "29",
+    ".cgr": "29",
+    ".model": "29",
+    // ixprj extension -> Group ID 28
+    ".ixprj": "28"
+  };
+  allFiles.forEach((file) => {
+    const fileName = file.name || "";
+    const filePath = file.path || fileName;
+    const lastDotIndex = fileName.lastIndexOf(".");
+    if (lastDotIndex === -1) return;
+    const extension = fileName.substring(lastDotIndex).toLowerCase();
+    const groupId = extensionGroupMap[extension];
+    if (groupId) {
+      mapping[fileName] = [groupId];
+    }
+  });
+  return mapping;
 }
 
 // src/renderer/rfq_gen/components/date_picker.jsx
@@ -20087,8 +20165,12 @@ function DocumentMapModal({
   uploadedFiles = (
     /** @type {{excel?: any[], estimation?: any[], parts_requested?: any[]}} */
     {}
-  )
+  ),
   // { excel: [], estimation: [], parts_requested: [] }
+  existingMappings = (
+    /** @type {{partToDoc?: Record<string, string[]>, docToGroup?: Record<string, string[]>, partToTemplate?: Record<string, string[]>}} */
+    {}
+  )
 }) {
   const [leftItems, setLeftItems] = (0, import_react6.useState)(
     /** @type {any[]} */
@@ -20108,6 +20190,7 @@ function DocumentMapModal({
     /** @type {string | null} */
     null
   );
+  const [autoAssignLoading, setAutoAssignLoading] = (0, import_react6.useState)(false);
   const [leftSelected, setLeftSelected] = (0, import_react6.useState)(
     /** @type {Set | string | null} */
     /* @__PURE__ */ new Set()
@@ -20232,6 +20315,65 @@ function DocumentMapModal({
       setRightLoading(false);
     }
   };
+  const loadMappings = async () => {
+    const newMappings = /* @__PURE__ */ new Map();
+    let existingMap = {};
+    if (mode === "part-doc" && existingMappings.partToDoc) {
+      existingMap = existingMappings.partToDoc;
+    } else if (mode === "doc-group" && existingMappings.docToGroup) {
+      existingMap = existingMappings.docToGroup;
+    } else if (mode === "template" && existingMappings.partToTemplate) {
+      existingMap = existingMappings.partToTemplate;
+    }
+    Object.entries(existingMap).forEach(([key, values]) => {
+      if (values && values.length > 0) {
+        newMappings.set(key, new Set(values));
+      }
+    });
+    if (mode === "part-doc" && newMappings.size === 0) {
+      try {
+        if (uploadedFiles.excel?.length) {
+          setAutoAssignLoading(true);
+          const filePaths = uploadedFiles.excel.map((file) => file.path || file.name);
+          const result = await parseExcelFiles(filePaths);
+          const parts = result.parts || [];
+          if (parts.length > 0) {
+            const defaultMapping = autoAssignPartsToDocuments(parts, uploadedFiles);
+            Object.entries(defaultMapping).forEach(([partNo, docNames]) => {
+              if (docNames && docNames.length > 0) {
+                newMappings.set(partNo, new Set(docNames));
+              }
+            });
+            console.log("Auto-populated default part-doc mappings:", defaultMapping);
+          }
+        }
+      } catch (error) {
+        console.error("Error auto-populating defaults:", error);
+      } finally {
+        setAutoAssignLoading(false);
+      }
+    }
+    if (mode === "doc-group" && newMappings.size === 0) {
+      try {
+        const totalFiles = (uploadedFiles.excel?.length || 0) + (uploadedFiles.estimation?.length || 0) + (uploadedFiles.parts_requested?.length || 0);
+        if (totalFiles > 0) {
+          setAutoAssignLoading(true);
+          const defaultMapping = autoAssignDocumentsToGroups(uploadedFiles);
+          Object.entries(defaultMapping).forEach(([docName, groupIds]) => {
+            if (groupIds && groupIds.length > 0) {
+              newMappings.set(docName, new Set(groupIds));
+            }
+          });
+          console.log("Auto-populated default doc-group mappings:", defaultMapping);
+        }
+      } catch (error) {
+        console.error("Error auto-populating doc-group defaults:", error);
+      } finally {
+        setAutoAssignLoading(false);
+      }
+    }
+    setMappings(newMappings);
+  };
   (0, import_react6.useEffect)(() => {
     if (open) {
       fetchLeftItems();
@@ -20246,9 +20388,9 @@ function DocumentMapModal({
         setLeftSelected(/* @__PURE__ */ new Set());
         setRightSelected(/* @__PURE__ */ new Set());
       }
-      setMappings(/* @__PURE__ */ new Map());
+      loadMappings();
     }
-  }, [open, mode]);
+  }, [open, mode, existingMappings, uploadedFiles]);
   const handleAssign = () => {
     if (mode === "part-doc") {
       const rightSet = rightSelected && typeof rightSelected === "object" && "has" in rightSelected ? (
@@ -20435,7 +20577,23 @@ function DocumentMapModal({
         searchPlaceholder: config.rightPlaceholder,
         mappedItems: mode === "part-doc" && leftSelected ? mappings.get(leftSelected) : (mode === "doc-group" || mode === "template") && leftSelected ? new Set(Array.from(mappings.entries()).filter(([itemKey, mappedTo]) => mappedTo.has(leftSelected)).map(([itemKey]) => itemKey)) : void 0
       }
-    ))), mappings.size > 0 && /* @__PURE__ */ import_react6.default.createElement("div", { className: "row mt-3" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "card" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "card-header py-2" }, /* @__PURE__ */ import_react6.default.createElement("small", { className: "fw-semibold" }, "Current Mappings (", mappings.size, ")")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "card-body py-1", style: { height: "80px", overflow: "auto" } }, Array.from(mappings.entries()).map(([leftKey, rightKeys]) => /* @__PURE__ */ import_react6.default.createElement("div", { key: leftKey, className: "mb-1", style: { fontSize: "0.85rem" } }, /* @__PURE__ */ import_react6.default.createElement("strong", null, leftKey), " \u2192 ", Array.from(rightKeys).join(", "))))))))
+    ))), mappings.size > 0 && /* @__PURE__ */ import_react6.default.createElement("div", { className: "row mt-3" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "card" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "card-header py-2" }, /* @__PURE__ */ import_react6.default.createElement("small", { className: "fw-semibold" }, "Current Mappings (", mappings.size, ")")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "card-body py-1", style: { height: "80px", overflow: "auto" } }, Array.from(mappings.entries()).map(([leftKey, rightKeys]) => /* @__PURE__ */ import_react6.default.createElement("div", { key: leftKey, className: "mb-1", style: { fontSize: "0.85rem" } }, /* @__PURE__ */ import_react6.default.createElement("strong", null, leftKey), " \u2192 ", Array.from(rightKeys).join(", ")))))))),
+    autoAssignLoading && /* @__PURE__ */ import_react6.default.createElement("div", { style: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(255, 255, 255, 0.9)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 1e3,
+      borderRadius: "8px"
+    } }, /* @__PURE__ */ import_react6.default.createElement("div", { style: {
+      textAlign: "center",
+      padding: "20px"
+    } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "spinner-border text-primary mb-3", role: "status" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "visually-hidden" }, "Loading...")), /* @__PURE__ */ import_react6.default.createElement("div", { style: { fontSize: "16px", fontWeight: "500", color: "#333" } }, mode === "part-doc" ? "Auto-assigning documents..." : mode === "doc-group" ? "Auto-assigning document groups..." : "Auto-assigning...")))
   );
 }
 
@@ -20491,6 +20649,7 @@ function RfqApp() {
     open: false,
     mode: "part-doc"
   });
+  const [isGenerating, setIsGenerating] = (0, import_react7.useState)(false);
   const handlePanelChange = (0, import_react7.useCallback)((partial) => {
     setState((prev) => ({ ...prev, ...partial }));
   }, []);
@@ -20556,24 +20715,26 @@ function RfqApp() {
     const part_to_doc_map = {};
     Object.entries(state.mappings.partToDoc).forEach(([partNo, docKeys]) => {
       part_to_doc_map[partNo] = docKeys.map((docKey) => {
-        const groupKeys = state.mappings.docToGroup[docKey] || [];
-        const group_pk = groupKeys.length > 0 ? groupKeys[0] : null;
-        const allFiles = [...state.files.estimation || [], ...state.files.parts_requested || []];
+        const allFiles = [...state.files.excel || [], ...state.files.estimation || [], ...state.files.parts_requested || []];
         const fileObj = allFiles.find((f) => f.name === docKey);
+        const fullPath = fileObj?.path || docKey;
+        const groupKeys = state.mappings.docToGroup[fullPath] || state.mappings.docToGroup[docKey] || [];
+        const group_pk = groupKeys.length > 0 ? groupKeys[0] : null;
         return {
-          url: fileObj?.path || docKey,
-          // Use full path if available, fallback to docKey
+          url: fullPath,
+          // Use full path
           group_pk
         };
       });
     });
     const excel_files = (state.files.excel || []).map((file) => file.path || file.name);
     const estimation_files = (state.files.estimation || []).map((file) => {
-      const groupKeys = state.mappings.docToGroup[file.name] || [];
+      const fullPath = file.path || file.name;
+      const groupKeys = state.mappings.docToGroup[fullPath] || state.mappings.docToGroup[file.name] || [];
       const group_pk = groupKeys.length > 0 ? groupKeys[0] : null;
       return {
-        url: file.path || file.name,
-        // Use full path if available
+        url: fullPath,
+        // Use full path
         group_pk
       };
     });
@@ -20644,7 +20805,7 @@ function RfqApp() {
           oneToOneOnly: false,
           onClose: close,
           onSubmit: ({ left: l, right: r }) => {
-            console.log("DocMap selection:", { left: l, right: r, formData: fd });
+            console.log("DocMap selection:", { left: l, right: r });
             close();
           }
         }
@@ -20652,7 +20813,7 @@ function RfqApp() {
     );
     console.log("DocumentMap: prepared payload & fake lists", { excelFiles, left, right });
   }, [state.files, state.customer_pk, state.buyer_pk, state.customer_rfq_number]);
-  return /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement(HeaderBar, { title: "RFQ Gen" }), /* @__PURE__ */ import_react7.default.createElement(PageHeading, { heading: "RFQ Gen" }), /* @__PURE__ */ import_react7.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement("div", { style: { position: "relative" } }, /* @__PURE__ */ import_react7.default.createElement(HeaderBar, { title: "RFQ Gen" }), /* @__PURE__ */ import_react7.default.createElement(PageHeading, { heading: "RFQ Gen" }), /* @__PURE__ */ import_react7.default.createElement(
     CustomerBuyerPanel,
     {
       value: { customer_pk: state.customer_pk, customer_name: state.customer_name, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number },
@@ -20677,13 +20838,22 @@ function RfqApp() {
     ActionBar2,
     {
       onGenerate: async () => {
+        setIsGenerating(true);
         try {
           const payload = buildRfqRequestPayload();
           console.log("Generate RFQ payload:", JSON.stringify(payload, null, 2));
           const result = await generateRfq(payload);
           console.log("RFQ generated successfully:", result);
+          if (result && result.generated) {
+            alert(`RFQ generated successfully! RFQ PK: ${result.generated}`);
+          } else {
+            alert("RFQ generated successfully!");
+          }
         } catch (error) {
           console.error("Failed to generate RFQ:", error);
+          alert(`Failed to generate RFQ: ${error.message || error}`);
+        } finally {
+          setIsGenerating(false);
         }
       },
       onUpdate: () => {
@@ -20699,9 +20869,27 @@ function RfqApp() {
       mode: documentMapModal.mode,
       onClose: handleMapClose,
       onSave: handleMapSave,
-      uploadedFiles: state.files
+      uploadedFiles: state.files,
+      existingMappings: state.mappings
     }
-  ));
+  ), isGenerating && /* @__PURE__ */ import_react7.default.createElement("div", { style: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999
+  } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: {
+    backgroundColor: "white",
+    padding: "30px",
+    borderRadius: "8px",
+    textAlign: "center",
+    minWidth: "200px"
+  } }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "spinner-border text-primary mb-3", role: "status" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "visually-hidden" }, "Loading...")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "16px", fontWeight: "500" } }, "Generating RFQ..."))));
 }
 
 // src/renderer/rfq_gen/main.jsx

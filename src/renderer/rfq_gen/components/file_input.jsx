@@ -1,5 +1,6 @@
 // @ts-check
 import React from "react";
+import { parseExcelFiles } from "../../api_calls";
 
 
 function ActionBar({ onMapPress }) {
@@ -9,21 +10,21 @@ function ActionBar({ onMapPress }) {
             <div className="d-flex gap-2">
                 <button
                     type="button"
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-outline-dark btn-sm"
                     onClick={() => onMapPress("part-doc")}
                 >
                     Part–Doc Map
                 </button>
                 <button
                     type="button"
-                    className="btn btn-outline-primary btn-sm"
+                    className="btn btn-outline-dark btn-sm"
                     onClick={() => onMapPress("doc-group")}
                 >
                     Doc Group Map
                 </button>
                 <button
                     type="button"
-                    className="btn btn-outline-primary btn-sm"
+                    className="btn btn-outline-dark btn-sm"
                     onClick={() => onMapPress("template")}
                 >
                     Template Map
@@ -116,7 +117,7 @@ function FileUpload({
             <div className="d-grid">
                 <button
                     type="button"
-                    className="btn btn-outline-primary"
+                    className="btn btn-outline-dark"
                     onClick={handleFileSelection}
                 >
                     📁 Select {label}
@@ -124,35 +125,50 @@ function FileUpload({
             </div>
 
             {files.length > 0 && (
-                <ul className="list-group mt-2">
-                    {files.map((f, i) => (
-                        <li
-                            key={`${f.name}-${f.size}-${f.lastModified}-${i}`}
-                            className="list-group-item py-2 d-flex justify-content-between align-items-center"
-                        >
-                            <div className="text-truncate" style={{ maxWidth: "75%" }}>
-                                <span className="text-truncate d-block">{f.name}</span>
-                                {f.path && (
-                                    <small className="text-muted d-block text-truncate" title={f.path}>
-                                        📂 {f.path}
-                                    </small>
-                                )}
-                                <small className="text-muted">
-                                    {(f.size / 1024 / 1024).toFixed(2)} MB
-                                </small>
-                            </div>
-                            <button
-                                type="button"
-                                className="btn btn-sm btn-outline-danger"   // ← red outline style
-                                aria-label={`Remove ${f.name}`}
-                                onClick={() => onRemove?.(name, i)}
-                                title="Remove"
+                <div 
+                    className="mt-2 border rounded"
+                    style={{ 
+                        maxHeight: '200px', 
+                        overflowY: 'auto',
+                        fontSize: '0.75rem' // Smaller text size
+                    }}
+                >
+                    <ul className="list-group list-group-flush">
+                        {files.map((f, i) => (
+                            <li
+                                key={`${f.name}-${f.size}-${f.lastModified}-${i}`}
+                                className="list-group-item py-1 d-flex justify-content-between align-items-center"
+                                style={{ fontSize: '0.75rem' }} // Smaller text for each item
                             >
-                                ×
-                            </button>
-                        </li>
-                    ))}
-                </ul>
+                                <div className="text-truncate" style={{ maxWidth: "75%" }}>
+                                    <span className="text-truncate d-block fw-medium">{f.name}</span>
+                                    {f.path && (
+                                        <small className="text-muted d-block text-truncate" title={f.path} style={{ fontSize: '0.65rem' }}>
+                                            📂 {f.path}
+                                        </small>
+                                    )}
+                                </div>
+                                <button
+                                    type="button"
+                                    className="btn btn-sm btn-outline-danger p-1"
+                                    style={{ fontSize: '0.65rem', lineHeight: '1' }}
+                                    aria-label={`Remove ${f.name}`}
+                                    onClick={() => onRemove?.(name, i)}
+                                    title="Remove"
+                                >
+                                    ×
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                    {files.length > 5 && (
+                        <div className="text-center p-1 bg-light border-top">
+                            <small className="text-muted" style={{ fontSize: '0.65rem' }}>
+                                Showing all {files.length} files - scroll to see more
+                            </small>
+                        </div>
+                    )}
+                </div>
             )}
         </div>
     );
@@ -208,3 +224,109 @@ export default function FileUploadSection({ onChange, onRemove, onMapPress, file
     );
 }
 
+/**
+ * Auto-assigns parts to documents based on part number strings found in file paths/names
+ * @param {Array} parts - Array of part numbers from Excel files
+ * @param {{excel?: any[], estimation?: any[], parts_requested?: any[]}} files - Uploaded files object
+ * @returns {Record<string, string[]>} - Mapping of { [partNo]: [documentNames] }
+ */
+function autoAssignPartsToDocuments(parts, files) {
+    /** @type {Record<string, string[]>} */
+    const mapping = {};
+    
+    // Get all files from all categories
+    const allFiles = [
+        ...(files.excel || []),
+        ...(files.estimation || []),
+        ...(files.parts_requested || [])
+    ];
+    
+    // For each part, find files that contain the part number in their path or name
+    parts.forEach(part => {
+        // Handle different part formats - extract part number string
+        let partNo;
+        if (typeof part === 'string') {
+            partNo = part;
+        } else if (part && typeof part === 'object') {
+            // If part is an object, try to get part_number or other common fields
+            partNo = part.part_number || part.partNumber || part.pn || part.id || String(part);
+        } else {
+            partNo = String(part);
+        }
+        
+        // Ensure partNo is a valid string
+        if (!partNo || typeof partNo !== 'string') {
+            console.warn('Invalid part number:', part);
+            return;
+        }
+        
+        const matchingFiles = allFiles.filter(file => {
+            const filePath = file.path || file.name || '';
+            const fileName = file.name || '';
+            
+            // Check if part number exists in file path or name (case insensitive)
+            return filePath.toLowerCase().includes(partNo.toLowerCase()) || 
+                   fileName.toLowerCase().includes(partNo.toLowerCase());
+        });
+        
+        if (matchingFiles.length > 0) {
+            mapping[partNo] = matchingFiles.map(file => file.name);
+        }
+    });
+    
+    return mapping;
+}
+
+/**
+ * Auto-assigns documents to document groups based on file extensions
+ * @param {{excel?: any[], estimation?: any[], parts_requested?: any[]}} files - Uploaded files object
+ * @returns {Record<string, string[]>} - Mapping of { [documentName]: [groupId] }
+ */
+function autoAssignDocumentsToGroups(files) {
+    /** @type {Record<string, string[]>} */
+    const mapping = {};
+    
+    // Get all files from all categories
+    const allFiles = [
+        ...(files.excel || []),
+        ...(files.estimation || []),
+        ...(files.parts_requested || [])
+    ];
+    
+    // Define extension to group ID mappings
+    const extensionGroupMap = {
+        // CATIA extensions -> Group ID 29
+        '.catia': '29',
+        '.catpart': '29',
+        '.catproduct': '29',
+        '.catdrawing': '29',
+        '.catshape': '29',
+        '.cgr': '29',
+        '.model': '29',
+        // ixprj extension -> Group ID 28
+        '.ixprj': '28'
+    };
+    
+    // For each file, check extension and assign to appropriate group
+    allFiles.forEach(file => {
+        const fileName = file.name || '';
+        const filePath = file.path || fileName;
+        
+        // Get file extension (convert to lowercase for comparison)
+        const lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex === -1) return; // No extension
+        
+        const extension = fileName.substring(lastDotIndex).toLowerCase();
+        
+        // Check if extension matches any of our criteria
+        const groupId = extensionGroupMap[extension];
+        if (groupId) {
+            mapping[fileName] = [groupId];
+        }
+    });
+    
+    return mapping;
+}
+
+// Export the auto-assignment functions for use in other components
+export { autoAssignPartsToDocuments, autoAssignDocumentsToGroups };
