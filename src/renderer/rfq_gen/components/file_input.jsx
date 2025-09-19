@@ -303,30 +303,86 @@ function autoAssignDocumentsToGroups(files) {
         '.catshape': '29',
         '.cgr': '29',
         '.model': '29',
-        // ixprj extension -> Group ID 28
-        '.ixprj': '28'
+        // ixprj and xls extensions -> Group ID 28
+        '.ixprj': '28',
+        '.xls': '28'
     };
     
-    // For each file, check extension and assign to appropriate group
+    // For each file, check extension first, then filename content to assign to appropriate group
     allFiles.forEach(file => {
         const fileName = file.name || '';
         const filePath = file.path || fileName;
         
-        // Get file extension (convert to lowercase for comparison)
+        // PRIORITY 1: Check file extension first (convert to lowercase for comparison)
         const lastDotIndex = fileName.lastIndexOf('.');
-        if (lastDotIndex === -1) return; // No extension
+        if (lastDotIndex !== -1) {
+            const extension = fileName.substring(lastDotIndex).toLowerCase();
+            const groupId = extensionGroupMap[extension];
+            if (groupId) {
+                mapping[fileName] = [groupId];
+                return; // Found extension match, no need to check filename content
+            }
+        }
         
-        const extension = fileName.substring(lastDotIndex).toLowerCase();
+        // PRIORITY 2: Check for "PL" in filename (case-sensitive, uppercase only) - maps to Group ID 26
+        if (fileName.includes('PL')) {
+            mapping[fileName] = ['26'];
+            return; // Found PL, no need to check other conditions
+        }
         
-        // Check if extension matches any of our criteria
-        const groupId = extensionGroupMap[extension];
-        if (groupId) {
-            mapping[fileName] = [groupId];
+        // PRIORITY 3: Check for "DWG" in filename (case-sensitive, uppercase only) - maps to Group ID 27
+        if (fileName.includes('DWG')) {
+            mapping[fileName] = ['27'];
+            return; // Found DWG, done with this file
+        }
+        
+        // PRIORITY 4: Check for "PSDL" in filename (case-sensitive, uppercase only) - maps to Group ID 33
+        if (fileName.includes('PSDL')) {
+            mapping[fileName] = ['33'];
+            return; // Found PSDL, done with this file
         }
     });
     
     return mapping;
 }
 
+/**
+ * Auto-assigns parts to templates with a default template ID
+ * @param {Array} parts - Array of part numbers from Excel files
+ * @returns {Record<string, string[]>} - Mapping of { [partNumber]: [templateId] }
+ */
+function autoAssignPartsToTemplates(parts) {
+    /** @type {Record<string, string[]>} */
+    const mapping = {};
+    
+    // Default template ID for all parts
+    const defaultTemplateId = '494';
+    
+    // For each part, assign the default template
+    parts.forEach(part => {
+        // Handle different part formats - extract part number string
+        let partNo;
+        if (typeof part === 'string') {
+            partNo = part;
+        } else if (part && typeof part === 'object') {
+            // If part is an object, try to get part_number or other common fields
+            partNo = part.part_number || part.partNumber || part.pn || part.id || String(part);
+        } else {
+            partNo = String(part);
+        }
+        
+        // Ensure partNo is a valid string
+        if (!partNo || typeof partNo !== 'string') {
+            console.warn('Invalid part number:', part);
+            return;
+        }
+        
+        // Assign default template to this part
+        mapping[partNo] = [defaultTemplateId];
+    });
+    
+    return mapping;
+}
+
 // Export the auto-assignment functions for use in other components
-export { autoAssignPartsToDocuments, autoAssignDocumentsToGroups };
+export { autoAssignPartsToDocuments, autoAssignDocumentsToGroups, autoAssignPartsToTemplates };

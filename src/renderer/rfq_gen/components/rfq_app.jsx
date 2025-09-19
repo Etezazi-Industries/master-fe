@@ -26,7 +26,8 @@ function PageHeading({ heading }) {
 }
 
 export default function RfqApp() {
-    const [state, setState] = useState({
+    // Define initial/default state
+    const getInitialState = () => ({
         customer_pk: null,
         customer_name: null, // Store the party name
         buyer_pk: null,
@@ -44,15 +45,26 @@ export default function RfqApp() {
             docToGroup: /** @type {Record<string, string[]>} */ ({}) // { [docKey]: groupKeys[] }
         }
     });
+
+    const [state, setState] = useState(getInitialState());
     
     // New modal state
-    const [documentMapModal, setDocumentMapModal] = useState({
+    const getInitialModalState = () => ({
         open: false,
         mode: "part-doc"
     });
+    
+    const [documentMapModal, setDocumentMapModal] = useState(getInitialModalState());
 
     // Loading state for RFQ generation
     const [isGenerating, setIsGenerating] = useState(false);
+
+    // Reset function to restore all state to factory defaults
+    const resetToDefaults = useCallback(() => {
+        setState(getInitialState());
+        setDocumentMapModal(getInitialModalState());
+        setIsGenerating(false);
+    }, []);
 
     const handlePanelChange = useCallback((partial) => {
         setState(prev => ({ ...prev, ...partial }));
@@ -286,6 +298,9 @@ export default function RfqApp() {
                         } else {
                             alert("RFQ generated successfully!");
                         }
+                        
+                        // Reset application state to factory defaults after successful generation
+                        resetToDefaults();
                     } catch (error) {
                         console.error("Failed to generate RFQ:", error);
                         alert(`Failed to generate RFQ: ${error.message || error}`);
@@ -297,7 +312,7 @@ export default function RfqApp() {
                     const payload = buildRfqRequestPayload();
                     console.log("Update RFQ payload:", JSON.stringify(payload, null, 2));
                 }}
-                onReset={() => console.log("Reset GUI clicked")}
+                onReset={resetToDefaults}
             />
             
             {/* Document Map Modal */}

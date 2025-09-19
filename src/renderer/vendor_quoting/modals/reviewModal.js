@@ -19318,8 +19318,50 @@ var import_client2 = __toESM(require_client(), 1);
 var import_react = __toESM(require_react(), 1);
 
 // src/renderer/api_calls.js
+var _apiBase = "";
+var _baseReady;
+function findBridge() {
+  try {
+    if (typeof window !== "undefined") {
+      const win = (
+        /** @type {WindowWithBackend} */
+        window
+      );
+      if (win.backend) return win.backend;
+      const t = (
+        /** @type {WindowWithBackend} */
+        window.top
+      );
+      if (t && t !== window && t.backend) return t.backend;
+    }
+  } catch {
+  }
+  return null;
+}
+function waitForBridge(timeoutMs = 8e3) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    (function tick() {
+      const br = findBridge();
+      if (br && (typeof br.getApiBase === "function" || typeof br.apiBase === "string")) return resolve(br);
+      if (Date.now() - start > timeoutMs) return reject(new Error("Preload bridge not available"));
+      setTimeout(tick, 50);
+    })();
+  });
+}
 async function getApiBase() {
-  return "http://127.0.0.1:8000/";
+  if (_apiBase) return _apiBase;
+  if (!_baseReady) {
+    _baseReady = (async () => {
+      const br = await waitForBridge();
+      const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
+      const b = (base || "").trim();
+      if (!b) throw new Error("API base not provided by preload");
+      _apiBase = b.endsWith("/") ? b : b + "/";
+      return _apiBase;
+    })();
+  }
+  return _baseReady;
 }
 function joinUrl(base, endpoint) {
   const e = String(endpoint || "").replace(/^\/+/, "");
@@ -19377,7 +19419,7 @@ async function getPartyData() {
 }
 async function createBuyer(partyPk, body) {
   if (!partyPk) throw new Error("Party PK is required");
-  const res = await fetch(`http://127.0.0.1:8000/parties/${partyPk}/buyers`, {
+  const res = await apiFetch(`parties/${partyPk}/buyers`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)

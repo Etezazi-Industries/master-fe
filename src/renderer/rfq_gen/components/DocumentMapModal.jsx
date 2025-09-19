@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ModalShell } from "./modals/document_group";
 import { parseExcelFiles, requestJson, getDocGroups, getQuoteTemplates } from "../../api_calls";
-import { autoAssignPartsToDocuments, autoAssignDocumentsToGroups } from "./file_input";
+import { autoAssignPartsToDocuments, autoAssignDocumentsToGroups, autoAssignPartsToTemplates } from "./file_input";
 
 /**
  * Reusable list component with search functionality
@@ -18,6 +18,8 @@ function SearchableList({
     onRetry = /** @type {(() => void) | null} */ (null),
     searchPlaceholder = "Search items...",
     mappedItems = /** @type {Set | undefined} */ (undefined), // Items that are already mapped
+    showClearButton = false, // Whether to show clear selection button
+    onClearSelection = /** @type {(() => void) | null} */ (null), // Handler for clear selection
     getKey = (x) => {
         if (x && typeof x === "object") {
             if ("id" in x) return x.id;
@@ -65,6 +67,15 @@ function SearchableList({
         }
     };
 
+    // Check if there are any selections to clear
+    const hasSelections = () => {
+        if (multiple) {
+            return selected && typeof selected.has === 'function' && selected.size > 0;
+        } else {
+            return selected !== null && selected !== undefined && selected !== "";
+        }
+    };
+
     return (
         <div className="d-flex flex-column" style={{ height: "800px" }}>
             <div className="mb-2 fw-semibold d-flex justify-content-between align-items-center">
@@ -73,6 +84,28 @@ function SearchableList({
                     <small className="text-muted">({selected.size} selected)</small>
                 )}
             </div>
+            
+            {/* Clear Selection Button */}
+            {showClearButton && (
+                <div className="mb-2">
+                    <button
+                        type="button"
+                        className="btn btn-outline-secondary btn-sm w-100"
+                        onClick={() => {
+                            if (multiple) {
+                                onSelect(new Set());
+                            } else {
+                                onSelect(null);
+                            }
+                            onClearSelection?.();
+                        }}
+                        disabled={!hasSelections()}
+                        title={hasSelections() ? "Clear all selections" : "No selections to clear"}
+                    >
+                        🗑️ Clear Selection
+                    </button>
+                </div>
+            )}
             
             <div className="mb-2">
                 <div className="position-relative">
@@ -418,6 +451,37 @@ export default function DocumentMapModal({
             }
         }
         
+        // Auto-populate defaults for template mode if no existing mappings
+        if (mode === "template" && newMappings.size === 0) {
+            try {
+                // Get parts from Excel files
+                if (uploadedFiles.excel?.length) {
+                    setAutoAssignLoading(true);
+                    const filePaths = uploadedFiles.excel.map(file => file.path || file.name);
+                    const result = await parseExcelFiles(filePaths);
+                    const parts = result.parts || [];
+                    
+                    if (parts.length > 0) {
+                        // Generate auto-assignment mapping (all parts to template 494)
+                        const defaultMapping = autoAssignPartsToTemplates(parts);
+                        
+                        // Add default mappings to newMappings
+                        Object.entries(defaultMapping).forEach(([partNo, templateIds]) => {
+                            if (templateIds && templateIds.length > 0) {
+                                newMappings.set(partNo, new Set(templateIds));
+                            }
+                        });
+                        
+                        console.log("Auto-populated default part-template mappings:", defaultMapping);
+                    }
+                }
+            } catch (error) {
+                console.error("Error auto-populating template defaults:", error);
+            } finally {
+                setAutoAssignLoading(false);
+            }
+        }
+        
         setMappings(newMappings);
     };
 
@@ -665,6 +729,10 @@ export default function DocumentMapModal({
                             error={rightError}
                             onRetry={() => fetchRightItems()}
                             searchPlaceholder={config.rightPlaceholder}
+                            showClearButton={true}
+                            onClearSelection={() => {
+                                console.log("Right panel selection cleared");
+                            }}
                             // For part-doc mode, highlight already mapped documents
                             // For doc-group mode, highlight documents already mapped to selected group
                             // For template mode, highlight parts already mapped to selected template

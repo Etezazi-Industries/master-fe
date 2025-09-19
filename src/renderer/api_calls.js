@@ -3,6 +3,9 @@
 let _apiBase = "";
 let _baseReady;
 
+// Type definitions for window extensions
+/** @typedef {{backend?: {getApiBase?: () => Promise<string>, apiBase?: string}}} WindowWithBackend */
+
 /** Set API base manually (tests/overrides). */
 export function setApiBase(base) {
     _apiBase = base ? (base.endsWith("/") ? base : base + "/") : "";
@@ -12,8 +15,9 @@ export function setApiBase(base) {
 function findBridge() {
     try {
         if (typeof window !== "undefined") {
-            if (window.backend) return window.backend;
-            const t = window.top;
+            const win = /** @type {WindowWithBackend} */ (window);
+            if (win.backend) return win.backend;
+            const t = /** @type {WindowWithBackend} */ (window.top);
             if (t && t !== window && t.backend) return t.backend;
         }
     } catch { }
@@ -33,19 +37,18 @@ function waitForBridge(timeoutMs = 8000) {
 }
 
 async function getApiBase() {
-    //if (_apiBase) return _apiBase;
-    //if (!_baseReady) {
-    //    _baseReady = (async () => {
-    //        const br = await waitForBridge();
-    //        const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
-    //        const b = (base || "").trim();
-    //        if (!b) throw new Error("API base not provided by preload");
-    //        _apiBase = b.endsWith("/") ? b : b + "/";
-    //        return _apiBase;
-    //    })();
-    //}
-    //return _baseReady;
-    return "http://127.0.0.1:8000/";
+    if (_apiBase) return _apiBase;
+    if (!_baseReady) {
+        _baseReady = (async () => {
+            const br = await waitForBridge();
+            const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
+            const b = (base || "").trim();
+            if (!b) throw new Error("API base not provided by preload");
+            _apiBase = b.endsWith("/") ? b : b + "/";
+            return _apiBase;
+        })();
+    }
+    return _baseReady;
 }
 
 function joinUrl(base, endpoint) {
@@ -134,7 +137,7 @@ export async function getBuyers(party_pk) {
 }
 
 export async function parseExcelFiles(filePaths) {
-    const res = await fetch("http://127.0.0.1:8000/rfq_gen/excel-files", { 
+    const res = await apiFetch("rfq_gen/excel-files", { 
         method: "POST", 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(filePaths)
@@ -156,7 +159,7 @@ export async function getQuoteTemplates() {
 }
 
 export async function generateRfq(payload) {
-    const res = await fetch("http://127.0.0.1:8000/rfq_gen/rfq", {
+    const res = await apiFetch("rfq_gen/rfq", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -171,9 +174,9 @@ export async function generateRfq(payload) {
 
 
 export async function createParty(body) {
-    const res = await fetch("http://127.0.0.1:8000/parties", {
+    const res = await apiFetch("parties", {
         method: "POST",
-        headers: { "Content-Type": "application/json" }, // <-- add this
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
     });
     if (!res.ok) {
@@ -186,7 +189,7 @@ export async function createParty(body) {
 export async function createBuyer(partyPk, body) {
     if (!partyPk) throw new Error("Party PK is required");
     
-    const res = await fetch(`http://127.0.0.1:8000/parties/${partyPk}/buyers`, {
+    const res = await apiFetch(`parties/${partyPk}/buyers`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

@@ -19383,8 +19383,50 @@ function HeaderBar({ icon, title, subtitle, actions, sticky = false }) {
 var import_react2 = __toESM(require_react(), 1);
 
 // src/renderer/api_calls.js
+var _apiBase = "";
+var _baseReady;
+function findBridge() {
+  try {
+    if (typeof window !== "undefined") {
+      const win = (
+        /** @type {WindowWithBackend} */
+        window
+      );
+      if (win.backend) return win.backend;
+      const t = (
+        /** @type {WindowWithBackend} */
+        window.top
+      );
+      if (t && t !== window && t.backend) return t.backend;
+    }
+  } catch {
+  }
+  return null;
+}
+function waitForBridge(timeoutMs = 8e3) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    (function tick() {
+      const br = findBridge();
+      if (br && (typeof br.getApiBase === "function" || typeof br.apiBase === "string")) return resolve(br);
+      if (Date.now() - start > timeoutMs) return reject(new Error("Preload bridge not available"));
+      setTimeout(tick, 50);
+    })();
+  });
+}
 async function getApiBase() {
-  return "http://127.0.0.1:8000/";
+  if (_apiBase) return _apiBase;
+  if (!_baseReady) {
+    _baseReady = (async () => {
+      const br = await waitForBridge();
+      const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
+      const b = (base || "").trim();
+      if (!b) throw new Error("API base not provided by preload");
+      _apiBase = b.endsWith("/") ? b : b + "/";
+      return _apiBase;
+    })();
+  }
+  return _baseReady;
 }
 function joinUrl(base, endpoint) {
   const e = String(endpoint || "").replace(/^\/+/, "");
@@ -19450,7 +19492,7 @@ async function getBuyers(party_pk) {
 }
 async function createBuyer(partyPk, body) {
   if (!partyPk) throw new Error("Party PK is required");
-  const res = await fetch(`http://127.0.0.1:8000/parties/${partyPk}/buyers`, {
+  const res = await apiFetch(`parties/${partyPk}/buyers`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
@@ -39323,8 +39365,50 @@ var require_client2 = __commonJS2({
 var import_react42 = __toESM2(require_react2(), 1);
 var import_client2 = __toESM2(require_client2(), 1);
 var import_react7 = __toESM2(require_react2(), 1);
+var _apiBase2 = "";
+var _baseReady2;
+function findBridge2() {
+  try {
+    if (typeof window !== "undefined") {
+      const win = (
+        /** @type {WindowWithBackend} */
+        window
+      );
+      if (win.backend) return win.backend;
+      const t = (
+        /** @type {WindowWithBackend} */
+        window.top
+      );
+      if (t && t !== window && t.backend) return t.backend;
+    }
+  } catch {
+  }
+  return null;
+}
+function waitForBridge2(timeoutMs = 8e3) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    (function tick() {
+      const br = findBridge2();
+      if (br && (typeof br.getApiBase === "function" || typeof br.apiBase === "string")) return resolve(br);
+      if (Date.now() - start > timeoutMs) return reject(new Error("Preload bridge not available"));
+      setTimeout(tick, 50);
+    })();
+  });
+}
 async function getApiBase2() {
-  return "http://127.0.0.1:8000/";
+  if (_apiBase2) return _apiBase2;
+  if (!_baseReady2) {
+    _baseReady2 = (async () => {
+      const br = await waitForBridge2();
+      const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
+      const b = (base || "").trim();
+      if (!b) throw new Error("API base not provided by preload");
+      _apiBase2 = b.endsWith("/") ? b : b + "/";
+      return _apiBase2;
+    })();
+  }
+  return _baseReady2;
 }
 function joinUrl2(base, endpoint) {
   const e = String(endpoint || "").replace(/^\/+/, "");
@@ -39382,7 +39466,7 @@ async function getPartyData2() {
 }
 async function createBuyer2(partyPk, body) {
   if (!partyPk) throw new Error("Party PK is required");
-  const res = await fetch(`http://127.0.0.1:8000/parties/${partyPk}/buyers`, {
+  const res = await apiFetch2(`parties/${partyPk}/buyers`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
@@ -59477,8 +59561,50 @@ var require_client3 = __commonJS3({
 });
 var import_react8 = __toESM3(require_react3(), 1);
 var import_client3 = __toESM3(require_client3(), 1);
+var _apiBase3 = "";
+var _baseReady3;
+function findBridge3() {
+  try {
+    if (typeof window !== "undefined") {
+      const win = (
+        /** @type {WindowWithBackend} */
+        window
+      );
+      if (win.backend) return win.backend;
+      const t = (
+        /** @type {WindowWithBackend} */
+        window.top
+      );
+      if (t && t !== window && t.backend) return t.backend;
+    }
+  } catch {
+  }
+  return null;
+}
+function waitForBridge3(timeoutMs = 8e3) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    (function tick() {
+      const br = findBridge3();
+      if (br && (typeof br.getApiBase === "function" || typeof br.apiBase === "string")) return resolve(br);
+      if (Date.now() - start > timeoutMs) return reject(new Error("Preload bridge not available"));
+      setTimeout(tick, 50);
+    })();
+  });
+}
 async function getApiBase3() {
-  return "http://127.0.0.1:8000/";
+  if (_apiBase3) return _apiBase3;
+  if (!_baseReady3) {
+    _baseReady3 = (async () => {
+      const br = await waitForBridge3();
+      const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
+      const b = (base || "").trim();
+      if (!b) throw new Error("API base not provided by preload");
+      _apiBase3 = b.endsWith("/") ? b : b + "/";
+      return _apiBase3;
+    })();
+  }
+  return _baseReady3;
 }
 function joinUrl3(base, endpoint) {
   const e = String(endpoint || "").replace(/^\/+/, "");

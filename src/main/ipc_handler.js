@@ -2,6 +2,22 @@ import { ipcMain, BrowserWindow, dialog } from 'electron';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
+// Store the API base URL (will be set by main.js)
+let apiBaseUrl = '';
+
+// Export function to set API base from main.js
+export function setApiBase(url) {
+    apiBaseUrl = url;
+}
+
+// Handle getting API base URL
+ipcMain.handle('get-api-base', async () => {
+    if (!apiBaseUrl) {
+        throw new Error('API base URL not initialized');
+    }
+    return apiBaseUrl;
+});
+
 // Handle file selection with full paths
 ipcMain.handle('select-files', async (event, options = {}) => {
     const { filters = [], allowMultipleSelection = false, title = 'Select Files' } = options;
