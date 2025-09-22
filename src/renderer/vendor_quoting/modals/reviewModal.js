@@ -19430,10 +19430,23 @@ async function createBuyer(partyPk, body) {
   }
   return res.json();
 }
+async function getCommodityCodes() {
+  return requestJson("commodity-codes");
+}
+async function updateItemCommodityCode(itemPk, codeId) {
+  if (!itemPk) throw new Error("Item PK is required");
+  if (codeId === null || codeId === void 0) throw new Error("Code ID is required");
+  return requestJson(`item/${encodeURIComponent(itemPk)}/commodity-code/${encodeURIComponent(codeId)}`, {
+    method: "PUT"
+  });
+}
 
 // src/renderer/vendor_quoting/components/emailgroups.jsx
 function EmailManager({ groups = [], onChange }) {
-  const categories = [...new Set(groups.map((g) => g.code).filter(Boolean))];
+  const [availableCategories, setAvailableCategories] = (0, import_react.useState)(
+    /** @type {string[]} */
+    []
+  );
   const [currentCategory, setCurrentCategory] = (0, import_react.useState)("");
   const [cache, setCache] = (0, import_react.useState)({});
   const [editingId, setEditingId] = (0, import_react.useState)(null);
@@ -19443,8 +19456,8 @@ function EmailManager({ groups = [], onChange }) {
     onChangeRef.current = onChange;
   }, [onChange]);
   (0, import_react.useEffect)(() => {
-    if (!currentCategory && categories.length) setCurrentCategory(categories[0]);
-  }, [categories, currentCategory]);
+    if (!currentCategory && availableCategories.length) setCurrentCategory(availableCategories[0]);
+  }, [availableCategories, currentCategory]);
   const serialize = (0, import_react.useCallback)((mapObj) => {
     const out = {};
     for (const [cat, arr] of Object.entries(mapObj || {})) {
@@ -19452,7 +19465,7 @@ function EmailManager({ groups = [], onChange }) {
     }
     return out;
   }, []);
-  const lastPayloadRef = (0, import_react.useRef)(null);
+  const lastPayloadRef = (0, import_react.useRef)({});
   (0, import_react.useEffect)(() => {
     const payload = serialize(cache);
     const same = lastPayloadRef.current && JSON.stringify(lastPayloadRef.current) === JSON.stringify(payload);
@@ -19467,12 +19480,15 @@ function EmailManager({ groups = [], onChange }) {
     (async () => {
       const data = await getEmailGroups();
       const next = {};
+      const categories = [];
       for (const cat of Object.keys(data || {})) {
+        categories.push(cat);
         next[cat] = (data[cat] || []).map((email, idx) => ({
           id: String(idx + 1),
           email
         }));
       }
+      setAvailableCategories(categories.sort());
       updateCache(next);
     })().catch(console.error);
   }, [updateCache]);
@@ -19515,7 +19531,7 @@ function EmailManager({ groups = [], onChange }) {
       value: currentCategory,
       onChange: (e) => setCurrentCategory(e.target.value)
     },
-    categories.map((c) => /* @__PURE__ */ import_react.default.createElement("option", { key: c, value: c }, c))
+    availableCategories.map((c) => /* @__PURE__ */ import_react.default.createElement("option", { key: c, value: c }, c))
   )), /* @__PURE__ */ import_react.default.createElement("ul", { className: "list-group mb-2" }, list.length ? list.map(({ id, email }) => /* @__PURE__ */ import_react.default.createElement("li", { key: id, className: "list-group-item d-flex justify-content-between align-items-center" }, editingId === id ? /* @__PURE__ */ import_react.default.createElement("div", { className: "input-group input-group-sm" }, /* @__PURE__ */ import_react.default.createElement(
     "input",
     {
@@ -19523,11 +19539,18 @@ function EmailManager({ groups = [], onChange }) {
       defaultValue: email,
       className: "form-control",
       onKeyDown: (e) => {
-        if (e.key === "Enter") saveEmail(id, e.target.value);
+        if (e.key === "Enter") saveEmail(
+          id,
+          /** @type {HTMLInputElement} */
+          e.target.value
+        );
       }
     }
   ), /* @__PURE__ */ import_react.default.createElement("button", { className: "btn btn-primary", onClick: (e) => {
-    const input = e.currentTarget.previousSibling;
+    const input = (
+      /** @type {HTMLInputElement} */
+      e.currentTarget.previousSibling
+    );
     saveEmail(id, input && input.value);
   } }, "Save"), /* @__PURE__ */ import_react.default.createElement("button", { className: "btn btn-outline-secondary", onClick: () => setEditingId(null) }, "Cancel")) : /* @__PURE__ */ import_react.default.createElement(import_react.default.Fragment, null, /* @__PURE__ */ import_react.default.createElement("span", { className: "text-truncate", style: { maxWidth: "75%" } }, email), /* @__PURE__ */ import_react.default.createElement("div", { className: "btn-group btn-group-sm" }, /* @__PURE__ */ import_react.default.createElement("button", { className: "btn btn-outline-secondary", onClick: () => setEditingId(id) }, "Edit"), /* @__PURE__ */ import_react.default.createElement("button", { className: "btn btn-outline-danger", onClick: () => deleteEmail(id) }, "Del"))))) : /* @__PURE__ */ import_react.default.createElement("li", { className: "list-group-item text-muted" }, "No emails for ", currentCategory || "\u2014", ".")), /* @__PURE__ */ import_react.default.createElement("div", { className: "input-group input-group-sm" }, /* @__PURE__ */ import_react.default.createElement(
     "input",
@@ -19544,39 +19567,13 @@ function EmailManager({ groups = [], onChange }) {
 
 // src/renderer/vendor_quoting/components/itemGroups.jsx
 var import_react2 = __toESM(require_react(), 1);
-function Chip({ email }) {
-  const val = email ?? "";
-  return /* @__PURE__ */ import_react2.default.createElement("span", { className: "badge rounded-pill text-bg-light border me-1 mb-1" }, val);
-}
 function ItemRow({ it }) {
   const name = it?.name ?? it?.part_number ?? it?.PartNumber ?? "";
   const description = it?.Description ?? it?.description ?? "";
   const quantity = it?.qty ?? it?.QuantityRequired ?? 0;
-  const emailCategory = it?.EmailCategory ?? it?.email_category ?? "";
-  const [isEditingCategory, setIsEditingCategory] = import_react2.default.useState(false);
+  const commodityCode = it?.CommodityCode ?? "";
   const [isEditingQty, setIsEditingQty] = import_react2.default.useState(false);
-  const [editCategory, setEditCategory] = import_react2.default.useState(emailCategory);
   const [editQty, setEditQty] = import_react2.default.useState(quantity);
-  const emailCategories = [
-    "ALUMINUM",
-    "STEEL",
-    "PLASTIC",
-    "ELECTRONICS",
-    "HARDWARE",
-    "CUSTOM",
-    "UNCODED"
-  ];
-  const handleCategoryEdit = () => {
-    setIsEditingCategory(true);
-  };
-  const handleCategorySave = () => {
-    setIsEditingCategory(false);
-    console.log("Category updated:", editCategory);
-  };
-  const handleCategoryCancel = () => {
-    setIsEditingCategory(false);
-    setEditCategory(emailCategory);
-  };
   const handleQtyEdit = () => {
     setIsEditingQty(true);
   };
@@ -19600,36 +19597,7 @@ function ItemRow({ it }) {
     return dimensions.length > 0 ? dimensions.join(" \xD7 ") : null;
   };
   const dimensionsStr = buildDimensions();
-  return /* @__PURE__ */ import_react2.default.createElement("li", { className: "list-group-item" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex flex-column" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-3 mb-2" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "flex-grow-1" }, /* @__PURE__ */ import_react2.default.createElement("strong", { className: "text-dark" }, name)), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, "Category:"), isEditingCategory ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement(
-    "select",
-    {
-      className: "form-select form-select-sm",
-      style: { width: "120px", fontSize: "0.75rem" },
-      value: editCategory || "",
-      onChange: (e) => setEditCategory(e.target.value),
-      autoFocus: true
-    },
-    /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, "Select..."),
-    emailCategories.map((cat) => /* @__PURE__ */ import_react2.default.createElement("option", { key: cat, value: cat }, cat))
-  ), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn btn-sm btn-success",
-      style: { padding: "2px 6px" },
-      onClick: handleCategorySave,
-      title: "Save"
-    },
-    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-check", style: { fontSize: "0.75rem" } })
-  ), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn btn-sm btn-outline-secondary",
-      style: { padding: "2px 6px" },
-      onClick: handleCategoryCancel,
-      title: "Cancel"
-    },
-    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-x", style: { fontSize: "0.75rem" } })
-  )) : /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement(
+  return /* @__PURE__ */ import_react2.default.createElement("li", { className: "list-group-item" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex flex-column" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-3 mb-2" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "flex-grow-1" }, /* @__PURE__ */ import_react2.default.createElement("strong", { className: "text-dark" }, name)), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, "Commodity:"), /* @__PURE__ */ import_react2.default.createElement(
     "span",
     {
       className: "form-control form-control-sm bg-light",
@@ -19642,17 +19610,8 @@ function ItemRow({ it }) {
         height: "28px"
       }
     },
-    emailCategory || "Not set"
-  ), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn btn-sm btn-outline-primary",
-      style: { padding: "2px 6px" },
-      onClick: handleCategoryEdit,
-      title: "Edit Category"
-    },
-    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-pencil", style: { fontSize: "0.75rem" } })
-  ))), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, "Qty:"), isEditingQty ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement(
+    commodityCode || "Not set"
+  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, "Qty:"), isEditingQty ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-1" }, /* @__PURE__ */ import_react2.default.createElement(
     "input",
     {
       type: "number",
@@ -19718,8 +19677,7 @@ function ItemRow({ it }) {
   ))));
 }
 function GroupCard({ code, items = [], emails = [] }) {
-  const recipients = emails?.length > 0 ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-2" }, emails.map((e, i) => /* @__PURE__ */ import_react2.default.createElement(Chip, { key: i, email: e.email_id || e.email || "" }))) : null;
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "card mb-4" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center justify-content-between" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "fw-semibold" }, code)), /* @__PURE__ */ import_react2.default.createElement("span", { className: "badge text-bg-primary rounded-pill" }, items.length, " item", items.length === 1 ? "" : "s")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-2" }, recipients), /* @__PURE__ */ import_react2.default.createElement("hr", { className: "my-3" }), /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-4" }, /* @__PURE__ */ import_react2.default.createElement("div", null, /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group list-group-flush" }, items.map((it) => /* @__PURE__ */ import_react2.default.createElement(ItemRow, { key: String(it.item_pk ?? it.part_number ?? Math.random()), it })))))));
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "card mb-4" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center justify-content-between" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "fw-semibold" }, code)), /* @__PURE__ */ import_react2.default.createElement("span", { className: "badge text-bg-primary rounded-pill" }, items.length, " item", items.length === 1 ? "" : "s")), /* @__PURE__ */ import_react2.default.createElement("hr", { className: "my-3" }), /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-4" }, /* @__PURE__ */ import_react2.default.createElement("div", null, /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group list-group-flush" }, items.map((it) => /* @__PURE__ */ import_react2.default.createElement(ItemRow, { key: String(it.item_pk ?? it.part_number ?? Math.random()), it })))))));
 }
 function CodeOptions({ codes = [], selected = "" }) {
   const normalized = (0, import_react2.useMemo)(() => {
@@ -19736,47 +19694,82 @@ function CodeOptions({ codes = [], selected = "" }) {
   }, [codes]);
   return /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, "Assign commodity code\u2026"), normalized.map(({ value, label }) => /* @__PURE__ */ import_react2.default.createElement("option", { key: value, value, selected: value === selected }, label)));
 }
-function UncodedCard({ items = [], codes = [], onApply }) {
+function UncodedCard({ items = [], onApply }) {
   const [assignments, setAssignments] = (0, import_react2.useState)({});
+  const [commodityCodes, setCommodityCodes] = (0, import_react2.useState)([]);
+  const [isLoading, setIsLoading] = (0, import_react2.useState)(true);
+  const [updatingItems, setUpdatingItems] = (0, import_react2.useState)(/* @__PURE__ */ new Set());
+  (0, import_react2.useEffect)(() => {
+    const fetchCodes = async () => {
+      try {
+        const response = await getCommodityCodes();
+        const codes = response.codes || [];
+        setCommodityCodes(codes);
+      } catch (error) {
+        console.error("Failed to fetch commodity codes:", error);
+        setCommodityCodes([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchCodes();
+  }, []);
   if (!items?.length) return null;
-  const handlePick = (item_pk, val) => {
-    setAssignments((prev) => {
-      const next = { ...prev };
-      if (!val) delete next[item_pk];
-      else next[item_pk] = val;
-      return next;
-    });
+  const handlePick = async (item_pk, selectedCode) => {
+    if (!selectedCode) return;
+    const codeIndex = commodityCodes.indexOf(selectedCode);
+    if (codeIndex === -1) {
+      console.error("Selected code not found in commodity codes list:", selectedCode);
+      return;
+    }
+    const codeId = codeIndex + 1;
+    setUpdatingItems((prev) => new Set(prev).add(item_pk));
+    try {
+      await updateItemCommodityCode(item_pk, codeId);
+      setAssignments((prev) => {
+        const next = { ...prev };
+        next[item_pk] = selectedCode;
+        return next;
+      });
+      if (onApply) {
+        onApply({ [item_pk]: selectedCode });
+      }
+    } catch (error) {
+      console.error("Failed to update commodity code:", error);
+      alert(`Failed to update commodity code: ${error.message}`);
+    } finally {
+      setUpdatingItems((prev) => {
+        const next = new Set(prev);
+        next.delete(item_pk);
+        return next;
+      });
+    }
   };
   const hasUpdates = Object.keys(assignments).length > 0;
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "card mb-1" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center justify-content-between" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "fw-semibold" }, "Uncategorized (no commodity code)")), /* @__PURE__ */ import_react2.default.createElement("span", { className: "badge text-bg-primary rounded-pill" }, items.length, " item", items.length === 1 ? "" : "s")), /* @__PURE__ */ import_react2.default.createElement("hr", { className: "my-3" }), /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group list-group-flush" }, items.map((it) => {
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "card mb-1" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center justify-content-between" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "fw-semibold" }, "Uncategorized (no commodity code)")), /* @__PURE__ */ import_react2.default.createElement("span", { className: "badge text-bg-primary rounded-pill" }, items.length, " item", items.length === 1 ? "" : "s")), /* @__PURE__ */ import_react2.default.createElement("hr", { className: "my-3" }), isLoading ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-center py-3" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-muted" }, "Loading commodity codes...")) : /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group list-group-flush" }, items.map((it) => {
     const name = it.name ?? it.part_number ?? "";
     const key = String(it.item_pk);
-    return /* @__PURE__ */ import_react2.default.createElement("li", { className: "list-group-item", key }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "me-3" }, /* @__PURE__ */ import_react2.default.createElement("strong", null, name), " ", /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-muted" }, "\u2022 Qty ", it.qty)), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label mb-0 small text-muted" }, "Commodity"), /* @__PURE__ */ import_react2.default.createElement(
+    const isUpdating = updatingItems.has(key);
+    const currentValue = assignments[key] ?? "";
+    return /* @__PURE__ */ import_react2.default.createElement("li", { className: "list-group-item", key }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "me-3" }, /* @__PURE__ */ import_react2.default.createElement("strong", null, name), " ", /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-muted" }, "\u2022 Qty ", it.qty), isUpdating && /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-primary ms-2" }, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-arrow-clockwise spinner-border spinner-border-sm", role: "status", "aria-hidden": "true" }), /* @__PURE__ */ import_react2.default.createElement("span", { className: "ms-1" }, "Updating..."))), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label mb-0 small text-muted" }, "Commodity"), /* @__PURE__ */ import_react2.default.createElement(
       "select",
       {
         className: "form-select form-select-sm code-picker",
         "aria-label": "Assign commodity code",
-        value: assignments[key] ?? "",
-        onChange: (e) => handlePick(key, e.target.value)
+        value: currentValue,
+        onChange: (e) => handlePick(key, e.target.value),
+        disabled: isUpdating
       },
-      /* @__PURE__ */ import_react2.default.createElement(CodeOptions, { codes })
+      /* @__PURE__ */ import_react2.default.createElement(CodeOptions, { codes: commodityCodes })
     ))));
-  })), hasUpdates && /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-3" }, /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn btn-primary btn-sm",
-      onClick: () => onApply?.(assignments)
-    },
-    "Update ",
-    items.length > 1 ? "Selected Items" : "Item"
-  ), /* @__PURE__ */ import_react2.default.createElement("span", { className: "ms-2 text-muted" }, Object.keys(assignments).length, " change", Object.keys(assignments).length === 1 ? "" : "s"))));
+  })), hasUpdates && /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-3" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "alert alert-success alert-sm mb-0", role: "alert" }, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-check-circle me-2" }), Object.keys(assignments).length, " item", Object.keys(assignments).length === 1 ? "" : "s", " updated successfully"))));
 }
 function normalizeFromYourApi(raw) {
   const items = Object.entries(raw).map(([item_pk, it]) => ({
     item_pk,
     name: it.PartNumber,
     qty: it.QuantityRequired,
-    code: it.EmailCategory,
+    code: it.CommodityCode,
     // Preserve all the original data for ItemRow to use
     ...it,
     // Spread all original fields
@@ -19784,7 +19777,7 @@ function normalizeFromYourApi(raw) {
     PartNumber: it.PartNumber,
     QuantityRequired: it.QuantityRequired,
     Description: it.Description,
-    EmailCategory: it.EmailCategory,
+    CommodityCode: it.CommodityCode,
     PartLength: it.PartLength,
     PartWidth: it.PartWidth,
     Thickness: it.Thickness,
@@ -20173,7 +20166,6 @@ function RecipientsModal({ rawData, rfqId }) {
     UncodedCard,
     {
       items: uncodedItems,
-      codes: window.codesCache || [],
       onApply: handleApplyUncoded
     }
   ))), /* @__PURE__ */ import_react4.default.createElement("div", { className: "col-12 col-lg-5" }, /* @__PURE__ */ import_react4.default.createElement(

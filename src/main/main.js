@@ -53,8 +53,9 @@ async function createWindow() {
     // Initialize backend connection first
     await initializeBackendConnection();
     
-    // Simple preload path - use process.cwd() which works reliably
-    const preloadPath = path.join(process.cwd(), 'src', 'preload.js');
+    // Use app.getAppPath() for packaged apps, process.cwd() for development
+    const appPath = app.isPackaged ? app.getAppPath() : process.cwd();
+    const preloadPath = path.join(appPath, 'src', 'preload.js');
 
     // Create the browser window
     const win = new BrowserWindow({
@@ -69,7 +70,8 @@ async function createWindow() {
         },
     });
 
-    await win.loadFile('src/renderer/home/home.html');
+    const htmlPath = path.join(appPath, 'src', 'renderer', 'home', 'home.html');
+    await win.loadFile(htmlPath);
     win.webContents.openDevTools();
 }
 

@@ -17,12 +17,19 @@
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx esbuild src/renderer/rfq_gen/main.jsx --bundle --outfile=src/renderer/rfq_gen/main.js --format=esm && npx esbuild src/renderer/vendor_quoting/modals/reviewModal.jsx --bundle --outfile=src/renderer/vendor_quoting/modals/reviewModal.js --format=esm && npx esbuild src/renderer/vendor_quoting/components/BoeingFinishModal.jsx --bundle --outfile=src/renderer/vendor_quoting/components/BoeingFinishModal.js --format=esm && npx esbuild src/renderer/vendor_quoting/App.jsx --bundle --outfile=src/renderer/vendor_quoting/App.js --format=esm && npx esbuild src/renderer/vacation/VacationApp.jsx --bundle --outfile=src/renderer/vacation/VacationApp.js --format=esm"
+    "build": "npx esbuild src/renderer/rfq_gen/main.jsx --bundle --outfile=src/renderer/rfq_gen/main.js --format=esm && npx esbuild src/renderer/vendor_quoting/modals/reviewModal.jsx --bundle --outfile=src/renderer/vendor_quoting/modals/reviewModal.js --format=esm && npx esbuild src/renderer/vendor_quoting/components/BoeingFinishModal.jsx --bundle --outfile=src/renderer/vendor_quoting/components/BoeingFinishModal.js --format=esm && npx esbuild src/renderer/vendor_quoting/App.jsx --bundle --outfile=src/renderer/vendor_quoting/App.js --format=esm && npx esbuild src/renderer/vacation/VacationApp.jsx --bundle --outfile=src/renderer/vacation/VacationApp.js --format=esm",
+    "build-app": "npm run build && electron-builder",
+    "build-app-win": "npm run build && electron-builder --win",
+    "build-app-dir": "npm run build && electron-builder --dir",
+    "build-simple": "npm run build && electron-builder --win --publish=never",
+    "pack-win": "npm run build && npx electron-packager . procure-hub --platform=win32 --arch=x64 --out=dist --overwrite"
   },
   "devDependencies": {
     "concurrently": "^9.2.0",
     "cross-env": "^10.0.0",
     "electron": "^37.2.5",
+    "electron-builder": "^24.13.3",
+    "electron-packager": "^17.1.1",
     "esbuild": "^0.25.9",
     "wait-on": "^8.0.4"
   },
@@ -30,5 +37,33 @@
     "odbc": "^2.4.9",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
+  },
+  "build": {
+    "appId": "com.etezazi.procure-hub",
+    "productName": "ProCure Hub",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "node_modules/**/*",
+      "backend_dist/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "backend_dist",
+        "to": "backend_dist"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "zip",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "afterSign": null,
+    "forceCodeSigning": false
   }
 }

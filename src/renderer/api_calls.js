@@ -236,3 +236,18 @@ export async function addVacationComment(id, comment) {
     });
 }
 
+// ----------- COMMODITY CODES --------------------
+
+export async function getCommodityCodes() {
+    return requestJson("commodity-codes");
+}
+
+export async function updateItemCommodityCode(itemPk, codeId) {
+    if (!itemPk) throw new Error("Item PK is required");
+    if (codeId === null || codeId === undefined) throw new Error("Code ID is required");
+    
+    return requestJson(`item/${encodeURIComponent(itemPk)}/commodity-code/${encodeURIComponent(codeId)}`, {
+        method: "PUT"
+    });
+}
+

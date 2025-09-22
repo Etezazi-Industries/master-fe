@@ -4,12 +4,11 @@ import { getEmailGroups } from "../../api_calls.js";
 
 
 export default function EmailManager({ groups = [], onChange }) {
-    const categories = [...new Set(groups.map(g => g.code).filter(Boolean))];
-
+    // Instead of filtering by item commodity codes, show all available email categories from API
+    const [availableCategories, setAvailableCategories] = useState(/** @type {string[]} */([]));
     const [currentCategory, setCurrentCategory] = useState("");
     const [cache, setCache] = useState({}); // { cat: [ {id,email} ] }
     const [editingId, setEditingId] = useState(null);
-    const [inputValue, setInputValue] = useState("");
 
     const onChangeRef = useRef(onChange);
     useEffect(() => {
@@ -17,8 +16,8 @@ export default function EmailManager({ groups = [], onChange }) {
     }, [onChange]);
 
     useEffect(() => {
-        if (!currentCategory && categories.length) setCurrentCategory(categories[0]);
-    }, [categories, currentCategory]);
+        if (!currentCategory && availableCategories.length) setCurrentCategory(availableCategories[0]);
+    }, [availableCategories, currentCategory]);
 
     const serialize = useCallback((mapObj) => {
         const out = {};
@@ -29,7 +28,7 @@ export default function EmailManager({ groups = [], onChange }) {
     }, []);
 
 
-    const lastPayloadRef = useRef(null);
+    const lastPayloadRef = useRef({});
 
     useEffect(() => {
         const payload = serialize(cache);
@@ -51,28 +50,22 @@ export default function EmailManager({ groups = [], onChange }) {
         (async () => {
             const data = await getEmailGroups(); // { CAT: string[] }
             const next = {};
+            const categories = [];
             for (const cat of Object.keys(data || {})) {
+                categories.push(cat);
                 next[cat] = (data[cat] || []).map((email, idx) => ({
                     id: String(idx + 1),
                     email,
                 }));
             }
+            // Set all available categories from API response
+            setAvailableCategories(categories.sort());
             updateCache(next);
             //didLoad.current = true;             // <-- gate opens AFTER cache populated
         })().catch(console.error);
     }, [updateCache]);
 
     const list = cache[currentCategory] || [];
-
-    function addEmail() {
-        const value = inputValue.trim();
-        if (!value || !currentCategory) return;
-        const exists = list.some(r => r.email.toLowerCase() === value.toLowerCase());
-        if (exists) { setInputValue(""); return; }
-        const newList = [...list, { id: String(Date.now()), email: value }];
-        updateCache(prev => ({ ...prev, [currentCategory]: newList }));
-        setInputValue("");
-    }
 
     function saveEmail(id, nextValue) {
         const value = String(nextValue || "").trim();
@@ -97,7 +90,7 @@ export default function EmailManager({ groups = [], onChange }) {
                     value={currentCategory}
                     onChange={(e) => setCurrentCategory(e.target.value)}
                 >
-                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    {availableCategories.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
             </div>
 
@@ -110,10 +103,10 @@ export default function EmailManager({ groups = [], onChange }) {
                                     type="email"
                                     defaultValue={email}
                                     className="form-control"
-                                    onKeyDown={(e) => { if (e.key === "Enter") saveEmail(id, e.target.value); }}
+                                    onKeyDown={(e) => { if (e.key === "Enter") saveEmail(id, /** @type {HTMLInputElement} */(e.target).value); }}
                                 />
                                 <button className="btn btn-primary" onClick={(e) => {
-                                    const input = e.currentTarget.previousSibling;
+                                    const input = /** @type {HTMLInputElement} */(e.currentTarget.previousSibling);
                                     saveEmail(id, input && input.value);
                                 }}>Save</button>
                                 <button className="btn btn-outline-secondary" onClick={() => setEditingId(null)}>Cancel</button>
@@ -135,20 +128,8 @@ export default function EmailManager({ groups = [], onChange }) {
                 )}
             </ul>
 
-            <div className="input-group input-group-sm">
-                <input
-                    type="email"
-                    className="form-control"
-                    placeholder="Add email"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && addEmail()}
-                />
-                <button className="btn btn-primary" onClick={addEmail}>Add</button>
-            </div>
-
             <div className="form-text mt-2">
-                You can add, edit, or remove emails for {currentCategory || "—"}.
+                You can edit or remove emails for {currentCategory || "—"}.
             </div>
         </div>
     );

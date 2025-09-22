@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { getCommodityCodes, updateItemCommodityCode } from "../../api_calls.js";
 
 /**
  * NOTE:
@@ -24,40 +25,11 @@ function ItemRow({ it }) {
     const name = it?.name ?? it?.part_number ?? it?.PartNumber ?? "";
     const description = it?.Description ?? it?.description ?? "";
     const quantity = it?.qty ?? it?.QuantityRequired ?? 0;
-    const emailCategory = it?.EmailCategory ?? it?.email_category ?? "";
+    const commodityCode = it?.CommodityCode ?? "";
     
     // Edit states
-    const [isEditingCategory, setIsEditingCategory] = React.useState(false);
     const [isEditingQty, setIsEditingQty] = React.useState(false);
-    const [editCategory, setEditCategory] = React.useState(emailCategory);
     const [editQty, setEditQty] = React.useState(quantity);
-    
-    // Available email categories (you might want to get this from props or global state)
-    const emailCategories = [
-        'ALUMINUM',
-        'STEEL',
-        'PLASTIC',
-        'ELECTRONICS', 
-        'HARDWARE',
-        'CUSTOM',
-        'UNCODED'
-    ];
-    
-    // Edit handlers
-    const handleCategoryEdit = () => {
-        setIsEditingCategory(true);
-    };
-    
-    const handleCategorySave = () => {
-        setIsEditingCategory(false);
-        // TODO: Implement save logic - update the item data
-        console.log('Category updated:', editCategory);
-    };
-    
-    const handleCategoryCancel = () => {
-        setIsEditingCategory(false);
-        setEditCategory(emailCategory); // Reset to original
-    };
     
     const handleQtyEdit = () => {
         setIsEditingQty(true);
@@ -97,71 +69,28 @@ function ItemRow({ it }) {
     return (
         <li className="list-group-item">
             <div className="d-flex flex-column">
-                {/* Top row: Part Number + Email Category + Quantity (all editable) */}
+                {/* Top row: Part Number + Commodity Code + Quantity */}
                 <div className="d-flex align-items-center gap-3 mb-2">
                     <div className="flex-grow-1">
                         <strong className="text-dark">{name}</strong>
                     </div>
                     
-                    {/* Email Category - Editable */}
+                    {/* Commodity Code - Display only */}
                     <div className="d-flex align-items-center gap-1">
-                        <small className="text-muted">Category:</small>
-                        {isEditingCategory ? (
-                            <div className="d-flex align-items-center gap-1">
-                                <select 
-                                    className="form-select form-select-sm" 
-                                    style={{ width: '120px', fontSize: '0.75rem' }}
-                                    value={editCategory || ''}
-                                    onChange={(e) => setEditCategory(e.target.value)}
-                                    autoFocus
-                                >
-                                    <option value="">Select...</option>
-                                    {emailCategories.map(cat => (
-                                        <option key={cat} value={cat}>{cat}</option>
-                                    ))}
-                                </select>
-                                <button 
-                                    className="btn btn-sm btn-success" 
-                                    style={{ padding: '2px 6px' }}
-                                    onClick={handleCategorySave}
-                                    title="Save"
-                                >
-                                    <i className="bi bi-check" style={{ fontSize: '0.75rem' }}></i>
-                                </button>
-                                <button 
-                                    className="btn btn-sm btn-outline-secondary" 
-                                    style={{ padding: '2px 6px' }}
-                                    onClick={handleCategoryCancel}
-                                    title="Cancel"
-                                >
-                                    <i className="bi bi-x" style={{ fontSize: '0.75rem' }}></i>
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="d-flex align-items-center gap-1">
-                                <span 
-                                    className="form-control form-control-sm bg-light" 
-                                    style={{ 
-                                        width: '120px', 
-                                        fontSize: '0.75rem',
-                                        border: '1px solid #dee2e6',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        height: '28px'
-                                    }}
-                                >
-                                    {emailCategory || 'Not set'}
-                                </span>
-                                <button 
-                                    className="btn btn-sm btn-outline-primary" 
-                                    style={{ padding: '2px 6px' }}
-                                    onClick={handleCategoryEdit}
-                                    title="Edit Category"
-                                >
-                                    <i className="bi bi-pencil" style={{ fontSize: '0.75rem' }}></i>
-                                </button>
-                            </div>
-                        )}
+                        <small className="text-muted">Commodity:</small>
+                        <span 
+                            className="form-control form-control-sm bg-light" 
+                            style={{ 
+                                width: '120px', 
+                                fontSize: '0.75rem',
+                                border: '1px solid #dee2e6',
+                                display: 'flex',
+                                alignItems: 'center',
+                                height: '28px'
+                            }}
+                        >
+                            {commodityCode || 'Not set'}
+                        </span>
                     </div>
                     
                     {/* Quantity - Editable */}
@@ -253,15 +182,6 @@ function ItemRow({ it }) {
 // ───────────────────────────────────────────────────────────────────────────────
 // Cards
 export function GroupCard({ code, items = [], emails = [] }) {
-    // recipients (computed but not rendered in your original; keeping parity)
-    const recipients =
-        emails?.length > 0 ? (
-            <div className="mt-2">
-                {emails.map((e, i) => (
-                    <Chip key={i} email={e.email_id || e.email || ""} />
-                ))}
-            </div>
-        ) : null; // Remove "No recipients" label
 
     return (
         <div className="card mb-4">
@@ -274,10 +194,6 @@ export function GroupCard({ code, items = [], emails = [] }) {
                         {items.length} item{items.length === 1 ? "" : "s"}
                     </span>
                 </div>
-
-                {/* recipients were computed in your original but not shown.
-            If you want them visible, keep this; otherwise remove. */}
-                <div className="mt-2">{recipients}</div>
 
                 <hr className="my-3" />
                 <div className="row g-4">
@@ -326,22 +242,81 @@ function CodeOptions({ codes = [], selected = "" }) {
 
 /**
  * UncodedCard
- * - Shows uncoded items with a code <select>.
+ * - Shows uncoded items with a commodity code <select>.
  * - Tracks selections in local state { [item_pk]: selectedCode }.
- * - When “Update” is clicked, calls onApply(assignmentsObject).
+ * - When "Update" is clicked, calls onApply(assignmentsObject).
+ * - Fetches commodity codes from API on mount.
  */
-export function UncodedCard({ items = [], codes = [], onApply }) {
+export function UncodedCard({ items = [], onApply }) {
     const [assignments, setAssignments] = useState({}); // { item_pk: code }
+    const [commodityCodes, setCommodityCodes] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [updatingItems, setUpdatingItems] = useState(new Set()); // Track which items are being updated
+
+    // Fetch commodity codes on mount
+    useEffect(() => {
+        const fetchCodes = async () => {
+            try {
+                const response = await getCommodityCodes();
+                // Response format: { "codes": string[] }
+                const codes = response.codes || [];
+                setCommodityCodes(codes);
+            } catch (error) {
+                console.error('Failed to fetch commodity codes:', error);
+                setCommodityCodes([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        
+        fetchCodes();
+    }, []);
 
     if (!items?.length) return null;
 
-    const handlePick = (item_pk, val) => {
-        setAssignments((prev) => {
-            const next = { ...prev };
-            if (!val) delete next[item_pk];
-            else next[item_pk] = val;
-            return next;
-        });
+    const handlePick = async (item_pk, selectedCode) => {
+        if (!selectedCode) return; // Don't update if empty selection
+        
+        // Find the index of the selected code (1-based for API)
+        const codeIndex = commodityCodes.indexOf(selectedCode);
+        if (codeIndex === -1) {
+            console.error('Selected code not found in commodity codes list:', selectedCode);
+            return;
+        }
+        
+        const codeId = codeIndex + 1; // Convert to 1-based index
+        
+        // Track that this item is being updated
+        setUpdatingItems(prev => new Set(prev).add(item_pk));
+        
+        try {
+            // Call the API to update the commodity code
+            await updateItemCommodityCode(item_pk, codeId);
+            
+            // On success, update the local state
+            setAssignments((prev) => {
+                const next = { ...prev };
+                next[item_pk] = selectedCode;
+                return next;
+            });
+            
+            // Optionally call onApply to notify parent component
+            if (onApply) {
+                onApply({ [item_pk]: selectedCode });
+            }
+            
+        } catch (error) {
+            console.error('Failed to update commodity code:', error);
+            // You might want to show a user-friendly error message here
+            alert(`Failed to update commodity code: ${error.message}`);
+        } finally {
+            // Remove from updating set
+            setUpdatingItems(prev => {
+                const next = new Set(prev);
+                next.delete(item_pk);
+                return next;
+            });
+        }
     };
 
     const hasUpdates = Object.keys(assignments).length > 0;
@@ -360,46 +335,56 @@ export function UncodedCard({ items = [], codes = [], onApply }) {
 
                 <hr className="my-3" />
 
-                <ul className="list-group list-group-flush">
-                    {items.map((it) => {
-                        const name = it.name ?? it.part_number ?? "";
-                        const key = String(it.item_pk);
-                        return (
-                            <li className="list-group-item" key={key}>
-                                <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-                                    <div className="me-3">
-                                        <strong>{name}</strong>{" "}
-                                        <span className="text-muted">• Qty {it.qty}</span>
+                {isLoading ? (
+                    <div className="text-center py-3">
+                        <span className="text-muted">Loading commodity codes...</span>
+                    </div>
+                ) : (
+                    <ul className="list-group list-group-flush">
+                        {items.map((it) => {
+                            const name = it.name ?? it.part_number ?? "";
+                            const key = String(it.item_pk);
+                            const isUpdating = updatingItems.has(key);
+                            const currentValue = assignments[key] ?? "";
+                            
+                            return (
+                                <li className="list-group-item" key={key}>
+                                    <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                                        <div className="me-3">
+                                            <strong>{name}</strong>{" "}
+                                            <span className="text-muted">• Qty {it.qty}</span>
+                                            {isUpdating && (
+                                                <span className="text-primary ms-2">
+                                                    <i className="bi bi-arrow-clockwise spinner-border spinner-border-sm" role="status" aria-hidden="true"></i>
+                                                    <span className="ms-1">Updating...</span>
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2">
+                                            <label className="form-label mb-0 small text-muted">Commodity</label>
+                                            <select
+                                                className="form-select form-select-sm code-picker"
+                                                aria-label="Assign commodity code"
+                                                value={currentValue}
+                                                onChange={(e) => handlePick(key, e.target.value)}
+                                                disabled={isUpdating}
+                                            >
+                                                <CodeOptions codes={commodityCodes} />
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div className="d-flex align-items-center gap-2">
-                                        <label className="form-label mb-0 small text-muted">Commodity</label>
-                                        <select
-                                            className="form-select form-select-sm code-picker"
-                                            aria-label="Assign commodity code"
-                                            value={assignments[key] ?? ""}
-                                            onChange={(e) => handlePick(key, e.target.value)}
-                                        >
-                                            <CodeOptions codes={codes} />
-                                        </select>
-                                    </div>
-                                </div>
-                            </li>
-                        );
-                    })}
-                </ul>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
 
                 {hasUpdates && (
                     <div className="mt-3">
-                        <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => onApply?.(assignments)}
-                        >
-                            Update {items.length > 1 ? "Selected Items" : "Item"}
-                        </button>
-                        <span className="ms-2 text-muted">
-                            {Object.keys(assignments).length} change
-                            {Object.keys(assignments).length === 1 ? "" : "s"}
-                        </span>
+                        <div className="alert alert-success alert-sm mb-0" role="alert">
+                            <i className="bi bi-check-circle me-2"></i>
+                            {Object.keys(assignments).length} item{Object.keys(assignments).length === 1 ? "" : "s"} updated successfully
+                        </div>
                     </div>
                 )}
             </div>
@@ -414,14 +399,14 @@ export function normalizeFromYourApi(raw) {
         item_pk,
         name: it.PartNumber,
         qty: it.QuantityRequired,
-        code: it.EmailCategory,
+        code: it.CommodityCode,
         // Preserve all the original data for ItemRow to use
         ...it,  // Spread all original fields
         // Ensure consistent field names for backward compatibility
         PartNumber: it.PartNumber,
         QuantityRequired: it.QuantityRequired,
         Description: it.Description,
-        EmailCategory: it.EmailCategory,
+        CommodityCode: it.CommodityCode,
         PartLength: it.PartLength,
         PartWidth: it.PartWidth,
         Thickness: it.Thickness,
@@ -429,7 +414,7 @@ export function normalizeFromYourApi(raw) {
         StockWidth: it.StockWidth,
         ItemTypeFK: it.ItemTypeFK,
         PurchaseOrderComment: it.PurchaseOrderComment,
-        Category: it.Category,
+        Category: it.Category
     }));
 
     const byCode = new Map();

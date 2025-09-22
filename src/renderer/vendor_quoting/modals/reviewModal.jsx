@@ -145,7 +145,6 @@ function RecipientsModal({ rawData, rfqId }) {
                                 ))}
                             <UncodedCard
                                 items={uncodedItems}
-                                codes={window.codesCache || []}
                                 onApply={handleApplyUncoded}
                             /* Ensure UncodedCard emits { [item_pk]: code } */
                             />
