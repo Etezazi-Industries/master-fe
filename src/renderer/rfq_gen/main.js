@@ -1299,7 +1299,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React9 = require_react(), Internals = {
+      var React10 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1317,7 +1317,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React10.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2859,7 +2859,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React9.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React10.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -16441,14 +16441,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React9 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React10 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
       Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
       Symbol.for("react.legacy_hidden");
       Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
       Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React10.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -19170,7 +19170,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React9.version;
+        var isomorphicReactPackageVersion = React10.version;
         if ("19.1.1" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.1.1\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -19311,61 +19311,84 @@ var require_client = __commonJS({
 });
 
 // src/renderer/rfq_gen/main.jsx
-var import_react8 = __toESM(require_react(), 1);
+var import_react9 = __toESM(require_react(), 1);
 var import_client2 = __toESM(require_client(), 1);
 
 // src/renderer/rfq_gen/components/rfq_app.jsx
-var import_react7 = __toESM(require_react(), 1);
+var import_react8 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
-// src/renderer/rfq_gen/components/customer_buyer_panel.jsx
+// src/renderer/components/shared/HeaderBar.jsx
 var import_react = __toESM(require_react(), 1);
+function HeaderBar({ icon, title, subtitle, actions, sticky = false }) {
+  const headerStyle = {
+    background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
+    padding: "1rem 0",
+    marginBottom: "1.5rem",
+    paddingLeft: "1.5rem",
+    position: sticky ? "sticky" : "relative",
+    top: sticky ? "0" : "auto",
+    zIndex: sticky ? "100" : "auto",
+    overflow: "hidden"
+  };
+  const headerIconStyle = {
+    width: "48px",
+    height: "48px",
+    background: "rgba(255,255,255,0.15)",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1.25rem",
+    color: "white",
+    backdropFilter: "blur(10px)"
+  };
+  const actionButtonStyle = {
+    borderRadius: "50%",
+    width: "40px",
+    height: "40px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "none",
+    background: "transparent",
+    color: "white",
+    transition: "background-color 0.2s ease"
+  };
+  const handleButtonHover = (e) => {
+    e.target.style.backgroundColor = "rgba(255,255,255,0.1)";
+  };
+  const handleButtonLeave = (e) => {
+    e.target.style.backgroundColor = "transparent";
+  };
+  return /* @__PURE__ */ import_react.default.createElement("div", { style: headerStyle }, /* @__PURE__ */ import_react.default.createElement("div", { className: "container-fluid" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center" }, /* @__PURE__ */ import_react.default.createElement("div", { style: headerIconStyle, className: "me-3" }, /* @__PURE__ */ import_react.default.createElement("i", { className: icon })), /* @__PURE__ */ import_react.default.createElement("div", null, /* @__PURE__ */ import_react.default.createElement("h4", { className: "mb-0 text-white fw-bold" }, title), /* @__PURE__ */ import_react.default.createElement("small", { className: "text-white-50" }, subtitle))), actions || /* @__PURE__ */ import_react.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react.default.createElement(
+    "button",
+    {
+      style: actionButtonStyle,
+      onMouseEnter: handleButtonHover,
+      onMouseLeave: handleButtonLeave,
+      title: "Help"
+    },
+    /* @__PURE__ */ import_react.default.createElement("i", { className: "bi bi-question-circle" })
+  ), /* @__PURE__ */ import_react.default.createElement(
+    "button",
+    {
+      style: actionButtonStyle,
+      onMouseEnter: handleButtonHover,
+      onMouseLeave: handleButtonLeave,
+      title: "Settings"
+    },
+    /* @__PURE__ */ import_react.default.createElement("i", { className: "bi bi-gear" })
+  )))));
+}
+
+// src/renderer/rfq_gen/components/customer_buyer_panel.jsx
+var import_react2 = __toESM(require_react(), 1);
 
 // src/renderer/api_calls.js
-var _apiBase = "";
-var _baseReady;
-function findBridge() {
-  try {
-    if (typeof window !== "undefined") {
-      const win = (
-        /** @type {WindowWithBackend} */
-        window
-      );
-      if (win.backend) return win.backend;
-      const t = (
-        /** @type {WindowWithBackend} */
-        window.top
-      );
-      if (t && t !== window && t.backend) return t.backend;
-    }
-  } catch {
-  }
-  return null;
-}
-function waitForBridge(timeoutMs = 8e3) {
-  return new Promise((resolve, reject) => {
-    const start = Date.now();
-    (function tick() {
-      const br = findBridge();
-      if (br && (typeof br.getApiBase === "function" || typeof br.apiBase === "string")) return resolve(br);
-      if (Date.now() - start > timeoutMs) return reject(new Error("Preload bridge not available"));
-      setTimeout(tick, 50);
-    })();
-  });
-}
 async function getApiBase() {
-  if (_apiBase) return _apiBase;
-  if (!_baseReady) {
-    _baseReady = (async () => {
-      const br = await waitForBridge();
-      const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
-      const b = (base || "").trim();
-      if (!b) throw new Error("API base not provided by preload");
-      _apiBase = b.endsWith("/") ? b : b + "/";
-      return _apiBase;
-    })();
-  }
-  return _baseReady;
+  return "http://127.0.0.1:8000/";
 }
 function joinUrl(base, endpoint) {
   const e = String(endpoint || "").replace(/^\/+/, "");
@@ -19461,7 +19484,7 @@ function TextInput({
   // (val: string) => void
   placeholder = ""
 }) {
-  return /* @__PURE__ */ import_react.default.createElement("div", { className: "mb-3 w-100" }, /* @__PURE__ */ import_react.default.createElement("h5", { className: "mb-3" }, label), /* @__PURE__ */ import_react.default.createElement(
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "mb-3 w-100" }, /* @__PURE__ */ import_react2.default.createElement("h5", { className: "mb-3" }, label), /* @__PURE__ */ import_react2.default.createElement(
     "input",
     {
       type: "text",
@@ -19493,7 +19516,7 @@ function Select({
   // normalize id (e.g., Number)
 }) {
   const controlled = value !== void 0 && value !== null;
-  return /* @__PURE__ */ import_react.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react.default.createElement("h5", { className: "mb-3" }, label), /* @__PURE__ */ import_react.default.createElement(
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react2.default.createElement("h5", { className: "mb-3" }, label), /* @__PURE__ */ import_react2.default.createElement(
     "select",
     {
       id,
@@ -19503,9 +19526,9 @@ function Select({
       disabled: disabled || loading,
       "aria-busy": loading || void 0
     },
-    /* @__PURE__ */ import_react.default.createElement("option", { value: "" }, loading ? loadingText : placeholder),
-    !loading && options.map((o) => /* @__PURE__ */ import_react.default.createElement("option", { key: o.id, value: o.id }, o.label))
-  ), !loading && disabled && disabledHint && /* @__PURE__ */ import_react.default.createElement("div", { className: "form-text" }, disabledHint), !loading && !disabled && options.length === 0 && emptyHint && /* @__PURE__ */ import_react.default.createElement("div", { className: "form-text" }, emptyHint));
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, loading ? loadingText : placeholder),
+    !loading && options.map((o) => /* @__PURE__ */ import_react2.default.createElement("option", { key: o.id, value: o.id }, o.label))
+  ), !loading && disabled && disabledHint && /* @__PURE__ */ import_react2.default.createElement("div", { className: "form-text" }, disabledHint), !loading && !disabled && options.length === 0 && emptyHint && /* @__PURE__ */ import_react2.default.createElement("div", { className: "form-text" }, emptyHint));
 }
 function normalizeParties(obj) {
   return Object.entries(obj).map(([id, label]) => ({
@@ -19515,10 +19538,10 @@ function normalizeParties(obj) {
 }
 function CustomerBuyerPanel({ value, onChange }) {
   const { customer_pk = null, customer_name = null, buyer_pk = null, customer_rfq_number = null } = value ?? {};
-  const [customers, setCustomers] = (0, import_react.useState)([]);
-  const [customersLoading, setCustomersLoading] = (0, import_react.useState)(false);
-  const [err, setErr] = (0, import_react.useState)(null);
-  (0, import_react.useEffect)(() => {
+  const [customers, setCustomers] = (0, import_react2.useState)([]);
+  const [customersLoading, setCustomersLoading] = (0, import_react2.useState)(false);
+  const [err, setErr] = (0, import_react2.useState)(null);
+  (0, import_react2.useEffect)(() => {
     const ac = new AbortController();
     (async () => {
       try {
@@ -19533,9 +19556,9 @@ function CustomerBuyerPanel({ value, onChange }) {
     })();
     return () => ac.abort();
   }, []);
-  const [buyers, setBuyers] = (0, import_react.useState)([]);
-  const [buyersLoading, setBuyersLoading] = (0, import_react.useState)(false);
-  (0, import_react.useEffect)(() => {
+  const [buyers, setBuyers] = (0, import_react2.useState)([]);
+  const [buyersLoading, setBuyersLoading] = (0, import_react2.useState)(false);
+  (0, import_react2.useEffect)(() => {
     onChange?.({ buyer_pk: null });
     setBuyers([]);
     if (!customer_pk) {
@@ -19558,7 +19581,7 @@ function CustomerBuyerPanel({ value, onChange }) {
     return () => ac.abort();
   }, [customer_pk]);
   const parseId = (v) => v ? Number(v) : null;
-  return /* @__PURE__ */ import_react.default.createElement("div", { className: "container my-4" }, err && /* @__PURE__ */ import_react.default.createElement("div", { className: "alert alert-danger py-2" }, err), /* @__PURE__ */ import_react.default.createElement("div", { className: "row row-cols-1 row-cols-sm-2 g-2" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react.default.createElement(
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "container my-4" }, err && /* @__PURE__ */ import_react2.default.createElement("div", { className: "alert alert-danger py-2" }, err), /* @__PURE__ */ import_react2.default.createElement("div", { className: "row row-cols-1 row-cols-sm-2 g-2" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react2.default.createElement(
     Select,
     {
       label: "Customer",
@@ -19577,7 +19600,7 @@ function CustomerBuyerPanel({ value, onChange }) {
       loadingText: "Loading customers...",
       emptyHint: "No customers found."
     }
-  )), /* @__PURE__ */ import_react.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react.default.createElement(
+  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react2.default.createElement(
     Select,
     {
       label: "Buyer",
@@ -19592,7 +19615,7 @@ function CustomerBuyerPanel({ value, onChange }) {
       emptyHint: customer_pk ? `No buyers for ${customer_pk}.` : "No buyers.",
       loadingText: "Loading buyers..."
     }
-  ))), /* @__PURE__ */ import_react.default.createElement(
+  ))), /* @__PURE__ */ import_react2.default.createElement(
     TextInput,
     {
       label: "Customer RFQ",
@@ -19605,9 +19628,9 @@ function CustomerBuyerPanel({ value, onChange }) {
 }
 
 // src/renderer/rfq_gen/components/file_input.jsx
-var import_react2 = __toESM(require_react(), 1);
+var import_react3 = __toESM(require_react(), 1);
 function ActionBar({ onMapPress }) {
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-3 my-3 flex-wrap" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex gap-2" }, /* @__PURE__ */ import_react2.default.createElement(
+  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex align-items-center gap-3 my-3 flex-wrap" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex gap-2" }, /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
       type: "button",
@@ -19615,7 +19638,7 @@ function ActionBar({ onMapPress }) {
       onClick: () => onMapPress("part-doc")
     },
     "Part\u2013Doc Map"
-  ), /* @__PURE__ */ import_react2.default.createElement(
+  ), /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
       type: "button",
@@ -19623,7 +19646,7 @@ function ActionBar({ onMapPress }) {
       onClick: () => onMapPress("doc-group")
     },
     "Doc Group Map"
-  ), /* @__PURE__ */ import_react2.default.createElement(
+  ), /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
       type: "button",
@@ -19631,14 +19654,14 @@ function ActionBar({ onMapPress }) {
       onClick: () => onMapPress("template")
     },
     "Template Map"
-  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "form-check" }, /* @__PURE__ */ import_react2.default.createElement(
+  )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-check" }, /* @__PURE__ */ import_react3.default.createElement(
     "input",
     {
       className: "form-check-input",
       type: "checkbox",
       id: "itarCheck"
     }
-  ), /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-check-label", htmlFor: "itarCheck" }, "ITAR RESTRICTED")));
+  ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: "itarCheck" }, "ITAR RESTRICTED")));
 }
 function FileUpload({
   label,
@@ -19708,7 +19731,7 @@ function FileUpload({
       input.click();
     }
   };
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "mb-3 w-100" }, label && /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label" }, label), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-grid" }, /* @__PURE__ */ import_react2.default.createElement(
+  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "mb-3 w-100" }, label && /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-label" }, label), /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-grid" }, /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
       type: "button",
@@ -19717,7 +19740,7 @@ function FileUpload({
     },
     "\u{1F4C1} Select ",
     label
-  )), files.length > 0 && /* @__PURE__ */ import_react2.default.createElement(
+  )), files.length > 0 && /* @__PURE__ */ import_react3.default.createElement(
     "div",
     {
       className: "mt-2 border rounded",
@@ -19728,15 +19751,15 @@ function FileUpload({
         // Smaller text size
       }
     },
-    /* @__PURE__ */ import_react2.default.createElement("ul", { className: "list-group list-group-flush" }, files.map((f, i) => /* @__PURE__ */ import_react2.default.createElement(
+    /* @__PURE__ */ import_react3.default.createElement("ul", { className: "list-group list-group-flush" }, files.map((f, i) => /* @__PURE__ */ import_react3.default.createElement(
       "li",
       {
         key: `${f.name}-${f.size}-${f.lastModified}-${i}`,
         className: "list-group-item py-1 d-flex justify-content-between align-items-center",
         style: { fontSize: "0.75rem" }
       },
-      /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-truncate", style: { maxWidth: "75%" } }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "text-truncate d-block fw-medium" }, f.name), f.path && /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted d-block text-truncate", title: f.path, style: { fontSize: "0.65rem" } }, "\u{1F4C2} ", f.path)),
-      /* @__PURE__ */ import_react2.default.createElement(
+      /* @__PURE__ */ import_react3.default.createElement("div", { className: "text-truncate", style: { maxWidth: "75%" } }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "text-truncate d-block fw-medium" }, f.name), f.path && /* @__PURE__ */ import_react3.default.createElement("small", { className: "text-muted d-block text-truncate", title: f.path, style: { fontSize: "0.65rem" } }, "\u{1F4C2} ", f.path)),
+      /* @__PURE__ */ import_react3.default.createElement(
         "button",
         {
           type: "button",
@@ -19749,11 +19772,11 @@ function FileUpload({
         "\xD7"
       )
     ))),
-    files.length > 5 && /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-center p-1 bg-light border-top" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted", style: { fontSize: "0.65rem" } }, "Showing all ", files.length, " files - scroll to see more"))
+    files.length > 5 && /* @__PURE__ */ import_react3.default.createElement("div", { className: "text-center p-1 bg-light border-top" }, /* @__PURE__ */ import_react3.default.createElement("small", { className: "text-muted", style: { fontSize: "0.65rem" } }, "Showing all ", files.length, " files - scroll to see more"))
   ));
 }
 function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: [], estimation: [], parts_requested: [] } }) {
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "container my-4" }, /* @__PURE__ */ import_react2.default.createElement("h5", { className: "mb-3" }, "Upload Files"), /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-3 mt-3" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react2.default.createElement(
+  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "container my-4" }, /* @__PURE__ */ import_react3.default.createElement("h5", { className: "mb-3" }, "Upload Files"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3 mt-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react3.default.createElement(
     FileUpload,
     {
       label: "Excel Files",
@@ -19765,7 +19788,7 @@ function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: []
       onRemove,
       files: files.excel
     }
-  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react2.default.createElement(
+  )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react3.default.createElement(
     FileUpload,
     {
       label: "Estimation Files",
@@ -19776,7 +19799,7 @@ function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: []
       onRemove,
       files: files.estimation
     }
-  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react2.default.createElement(
+  )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react3.default.createElement(
     FileUpload,
     {
       label: "Parts Requested Files",
@@ -19787,7 +19810,7 @@ function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: []
       onRemove,
       files: files.parts_requested
     }
-  ))), /* @__PURE__ */ import_react2.default.createElement(
+  ))), /* @__PURE__ */ import_react3.default.createElement(
     ActionBar,
     {
       onMapPress
@@ -19869,6 +19892,14 @@ function autoAssignDocumentsToGroups(files) {
       mapping[fileName] = ["33"];
       return;
     }
+    if (fileName.includes("LWG")) {
+      mapping[fileName] = ["29"];
+      return;
+    }
+    if (fileName.includes("CAD")) {
+      mapping[fileName] = ["16"];
+      return;
+    }
   });
   return mapping;
 }
@@ -19894,10 +19925,10 @@ function autoAssignPartsToTemplates(parts) {
 }
 
 // src/renderer/rfq_gen/components/date_picker.jsx
-var import_react3 = __toESM(require_react(), 1);
+var import_react4 = __toESM(require_react(), 1);
 function DateField({ label, value = "", onDateChange, fieldName }) {
-  const [showPicker, setShowPicker] = (0, import_react3.useState)(false);
-  const inputRef = (0, import_react3.useRef)(
+  const [showPicker, setShowPicker] = (0, import_react4.useState)(false);
+  const inputRef = (0, import_react4.useRef)(
     /** @type {HTMLInputElement | null} */
     null
   );
@@ -19929,7 +19960,7 @@ function DateField({ label, value = "", onDateChange, fieldName }) {
       return dateStr;
     }
   };
-  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "fw-bold" }, label), /* @__PURE__ */ import_react3.default.createElement("div", { className: "flex-grow-1 position-relative" }, !showPicker ? /* @__PURE__ */ import_react3.default.createElement(
+  return /* @__PURE__ */ import_react4.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "fw-bold" }, label), /* @__PURE__ */ import_react4.default.createElement("div", { className: "flex-grow-1 position-relative" }, !showPicker ? /* @__PURE__ */ import_react4.default.createElement(
     "span",
     {
       className: "form-control border rounded px-2 w-100 d-block",
@@ -19937,7 +19968,7 @@ function DateField({ label, value = "", onDateChange, fieldName }) {
       onClick: handleCalClick
     },
     formatDisplayDate(value)
-  ) : /* @__PURE__ */ import_react3.default.createElement(
+  ) : /* @__PURE__ */ import_react4.default.createElement(
     "input",
     {
       ref: inputRef,
@@ -19952,7 +19983,7 @@ function DateField({ label, value = "", onDateChange, fieldName }) {
 }
 function DateSection({ inquiryDate = "", dueDate = "", onDateChange = () => {
 } }) {
-  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "container my-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement(
+  return /* @__PURE__ */ import_react4.default.createElement("div", { className: "container my-3" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react4.default.createElement(
     DateField,
     {
       label: "Inquiry Date:",
@@ -19960,7 +19991,7 @@ function DateSection({ inquiryDate = "", dueDate = "", onDateChange = () => {
       onDateChange,
       fieldName: "inquiry"
     }
-  )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react3.default.createElement(
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react4.default.createElement(
     DateField,
     {
       label: "Due Date:",
@@ -19972,9 +20003,9 @@ function DateSection({ inquiryDate = "", dueDate = "", onDateChange = () => {
 }
 
 // src/renderer/rfq_gen/components/action_bar.jsx
-var import_react4 = __toESM(require_react(), 1);
+var import_react5 = __toESM(require_react(), 1);
 function ActionButton({ label, variant = "primary", onClick }) {
-  return /* @__PURE__ */ import_react4.default.createElement(
+  return /* @__PURE__ */ import_react5.default.createElement(
     "button",
     {
       type: "button",
@@ -19985,21 +20016,21 @@ function ActionButton({ label, variant = "primary", onClick }) {
   );
 }
 function ActionBar2({ onGenerate, onUpdate, onReset }) {
-  return /* @__PURE__ */ import_react4.default.createElement("div", { className: "container my-3 pt-4" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "row g-2" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react4.default.createElement(
+  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "container my-3 pt-4" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "row g-2" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react5.default.createElement(
     ActionButton,
     {
       label: "Generate RFQ",
       variant: "success",
       onClick: onGenerate
     }
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react5.default.createElement(
     ActionButton,
     {
       label: "Update RFQ",
       variant: "warning",
       onClick: onUpdate
     }
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "col" }, /* @__PURE__ */ import_react5.default.createElement(
     ActionButton,
     {
       label: "Reset GUI",
@@ -20010,10 +20041,10 @@ function ActionBar2({ onGenerate, onUpdate, onReset }) {
 }
 
 // src/renderer/rfq_gen/components/modals/document_group.jsx
-var import_react5 = __toESM(require_react(), 1);
+var import_react6 = __toESM(require_react(), 1);
 function ModalShell({ open, title, onClose, onConfirm, children, confirmLabel = "OK" }) {
   if (!open) return null;
-  return /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal d-block", tabIndex: "-1", role: "dialog", onClick: onClose }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-dialog modal-xl modal-dialog-centered", role: "document", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-content" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "modal-title m-0" }, title), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: onClose })), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-body" }, children), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn btn-secondary", onClick: onClose }, "Cancel"), /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn btn-primary", onClick: onConfirm }, confirmLabel))))), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-backdrop fade show" }));
+  return /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal d-block", tabIndex: "-1", role: "dialog", onClick: onClose }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-dialog modal-xl modal-dialog-centered", role: "document", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-content" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react6.default.createElement("h5", { className: "modal-title m-0" }, title), /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", className: "btn-close", "aria-label": "Close", onClick: onClose })), /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-body" }, children), /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react6.default.createElement("button", { className: "btn btn-secondary", onClick: onClose }, "Cancel"), /* @__PURE__ */ import_react6.default.createElement("button", { className: "btn btn-primary", onClick: onConfirm }, confirmLabel))))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-backdrop fade show" }));
 }
 function SelectList({
   items = (
@@ -20040,10 +20071,10 @@ function SelectList({
       onSelect(key);
     }
   };
-  return /* @__PURE__ */ import_react5.default.createElement("ul", { className: "list-group border rounded overflow-auto", style: { maxHeight: "40vh" } }, items.map((item) => {
+  return /* @__PURE__ */ import_react6.default.createElement("ul", { className: "list-group border rounded overflow-auto", style: { maxHeight: "40vh" } }, items.map((item) => {
     const key = Array.isArray(item) ? item[1] : item && typeof item === "object" && "id" in item ? item.id : item;
     const label = getLabel(item);
-    return /* @__PURE__ */ import_react5.default.createElement(
+    return /* @__PURE__ */ import_react6.default.createElement(
       "li",
       {
         key,
@@ -20073,12 +20104,12 @@ function DualListModal({
 }) {
   const keyOf = (x) => Array.isArray(x) ? x[1] : x && typeof x === "object" && "id" in x ? x.id : x;
   const labelOf = (x) => Array.isArray(x) ? x[0] : x && typeof x === "object" && "label" in x ? x.label : String(x);
-  const [leftSelected, setLeftSelected] = (0, import_react5.useState)(null);
-  const [rightSelected, setRightSelected] = (0, import_react5.useState)(oneToOneOnly ? null : /* @__PURE__ */ new Set());
-  (0, import_react5.useEffect)(() => {
+  const [leftSelected, setLeftSelected] = (0, import_react6.useState)(null);
+  const [rightSelected, setRightSelected] = (0, import_react6.useState)(oneToOneOnly ? null : /* @__PURE__ */ new Set());
+  (0, import_react6.useEffect)(() => {
     if (!leftSelected && leftItems.length) setLeftSelected(keyOf(leftItems[0]));
   }, [leftItems, leftSelected]);
-  (0, import_react5.useEffect)(() => {
+  (0, import_react6.useEffect)(() => {
     setRightSelected(oneToOneOnly ? null : /* @__PURE__ */ new Set());
   }, [leftSelected, oneToOneOnly]);
   const rightItems = leftSelected != null ? rightMap[leftSelected] ?? [] : [];
@@ -20087,7 +20118,7 @@ function DualListModal({
     onSubmit?.({ left: leftSelected, right: rightValue });
     onClose?.();
   };
-  return /* @__PURE__ */ import_react5.default.createElement(ModalShell, { open, title, onClose, onConfirm: handleConfirm, confirmLabel: "OK" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "container-fluid" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "col-12 col-md-6" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-2 fw-semibold" }, "Part Numbers"), /* @__PURE__ */ import_react5.default.createElement(
+  return /* @__PURE__ */ import_react6.default.createElement(ModalShell, { open, title, onClose, onConfirm: handleConfirm, confirmLabel: "OK" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "container-fluid" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12 col-md-6" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "mb-2 fw-semibold" }, "Part Numbers"), /* @__PURE__ */ import_react6.default.createElement(
     SelectList,
     {
       items: leftItems,
@@ -20097,7 +20128,7 @@ function DualListModal({
       getKey: keyOf,
       getLabel: labelOf
     }
-  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "col-12 col-md-6" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-2 fw-semibold" }, "Documents"), /* @__PURE__ */ import_react5.default.createElement(
+  )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12 col-md-6" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "mb-2 fw-semibold" }, "Documents"), /* @__PURE__ */ import_react6.default.createElement(
     SelectList,
     {
       items: rightItems,
@@ -20111,7 +20142,7 @@ function DualListModal({
 }
 
 // src/renderer/rfq_gen/components/DocumentMapModal.jsx
-var import_react6 = __toESM(require_react(), 1);
+var import_react7 = __toESM(require_react(), 1);
 function SearchableList({
   items = (
     /** @type {any[]} */
@@ -20159,7 +20190,7 @@ function SearchableList({
     return String(x);
   }
 }) {
-  const [searchTerm, setSearchTerm] = (0, import_react6.useState)("");
+  const [searchTerm, setSearchTerm] = (0, import_react7.useState)("");
   const filteredItems = items.filter((item) => {
     const label = getLabel(item).toLowerCase();
     return label.includes(searchTerm.toLowerCase());
@@ -20189,7 +20220,7 @@ function SearchableList({
       return selected !== null && selected !== void 0 && selected !== "";
     }
   };
-  return /* @__PURE__ */ import_react6.default.createElement("div", { className: "d-flex flex-column", style: { height: "800px" } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "mb-2 fw-semibold d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react6.default.createElement("span", null, title), multiple && selected && typeof selected.has === "function" && selected.size > 0 && /* @__PURE__ */ import_react6.default.createElement("small", { className: "text-muted" }, "(", selected.size, " selected)")), showClearButton && /* @__PURE__ */ import_react6.default.createElement("div", { className: "mb-2" }, /* @__PURE__ */ import_react6.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement("div", { className: "d-flex flex-column", style: { height: "800px" } }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mb-2 fw-semibold d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react7.default.createElement("span", null, title), multiple && selected && typeof selected.has === "function" && selected.size > 0 && /* @__PURE__ */ import_react7.default.createElement("small", { className: "text-muted" }, "(", selected.size, " selected)")), showClearButton && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mb-2" }, /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       type: "button",
@@ -20206,7 +20237,7 @@ function SearchableList({
       title: hasSelections() ? "Clear all selections" : "No selections to clear"
     },
     "\u{1F5D1}\uFE0F Clear Selection"
-  )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "mb-2" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "position-relative" }, /* @__PURE__ */ import_react6.default.createElement(
+  )), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mb-2" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "position-relative" }, /* @__PURE__ */ import_react7.default.createElement(
     "input",
     {
       type: "text",
@@ -20216,7 +20247,7 @@ function SearchableList({
       onChange: (e) => setSearchTerm(e.target.value),
       style: { paddingRight: searchTerm ? "35px" : void 0 }
     }
-  ), searchTerm && /* @__PURE__ */ import_react6.default.createElement(
+  ), searchTerm && /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       type: "button",
@@ -20239,7 +20270,7 @@ function SearchableList({
       title: "Clear search"
     },
     "\xD7"
-  ))), /* @__PURE__ */ import_react6.default.createElement("div", { style: { height: "650px", position: "relative" } }, loading && /* @__PURE__ */ import_react6.default.createElement("div", { className: "d-flex justify-content-center align-items-center h-100" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "spinner-border spinner-border-sm", role: "status" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "visually-hidden" }, "Loading..."))), error && /* @__PURE__ */ import_react6.default.createElement("div", { className: "alert alert-danger d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react6.default.createElement("small", null, error), onRetry && /* @__PURE__ */ import_react6.default.createElement("button", { className: "btn btn-sm btn-outline-danger", onClick: onRetry }, "Retry")), !loading && !error && /* @__PURE__ */ import_react6.default.createElement("div", { className: "border rounded overflow-auto", style: { height: "650px", maxHeight: "650px" } }, /* @__PURE__ */ import_react6.default.createElement("ul", { className: "list-group list-group-flush m-0" }, filteredItems.length === 0 ? /* @__PURE__ */ import_react6.default.createElement("li", { className: "list-group-item text-muted text-center" }, searchTerm ? "No items match your search" : "No items available") : filteredItems.map((item) => {
+  ))), /* @__PURE__ */ import_react7.default.createElement("div", { style: { height: "650px", position: "relative" } }, loading && /* @__PURE__ */ import_react7.default.createElement("div", { className: "d-flex justify-content-center align-items-center h-100" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "spinner-border spinner-border-sm", role: "status" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "visually-hidden" }, "Loading..."))), error && /* @__PURE__ */ import_react7.default.createElement("div", { className: "alert alert-danger d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react7.default.createElement("small", null, error), onRetry && /* @__PURE__ */ import_react7.default.createElement("button", { className: "btn btn-sm btn-outline-danger", onClick: onRetry }, "Retry")), !loading && !error && /* @__PURE__ */ import_react7.default.createElement("div", { className: "border rounded overflow-auto", style: { height: "650px", maxHeight: "650px" } }, /* @__PURE__ */ import_react7.default.createElement("ul", { className: "list-group list-group-flush m-0" }, filteredItems.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("li", { className: "list-group-item text-muted text-center" }, searchTerm ? "No items match your search" : "No items available") : filteredItems.map((item) => {
     const key = getKey(item);
     const label = getLabel(item);
     const mapped = isMapped(key);
@@ -20250,7 +20281,7 @@ function SearchableList({
     } else if (mapped) {
       className += " list-group-item-success";
     }
-    return /* @__PURE__ */ import_react6.default.createElement(
+    return /* @__PURE__ */ import_react7.default.createElement(
       "li",
       {
         key,
@@ -20258,9 +20289,9 @@ function SearchableList({
         className,
         onClick: () => handleClick(key)
       },
-      /* @__PURE__ */ import_react6.default.createElement("span", { className: "text-truncate" }, label),
-      multiple && active && /* @__PURE__ */ import_react6.default.createElement("span", { className: "badge bg-primary" }, "\u2713"),
-      multiple && mapped && !active && /* @__PURE__ */ import_react6.default.createElement("span", { className: "badge bg-success" }, "\u{1F4CE}")
+      /* @__PURE__ */ import_react7.default.createElement("span", { className: "text-truncate" }, label),
+      multiple && active && /* @__PURE__ */ import_react7.default.createElement("span", { className: "badge bg-primary" }, "\u2713"),
+      multiple && mapped && !active && /* @__PURE__ */ import_react7.default.createElement("span", { className: "badge bg-success" }, "\u{1F4CE}")
     );
   })))));
 }
@@ -20280,34 +20311,34 @@ function DocumentMapModal({
     {}
   )
 }) {
-  const [leftItems, setLeftItems] = (0, import_react6.useState)(
+  const [leftItems, setLeftItems] = (0, import_react7.useState)(
     /** @type {any[]} */
     []
   );
-  const [rightItems, setRightItems] = (0, import_react6.useState)(
+  const [rightItems, setRightItems] = (0, import_react7.useState)(
     /** @type {any[]} */
     []
   );
-  const [leftLoading, setLeftLoading] = (0, import_react6.useState)(false);
-  const [rightLoading, setRightLoading] = (0, import_react6.useState)(false);
-  const [leftError, setLeftError] = (0, import_react6.useState)(
+  const [leftLoading, setLeftLoading] = (0, import_react7.useState)(false);
+  const [rightLoading, setRightLoading] = (0, import_react7.useState)(false);
+  const [leftError, setLeftError] = (0, import_react7.useState)(
     /** @type {string | null} */
     null
   );
-  const [rightError, setRightError] = (0, import_react6.useState)(
+  const [rightError, setRightError] = (0, import_react7.useState)(
     /** @type {string | null} */
     null
   );
-  const [autoAssignLoading, setAutoAssignLoading] = (0, import_react6.useState)(false);
-  const [leftSelected, setLeftSelected] = (0, import_react6.useState)(
+  const [autoAssignLoading, setAutoAssignLoading] = (0, import_react7.useState)(false);
+  const [leftSelected, setLeftSelected] = (0, import_react7.useState)(
     /** @type {Set | string | null} */
     /* @__PURE__ */ new Set()
   );
-  const [rightSelected, setRightSelected] = (0, import_react6.useState)(
+  const [rightSelected, setRightSelected] = (0, import_react7.useState)(
     /** @type {Set | string | null} */
     /* @__PURE__ */ new Set()
   );
-  const [mappings, setMappings] = (0, import_react6.useState)(/* @__PURE__ */ new Map());
+  const [mappings, setMappings] = (0, import_react7.useState)(/* @__PURE__ */ new Map());
   const getModalConfig = () => {
     switch (mode) {
       case "part-doc":
@@ -20505,7 +20536,7 @@ function DocumentMapModal({
     }
     setMappings(newMappings);
   };
-  (0, import_react6.useEffect)(() => {
+  (0, import_react7.useEffect)(() => {
     if (open) {
       fetchLeftItems();
       fetchRightItems();
@@ -20652,7 +20683,7 @@ function DocumentMapModal({
     });
     return totalMappings;
   };
-  return /* @__PURE__ */ import_react6.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement(
     ModalShell,
     {
       open,
@@ -20661,7 +20692,7 @@ function DocumentMapModal({
       onConfirm: handleSave,
       confirmLabel: "Save Mappings"
     },
-    /* @__PURE__ */ import_react6.default.createElement("div", { className: "container-fluid", style: { height: "900px" } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "row g-3", style: { height: "750px" } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12 col-md-5" }, /* @__PURE__ */ import_react6.default.createElement(
+    /* @__PURE__ */ import_react7.default.createElement("div", { className: "container-fluid", style: { height: "900px" } }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "row g-3", style: { height: "750px" } }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "col-12 col-md-5" }, /* @__PURE__ */ import_react7.default.createElement(
       SearchableList,
       {
         items: leftItems,
@@ -20674,7 +20705,7 @@ function DocumentMapModal({
         onRetry: () => fetchLeftItems(),
         searchPlaceholder: config.leftPlaceholder
       }
-    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12 col-md-2 d-flex flex-column justify-content-center align-items-center" }, /* @__PURE__ */ import_react6.default.createElement(
+    )), /* @__PURE__ */ import_react7.default.createElement("div", { className: "col-12 col-md-2 d-flex flex-column justify-content-center align-items-center" }, /* @__PURE__ */ import_react7.default.createElement(
       "button",
       {
         className: "btn btn-primary btn-sm mb-2",
@@ -20684,7 +20715,7 @@ function DocumentMapModal({
         title: "Assign selected items"
       },
       "\u2192"
-    ), /* @__PURE__ */ import_react6.default.createElement(
+    ), /* @__PURE__ */ import_react7.default.createElement(
       "button",
       {
         className: "btn btn-outline-secondary btn-sm mb-3",
@@ -20694,7 +20725,7 @@ function DocumentMapModal({
         title: "Unassign selected items"
       },
       "\u2190"
-    ), /* @__PURE__ */ import_react6.default.createElement("small", { className: "text-muted text-center" }, getMappingCount(), " mappings")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12 col-md-5" }, /* @__PURE__ */ import_react6.default.createElement(
+    ), /* @__PURE__ */ import_react7.default.createElement("small", { className: "text-muted text-center" }, getMappingCount(), " mappings")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "col-12 col-md-5" }, /* @__PURE__ */ import_react7.default.createElement(
       SearchableList,
       {
         items: rightItems,
@@ -20712,8 +20743,8 @@ function DocumentMapModal({
         },
         mappedItems: mode === "part-doc" && leftSelected ? mappings.get(leftSelected) : (mode === "doc-group" || mode === "template") && leftSelected ? new Set(Array.from(mappings.entries()).filter(([itemKey, mappedTo]) => mappedTo.has(leftSelected)).map(([itemKey]) => itemKey)) : void 0
       }
-    ))), mappings.size > 0 && /* @__PURE__ */ import_react6.default.createElement("div", { className: "row mt-3" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "card" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "card-header py-2" }, /* @__PURE__ */ import_react6.default.createElement("small", { className: "fw-semibold" }, "Current Mappings (", mappings.size, ")")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "card-body py-1", style: { height: "80px", overflow: "auto" } }, Array.from(mappings.entries()).map(([leftKey, rightKeys]) => /* @__PURE__ */ import_react6.default.createElement("div", { key: leftKey, className: "mb-1", style: { fontSize: "0.85rem" } }, /* @__PURE__ */ import_react6.default.createElement("strong", null, leftKey), " \u2192 ", Array.from(rightKeys).join(", ")))))))),
-    autoAssignLoading && /* @__PURE__ */ import_react6.default.createElement("div", { style: {
+    ))), mappings.size > 0 && /* @__PURE__ */ import_react7.default.createElement("div", { className: "row mt-3" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "col-12" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "card" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "card-header py-2" }, /* @__PURE__ */ import_react7.default.createElement("small", { className: "fw-semibold" }, "Current Mappings (", mappings.size, ")")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "card-body py-1", style: { height: "80px", overflow: "auto" } }, Array.from(mappings.entries()).map(([leftKey, rightKeys]) => /* @__PURE__ */ import_react7.default.createElement("div", { key: leftKey, className: "mb-1", style: { fontSize: "0.85rem" } }, /* @__PURE__ */ import_react7.default.createElement("strong", null, leftKey), " \u2192 ", Array.from(rightKeys).join(", ")))))))),
+    autoAssignLoading && /* @__PURE__ */ import_react7.default.createElement("div", { style: {
       position: "absolute",
       top: 0,
       left: 0,
@@ -20725,20 +20756,14 @@ function DocumentMapModal({
       justifyContent: "center",
       zIndex: 1e3,
       borderRadius: "8px"
-    } }, /* @__PURE__ */ import_react6.default.createElement("div", { style: {
+    } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: {
       textAlign: "center",
       padding: "20px"
-    } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "spinner-border text-primary mb-3", role: "status" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "visually-hidden" }, "Loading...")), /* @__PURE__ */ import_react6.default.createElement("div", { style: { fontSize: "16px", fontWeight: "500", color: "#333" } }, mode === "part-doc" ? "Auto-assigning documents..." : mode === "doc-group" ? "Auto-assigning document groups..." : "Auto-assigning...")))
+    } }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "spinner-border text-primary mb-3", role: "status" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "visually-hidden" }, "Loading...")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "16px", fontWeight: "500", color: "#333" } }, mode === "part-doc" ? "Auto-assigning documents..." : mode === "doc-group" ? "Auto-assigning document groups..." : "Auto-assigning...")))
   );
 }
 
 // src/renderer/rfq_gen/components/rfq_app.jsx
-function HeaderBar({ title }) {
-  return /* @__PURE__ */ import_react7.default.createElement("div", { className: "container-fluid bg-body border-bottom py-2 mb-3" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "d-flex justify-content-between align-items-center" }, /* @__PURE__ */ import_react7.default.createElement("h5", { className: "mb-0 fw-bold" }, title)));
-}
-function PageHeading({ heading }) {
-  return /* @__PURE__ */ import_react7.default.createElement("h3", { className: "text-center mb-4 fw-bold" }, heading);
-}
 function RfqApp() {
   const getInitialState = () => ({
     customer_pk: null,
@@ -20780,22 +20805,22 @@ function RfqApp() {
       // { [docKey]: groupKeys[] }
     }
   });
-  const [state, setState] = (0, import_react7.useState)(getInitialState());
+  const [state, setState] = (0, import_react8.useState)(getInitialState());
   const getInitialModalState = () => ({
     open: false,
     mode: "part-doc"
   });
-  const [documentMapModal, setDocumentMapModal] = (0, import_react7.useState)(getInitialModalState());
-  const [isGenerating, setIsGenerating] = (0, import_react7.useState)(false);
-  const resetToDefaults = (0, import_react7.useCallback)(() => {
+  const [documentMapModal, setDocumentMapModal] = (0, import_react8.useState)(getInitialModalState());
+  const [isGenerating, setIsGenerating] = (0, import_react8.useState)(false);
+  const resetToDefaults = (0, import_react8.useCallback)(() => {
     setState(getInitialState());
     setDocumentMapModal(getInitialModalState());
     setIsGenerating(false);
   }, []);
-  const handlePanelChange = (0, import_react7.useCallback)((partial) => {
+  const handlePanelChange = (0, import_react8.useCallback)((partial) => {
     setState((prev) => ({ ...prev, ...partial }));
   }, []);
-  const handleFileUpload = (0, import_react7.useCallback)((name, newFiles) => {
+  const handleFileUpload = (0, import_react8.useCallback)((name, newFiles) => {
     setState((prev) => {
       const existing = prev.files[name] || [];
       const key = (f) => `${f.name}-${f.size}-${f.lastModified}`;
@@ -20807,26 +20832,26 @@ function RfqApp() {
       };
     });
   }, []);
-  const handleFileRemove = (0, import_react7.useCallback)((name, index) => {
+  const handleFileRemove = (0, import_react8.useCallback)((name, index) => {
     setState((prev) => {
       const list = (prev.files[name] || []).slice();
       list.splice(index, 1);
       return { ...prev, files: { ...prev.files, [name]: list } };
     });
   }, []);
-  const handleDateChange = (0, import_react7.useCallback)((field, value) => {
+  const handleDateChange = (0, import_react8.useCallback)((field, value) => {
     setState((prev) => ({
       ...prev,
       dates: { ...prev.dates, [field]: value }
     }));
   }, []);
-  const handleMapPress = (0, import_react7.useCallback)((mode) => {
+  const handleMapPress = (0, import_react8.useCallback)((mode) => {
     setDocumentMapModal({ open: true, mode });
   }, []);
-  const handleMapClose = (0, import_react7.useCallback)(() => {
+  const handleMapClose = (0, import_react8.useCallback)(() => {
     setDocumentMapModal((prev) => ({ ...prev, open: false }));
   }, []);
-  const handleMapSave = (0, import_react7.useCallback)((result) => {
+  const handleMapSave = (0, import_react8.useCallback)((result) => {
     console.log("Document mappings saved:", result);
     setState((prev) => {
       const newMappings = { ...prev.mappings };
@@ -20841,7 +20866,7 @@ function RfqApp() {
     });
     setDocumentMapModal((prev) => ({ ...prev, open: false }));
   }, []);
-  const buildRfqRequestPayload = (0, import_react7.useCallback)(() => {
+  const buildRfqRequestPayload = (0, import_react8.useCallback)(() => {
     const part_to_quote_map = {};
     Object.entries(state.mappings.partToTemplate).forEach(([partNo, templateKeys]) => {
       if (templateKeys.length > 0) {
@@ -20905,7 +20930,7 @@ function RfqApp() {
     };
     return payload;
   }, [state]);
-  const openDocumentMap = (0, import_react7.useCallback)(async () => {
+  const openDocumentMap = (0, import_react8.useCallback)(async () => {
     const excelFiles = state?.files?.excel ?? [];
     const filePaths = excelFiles.map((file) => file.path || file.name);
     const res = await parseExcelFiles(filePaths);
@@ -20934,7 +20959,7 @@ function RfqApp() {
       host.remove();
     };
     root2.render(
-      /* @__PURE__ */ import_react7.default.createElement(
+      /* @__PURE__ */ import_react8.default.createElement(
         DualListModal,
         {
           open: true,
@@ -20955,57 +20980,89 @@ function RfqApp() {
     );
     console.log("DocumentMap: prepared payload & fake lists", { excelFiles, left, right });
   }, [state.files, state.customer_pk, state.buyer_pk, state.customer_rfq_number]);
-  return /* @__PURE__ */ import_react7.default.createElement("div", { style: { position: "relative" } }, /* @__PURE__ */ import_react7.default.createElement(HeaderBar, { title: "RFQ Gen" }), /* @__PURE__ */ import_react7.default.createElement(PageHeading, { heading: "RFQ Gen" }), /* @__PURE__ */ import_react7.default.createElement(
-    CustomerBuyerPanel,
+  return /* @__PURE__ */ import_react8.default.createElement("div", { className: "bg-white text-dark", style: {
+    fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif',
+    letterSpacing: "-0.01em"
+  } }, /* @__PURE__ */ import_react8.default.createElement("div", { style: {
+    height: "calc(100vh - 32px)",
+    // Full height minus title bar
+    display: "flex",
+    flexDirection: "column"
+  } }, /* @__PURE__ */ import_react8.default.createElement(
+    HeaderBar,
     {
-      value: { customer_pk: state.customer_pk, customer_name: state.customer_name, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number },
-      onChange: handlePanelChange
+      icon: "bi bi-file-earmark-text-fill",
+      title: "RFQ Gen",
+      subtitle: "Auto Gen - RFQ Management",
+      sticky: false
     }
-  ), /* @__PURE__ */ import_react7.default.createElement(
-    FileUploadSection,
+  ), /* @__PURE__ */ import_react8.default.createElement(
+    "div",
     {
-      onChange: handleFileUpload,
-      onRemove: handleFileRemove,
-      onMapPress: handleMapPress,
-      files: state.files
-    }
-  ), /* @__PURE__ */ import_react7.default.createElement(
-    DateSection,
-    {
-      inquiryDate: state.dates.inquiry,
-      dueDate: state.dates.due,
-      onDateChange: handleDateChange
-    }
-  ), /* @__PURE__ */ import_react7.default.createElement(
-    ActionBar2,
-    {
-      onGenerate: async () => {
-        setIsGenerating(true);
-        try {
-          const payload = buildRfqRequestPayload();
-          console.log("Generate RFQ payload:", JSON.stringify(payload, null, 2));
-          const result = await generateRfq(payload);
-          console.log("RFQ generated successfully:", result);
-          if (result && result.generated) {
-            alert(`RFQ generated successfully! RFQ PK: ${result.generated}`);
-          } else {
-            alert("RFQ generated successfully!");
+      className: "flex-grow-1",
+      style: {
+        overflowY: "auto",
+        overflowX: "hidden"
+      }
+    },
+    /* @__PURE__ */ import_react8.default.createElement("div", { className: "container", style: {
+      maxWidth: "1200px",
+      margin: "0 auto",
+      padding: "2rem 1.5rem",
+      marginLeft: "1.5rem"
+      // Offset from sidebar
+    } }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "d-flex flex-column", style: { gap: "2rem" } }, /* @__PURE__ */ import_react8.default.createElement(
+      CustomerBuyerPanel,
+      {
+        value: { customer_pk: state.customer_pk, customer_name: state.customer_name, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number },
+        onChange: handlePanelChange
+      }
+    ), /* @__PURE__ */ import_react8.default.createElement(
+      FileUploadSection,
+      {
+        onChange: handleFileUpload,
+        onRemove: handleFileRemove,
+        onMapPress: handleMapPress,
+        files: state.files
+      }
+    ), /* @__PURE__ */ import_react8.default.createElement(
+      DateSection,
+      {
+        inquiryDate: state.dates.inquiry,
+        dueDate: state.dates.due,
+        onDateChange: handleDateChange
+      }
+    ), /* @__PURE__ */ import_react8.default.createElement(
+      ActionBar2,
+      {
+        onGenerate: async () => {
+          setIsGenerating(true);
+          try {
+            const payload = buildRfqRequestPayload();
+            console.log("Generate RFQ payload:", JSON.stringify(payload, null, 2));
+            const result = await generateRfq(payload);
+            console.log("RFQ generated successfully:", result);
+            if (result && result.generated) {
+              alert(`RFQ generated successfully! RFQ PK: ${result.generated}`);
+            } else {
+              alert("RFQ generated successfully!");
+            }
+            resetToDefaults();
+          } catch (error) {
+            console.error("Failed to generate RFQ:", error);
+            alert(`Failed to generate RFQ: ${error.message || error}`);
+          } finally {
+            setIsGenerating(false);
           }
-          resetToDefaults();
-        } catch (error) {
-          console.error("Failed to generate RFQ:", error);
-          alert(`Failed to generate RFQ: ${error.message || error}`);
-        } finally {
-          setIsGenerating(false);
-        }
-      },
-      onUpdate: () => {
-        const payload = buildRfqRequestPayload();
-        console.log("Update RFQ payload:", JSON.stringify(payload, null, 2));
-      },
-      onReset: resetToDefaults
-    }
-  ), /* @__PURE__ */ import_react7.default.createElement(
+        },
+        onUpdate: () => {
+          const payload = buildRfqRequestPayload();
+          console.log("Update RFQ payload:", JSON.stringify(payload, null, 2));
+        },
+        onReset: resetToDefaults
+      }
+    )))
+  ), /* @__PURE__ */ import_react8.default.createElement(
     DocumentMapModal,
     {
       open: documentMapModal.open,
@@ -21015,7 +21072,7 @@ function RfqApp() {
       uploadedFiles: state.files,
       existingMappings: state.mappings
     }
-  ), isGenerating && /* @__PURE__ */ import_react7.default.createElement("div", { style: {
+  ), isGenerating && /* @__PURE__ */ import_react8.default.createElement("div", { style: {
     position: "fixed",
     top: 0,
     left: 0,
@@ -21026,13 +21083,13 @@ function RfqApp() {
     alignItems: "center",
     justifyContent: "center",
     zIndex: 9999
-  } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: {
+  } }, /* @__PURE__ */ import_react8.default.createElement("div", { style: {
     backgroundColor: "white",
     padding: "30px",
     borderRadius: "8px",
     textAlign: "center",
     minWidth: "200px"
-  } }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "spinner-border text-primary mb-3", role: "status" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "visually-hidden" }, "Loading...")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "16px", fontWeight: "500" } }, "Generating RFQ..."))));
+  } }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "spinner-border text-primary mb-3", role: "status" }, /* @__PURE__ */ import_react8.default.createElement("span", { className: "visually-hidden" }, "Loading...")), /* @__PURE__ */ import_react8.default.createElement("div", { style: { fontSize: "16px", fontWeight: "500" } }, "Generating RFQ...")))));
 }
 
 // src/renderer/rfq_gen/main.jsx
@@ -21041,7 +21098,7 @@ function mountRfqGenApp() {
   const container = document.getElementById("rfq-gen-root");
   if (container && !root) {
     root = (0, import_client2.createRoot)(container);
-    root.render(/* @__PURE__ */ import_react8.default.createElement(RfqApp, null));
+    root.render(/* @__PURE__ */ import_react9.default.createElement(RfqApp, null));
   }
 }
 function unmountRfqGenApp() {

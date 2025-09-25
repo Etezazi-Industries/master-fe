@@ -1,6 +1,7 @@
 //@ts-check
 import React, { useEffect, useState, useCallback } from "react";
 import { createRoot } from "react-dom/client";
+import SharedHeaderBar from "../../components/shared/HeaderBar.jsx";
 import CustomerBuyerPanel from "./customer_buyer_panel";
 import FileUploadSection from "./file_input";
 import DateSection from "./date_picker.jsx";
@@ -9,21 +10,7 @@ import DualListModal from "./modals/document_group";
 import DocumentMapModal from "./DocumentMapModal";
 import { parseExcelFiles, generateRfq } from "../../api_calls";
 
-function HeaderBar({ title }) {
-    return (
-        <div className="container-fluid bg-body border-bottom py-2 mb-3">
-            <div className="d-flex justify-content-between align-items-center">
-                <h5 className="mb-0 fw-bold">{title}</h5>
-            </div>
-        </div>
-    );
-}
 
-function PageHeading({ heading }) {
-    return (
-        <h3 className="text-center mb-4 fw-bold">{heading}</h3>
-    )
-}
 
 export default function RfqApp() {
     // Define initial/default state
@@ -265,96 +252,129 @@ export default function RfqApp() {
 
 
     return (
-        <div style={{ position: 'relative' }}>
-            <HeaderBar title="RFQ Gen" />
-            <PageHeading heading="RFQ Gen" />
-            <CustomerBuyerPanel
-                value={{ customer_pk: state.customer_pk, customer_name: state.customer_name, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number }}
-                onChange={handlePanelChange}
-            />
-            <FileUploadSection
-                onChange={handleFileUpload}
-                onRemove={handleFileRemove}
-                onMapPress={handleMapPress}
-                files={state.files}
-            />
-            <DateSection 
-                inquiryDate={state.dates.inquiry}
-                dueDate={state.dates.due}
-                onDateChange={handleDateChange}
-            />
-            <ActionBar
-                onGenerate={async () => {
-                    setIsGenerating(true);
-                    try {
-                        const payload = buildRfqRequestPayload();
-                        console.log("Generate RFQ payload:", JSON.stringify(payload, null, 2));
-                        const result = await generateRfq(payload);
-                        console.log("RFQ generated successfully:", result);
-                        
-                        // Show success message with generated RFQ PK
-                        if (result && result.generated) {
-                            alert(`RFQ generated successfully! RFQ PK: ${result.generated}`);
-                        } else {
-                            alert("RFQ generated successfully!");
-                        }
-                        
-                        // Reset application state to factory defaults after successful generation
-                        resetToDefaults();
-                    } catch (error) {
-                        console.error("Failed to generate RFQ:", error);
-                        alert(`Failed to generate RFQ: ${error.message || error}`);
-                    } finally {
-                        setIsGenerating(false);
-                    }
-                }}
-                onUpdate={() => {
-                    const payload = buildRfqRequestPayload();
-                    console.log("Update RFQ payload:", JSON.stringify(payload, null, 2));
-                }}
-                onReset={resetToDefaults}
-            />
-            
-            {/* Document Map Modal */}
-            <DocumentMapModal
-                open={documentMapModal.open}
-                mode={documentMapModal.mode}
-                onClose={handleMapClose}
-                onSave={handleMapSave}
-                uploadedFiles={state.files}
-                existingMappings={state.mappings}
-            />
-            
-            {/* Loading Overlay */}
-            {isGenerating && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 9999
-                }}>
-                    <div style={{
-                        backgroundColor: 'white',
-                        padding: '30px',
-                        borderRadius: '8px',
-                        textAlign: 'center',
-                        minWidth: '200px'
+        <div className="bg-white text-dark" style={{ 
+            fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif',
+            letterSpacing: '-0.01em'
+        }}>
+            {/* Fixed container that stays below title bar */}
+            <div style={{
+                height: 'calc(100vh - 32px)', // Full height minus title bar
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
+                <SharedHeaderBar
+                    icon="bi bi-file-earmark-text-fill"
+                    title="RFQ Gen"
+                    subtitle="Auto Gen - RFQ Management"
+                    sticky={false}
+                />
+                
+                {/* Main content with scrolling */}
+                <div 
+                    className="flex-grow-1"
+                    style={{ 
+                        overflowY: 'auto',
+                        overflowX: 'hidden'
+                    }}
+                >
+                    <div className="container" style={{ 
+                        maxWidth: '1200px',
+                        margin: '0 auto',
+                        padding: '2rem 1.5rem',
+                        marginLeft: '1.5rem' // Offset from sidebar
                     }}>
-                        <div className="spinner-border text-primary mb-3" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </div>
-                        <div style={{ fontSize: '16px', fontWeight: '500' }}>
-                            Generating RFQ...
+                        <div className="d-flex flex-column" style={{ gap: '2rem' }}>
+                            <CustomerBuyerPanel
+                                value={{ customer_pk: state.customer_pk, customer_name: state.customer_name, buyer_pk: state.buyer_pk, customer_rfq_number: state.customer_rfq_number }}
+                                onChange={handlePanelChange}
+                            />
+                            <FileUploadSection
+                                onChange={handleFileUpload}
+                                onRemove={handleFileRemove}
+                                onMapPress={handleMapPress}
+                                files={state.files}
+                            />
+                            <DateSection 
+                                inquiryDate={state.dates.inquiry}
+                                dueDate={state.dates.due}
+                                onDateChange={handleDateChange}
+                            />
+                            <ActionBar
+                                onGenerate={async () => {
+                                    setIsGenerating(true);
+                                    try {
+                                        const payload = buildRfqRequestPayload();
+                                        console.log("Generate RFQ payload:", JSON.stringify(payload, null, 2));
+                                        const result = await generateRfq(payload);
+                                        console.log("RFQ generated successfully:", result);
+                                        
+                                        // Show success message with generated RFQ PK
+                                        if (result && result.generated) {
+                                            alert(`RFQ generated successfully! RFQ PK: ${result.generated}`);
+                                        } else {
+                                            alert("RFQ generated successfully!");
+                                        }
+                                        
+                                        // Reset application state to factory defaults after successful generation
+                                        resetToDefaults();
+                                    } catch (error) {
+                                        console.error("Failed to generate RFQ:", error);
+                                        alert(`Failed to generate RFQ: ${error.message || error}`);
+                                    } finally {
+                                        setIsGenerating(false);
+                                    }
+                                }}
+                                onUpdate={() => {
+                                    const payload = buildRfqRequestPayload();
+                                    console.log("Update RFQ payload:", JSON.stringify(payload, null, 2));
+                                }}
+                                onReset={resetToDefaults}
+                            />
                         </div>
                     </div>
                 </div>
-            )}
+                
+                {/* Document Map Modal */}
+                <DocumentMapModal
+                    open={documentMapModal.open}
+                    mode={documentMapModal.mode}
+                    onClose={handleMapClose}
+                    onSave={handleMapSave}
+                    uploadedFiles={state.files}
+                    existingMappings={state.mappings}
+                />
+                
+                {/* Loading Overlay */}
+                {isGenerating && (
+                    <div style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 9999
+                    }}>
+                        <div style={{
+                            backgroundColor: 'white',
+                            padding: '30px',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                            minWidth: '200px'
+                        }}>
+                            <div className="spinner-border text-primary mb-3" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
+                            <div style={{ fontSize: '16px', fontWeight: '500' }}>
+                                Generating RFQ...
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

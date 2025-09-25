@@ -19383,50 +19383,8 @@ function HeaderBar({ icon, title, subtitle, actions, sticky = false }) {
 var import_react2 = __toESM(require_react(), 1);
 
 // src/renderer/api_calls.js
-var _apiBase = "";
-var _baseReady;
-function findBridge() {
-  try {
-    if (typeof window !== "undefined") {
-      const win = (
-        /** @type {WindowWithBackend} */
-        window
-      );
-      if (win.backend) return win.backend;
-      const t = (
-        /** @type {WindowWithBackend} */
-        window.top
-      );
-      if (t && t !== window && t.backend) return t.backend;
-    }
-  } catch {
-  }
-  return null;
-}
-function waitForBridge(timeoutMs = 8e3) {
-  return new Promise((resolve, reject) => {
-    const start = Date.now();
-    (function tick() {
-      const br = findBridge();
-      if (br && (typeof br.getApiBase === "function" || typeof br.apiBase === "string")) return resolve(br);
-      if (Date.now() - start > timeoutMs) return reject(new Error("Preload bridge not available"));
-      setTimeout(tick, 50);
-    })();
-  });
-}
 async function getApiBase() {
-  if (_apiBase) return _apiBase;
-  if (!_baseReady) {
-    _baseReady = (async () => {
-      const br = await waitForBridge();
-      const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
-      const b = (base || "").trim();
-      if (!b) throw new Error("API base not provided by preload");
-      _apiBase = b.endsWith("/") ? b : b + "/";
-      return _apiBase;
-    })();
-  }
-  return _baseReady;
+  return "http://127.0.0.1:8000/";
 }
 function joinUrl(base, endpoint) {
   const e = String(endpoint || "").replace(/^\/+/, "");
@@ -39365,50 +39323,8 @@ var require_client2 = __commonJS2({
 var import_react42 = __toESM2(require_react2(), 1);
 var import_client2 = __toESM2(require_client2(), 1);
 var import_react7 = __toESM2(require_react2(), 1);
-var _apiBase2 = "";
-var _baseReady2;
-function findBridge2() {
-  try {
-    if (typeof window !== "undefined") {
-      const win = (
-        /** @type {WindowWithBackend} */
-        window
-      );
-      if (win.backend) return win.backend;
-      const t = (
-        /** @type {WindowWithBackend} */
-        window.top
-      );
-      if (t && t !== window && t.backend) return t.backend;
-    }
-  } catch {
-  }
-  return null;
-}
-function waitForBridge2(timeoutMs = 8e3) {
-  return new Promise((resolve, reject) => {
-    const start = Date.now();
-    (function tick() {
-      const br = findBridge2();
-      if (br && (typeof br.getApiBase === "function" || typeof br.apiBase === "string")) return resolve(br);
-      if (Date.now() - start > timeoutMs) return reject(new Error("Preload bridge not available"));
-      setTimeout(tick, 50);
-    })();
-  });
-}
 async function getApiBase2() {
-  if (_apiBase2) return _apiBase2;
-  if (!_baseReady2) {
-    _baseReady2 = (async () => {
-      const br = await waitForBridge2();
-      const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
-      const b = (base || "").trim();
-      if (!b) throw new Error("API base not provided by preload");
-      _apiBase2 = b.endsWith("/") ? b : b + "/";
-      return _apiBase2;
-    })();
-  }
-  return _baseReady2;
+  return "http://127.0.0.1:8000/";
 }
 function joinUrl2(base, endpoint) {
   const e = String(endpoint || "").replace(/^\/+/, "");
@@ -39448,6 +39364,22 @@ async function getEmailGroups() {
   return requestJson2("email-groups");
 }
 async function prepareRfqEmails(rfqId, payload) {
+  console.log("[DEBUG] prepareRfqEmails payload:", JSON.stringify(payload, null, 2));
+  if (!payload.recipientsByCategory) {
+    throw new Error("recipientsByCategory is required");
+  }
+  for (const [category, emails] of Object.entries(payload.recipientsByCategory)) {
+    console.log(`[DEBUG] Category ${category}:`, emails);
+    if (!Array.isArray(emails)) {
+      throw new Error(`recipientsByCategory.${category} must be an array`);
+    }
+    for (const email of emails) {
+      if (!email || typeof email !== "string" || !email.includes("@")) {
+        console.error(`[DEBUG] Invalid email in ${category}:`, email);
+        throw new Error(`Invalid email in ${category}: ${email}`);
+      }
+    }
+  }
   if (!rfqId) throw new Error("rfqId is required");
   return requestJson2(`rfqs/${encodeURIComponent(rfqId)}/emails`, {
     method: "POST",
@@ -39495,7 +39427,6 @@ function EmailManager({ groups = [], onChange }) {
   const [currentCategory, setCurrentCategory] = (0, import_react7.useState)("");
   const [cache, setCache] = (0, import_react7.useState)({});
   const [editingId, setEditingId] = (0, import_react7.useState)(null);
-  const [inputValue, setInputValue] = (0, import_react7.useState)("");
   const onChangeRef = (0, import_react7.useRef)(onChange);
   (0, import_react7.useEffect)(() => {
     onChangeRef.current = onChange;
@@ -39506,7 +39437,14 @@ function EmailManager({ groups = [], onChange }) {
   const serialize = (0, import_react7.useCallback)((mapObj) => {
     const out = {};
     for (const [cat, arr] of Object.entries(mapObj || {})) {
-      out[cat] = (arr || []).map((x) => x.email);
+      console.log(`[EmailManager] Serializing ${cat}:`, arr);
+      out[cat] = (arr || []).map((x) => {
+        if (typeof x === "string") return x;
+        if (x && typeof x === "object" && x.email) return x.email;
+        console.warn(`[EmailManager] Invalid email object in ${cat}:`, x);
+        return String(x);
+      }).filter((email) => email && typeof email === "string");
+      console.log(`[EmailManager] Serialized ${cat}:`, out[cat]);
     }
     return out;
   }, []);
@@ -39538,18 +39476,6 @@ function EmailManager({ groups = [], onChange }) {
     })().catch(console.error);
   }, [updateCache]);
   const list = cache[currentCategory] || [];
-  function addEmail() {
-    const value = inputValue.trim();
-    if (!value || !currentCategory) return;
-    const exists = list.some((r) => r.email.toLowerCase() === value.toLowerCase());
-    if (exists) {
-      setInputValue("");
-      return;
-    }
-    const newList = [...list, { id: String(Date.now()), email: value }];
-    updateCache((prev) => ({ ...prev, [currentCategory]: newList }));
-    setInputValue("");
-  }
   function saveEmail(id, nextValue) {
     const value = String(nextValue || "").trim();
     if (!value) {
@@ -39597,17 +39523,7 @@ function EmailManager({ groups = [], onChange }) {
       e.currentTarget.previousSibling
     );
     saveEmail(id, input && input.value);
-  } }, "Save"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "btn btn-outline-secondary", onClick: () => setEditingId(null) }, "Cancel")) : /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("span", { className: "text-truncate", style: { maxWidth: "75%" } }, email), /* @__PURE__ */ import_react7.default.createElement("div", { className: "btn-group btn-group-sm" }, /* @__PURE__ */ import_react7.default.createElement("button", { className: "btn btn-outline-secondary", onClick: () => setEditingId(id) }, "Edit"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "btn btn-outline-danger", onClick: () => deleteEmail(id) }, "Del"))))) : /* @__PURE__ */ import_react7.default.createElement("li", { className: "list-group-item text-muted" }, "No emails for ", currentCategory || "\u2014", ".")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "input-group input-group-sm" }, /* @__PURE__ */ import_react7.default.createElement(
-    "input",
-    {
-      type: "email",
-      className: "form-control",
-      placeholder: "Add email",
-      value: inputValue,
-      onChange: (e) => setInputValue(e.target.value),
-      onKeyDown: (e) => e.key === "Enter" && addEmail()
-    }
-  ), /* @__PURE__ */ import_react7.default.createElement("button", { className: "btn btn-primary", onClick: addEmail }, "Add")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "form-text mt-2" }, "You can add, edit, or remove emails for ", currentCategory || "\u2014", "."));
+  } }, "Save"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "btn btn-outline-secondary", onClick: () => setEditingId(null) }, "Cancel")) : /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("span", { className: "text-truncate", style: { maxWidth: "75%" } }, email), /* @__PURE__ */ import_react7.default.createElement("div", { className: "btn-group btn-group-sm" }, /* @__PURE__ */ import_react7.default.createElement("button", { className: "btn btn-outline-secondary", onClick: () => setEditingId(id) }, "Edit"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "btn btn-outline-danger", onClick: () => deleteEmail(id) }, "Del"))))) : /* @__PURE__ */ import_react7.default.createElement("li", { className: "list-group-item text-muted" }, "No emails for ", currentCategory || "\u2014", ".")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "form-text mt-2" }, "You can edit or remove emails for ", currentCategory || "\u2014", "."));
 }
 var import_react22 = __toESM2(require_react2(), 1);
 function ItemRow({ it }) {
@@ -59553,50 +59469,8 @@ var require_client3 = __commonJS3({
 });
 var import_react8 = __toESM3(require_react3(), 1);
 var import_client3 = __toESM3(require_client3(), 1);
-var _apiBase3 = "";
-var _baseReady3;
-function findBridge3() {
-  try {
-    if (typeof window !== "undefined") {
-      const win = (
-        /** @type {WindowWithBackend} */
-        window
-      );
-      if (win.backend) return win.backend;
-      const t = (
-        /** @type {WindowWithBackend} */
-        window.top
-      );
-      if (t && t !== window && t.backend) return t.backend;
-    }
-  } catch {
-  }
-  return null;
-}
-function waitForBridge3(timeoutMs = 8e3) {
-  return new Promise((resolve, reject) => {
-    const start = Date.now();
-    (function tick() {
-      const br = findBridge3();
-      if (br && (typeof br.getApiBase === "function" || typeof br.apiBase === "string")) return resolve(br);
-      if (Date.now() - start > timeoutMs) return reject(new Error("Preload bridge not available"));
-      setTimeout(tick, 50);
-    })();
-  });
-}
 async function getApiBase3() {
-  if (_apiBase3) return _apiBase3;
-  if (!_baseReady3) {
-    _baseReady3 = (async () => {
-      const br = await waitForBridge3();
-      const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
-      const b = (base || "").trim();
-      if (!b) throw new Error("API base not provided by preload");
-      _apiBase3 = b.endsWith("/") ? b : b + "/";
-      return _apiBase3;
-    })();
-  }
-  return _baseReady3;
+  return "http://127.0.0.1:8000/";
 }
 function joinUrl3(base, endpoint) {
   const e = String(endpoint || "").replace(/^\/+/, "");

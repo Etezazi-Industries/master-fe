@@ -22,7 +22,14 @@ export default function EmailManager({ groups = [], onChange }) {
     const serialize = useCallback((mapObj) => {
         const out = {};
         for (const [cat, arr] of Object.entries(mapObj || {})) {
-            out[cat] = (arr || []).map(x => x.email);
+            console.log(`[EmailManager] Serializing ${cat}:`, arr);
+            out[cat] = (arr || []).map(x => {
+                if (typeof x === 'string') return x;
+                if (x && typeof x === 'object' && x.email) return x.email;
+                console.warn(`[EmailManager] Invalid email object in ${cat}:`, x);
+                return String(x); // fallback
+            }).filter(email => email && typeof email === 'string');
+            console.log(`[EmailManager] Serialized ${cat}:`, out[cat]);
         }
         return out;
     }, []);

@@ -327,19 +327,29 @@ function autoAssignDocumentsToGroups(files) {
         // PRIORITY 2: Check for "PL" in filename (case-sensitive, uppercase only) - maps to Group ID 26
         if (fileName.includes('PL')) {
             mapping[fileName] = ['26'];
-            return; // Found PL, no need to check other conditions
+            return;
         }
         
         // PRIORITY 3: Check for "DWG" in filename (case-sensitive, uppercase only) - maps to Group ID 27
         if (fileName.includes('DWG')) {
             mapping[fileName] = ['27'];
-            return; // Found DWG, done with this file
+            return;
         }
         
         // PRIORITY 4: Check for "PSDL" in filename (case-sensitive, uppercase only) - maps to Group ID 33
         if (fileName.includes('PSDL')) {
             mapping[fileName] = ['33'];
-            return; // Found PSDL, done with this file
+            return;
+        }
+
+        if (fileName.includes('LWG')) {
+            mapping[fileName] = ['29'];
+            return;
+        }
+
+        if (fileName.includes('CAD')) {
+            mapping[fileName] = ['16'];
+            return;
         }
     });
     

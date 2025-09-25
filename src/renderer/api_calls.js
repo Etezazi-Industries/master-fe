@@ -37,18 +37,19 @@ function waitForBridge(timeoutMs = 8000) {
 }
 
 async function getApiBase() {
-    if (_apiBase) return _apiBase;
-    if (!_baseReady) {
-        _baseReady = (async () => {
-            const br = await waitForBridge();
-            const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
-            const b = (base || "").trim();
-            if (!b) throw new Error("API base not provided by preload");
-            _apiBase = b.endsWith("/") ? b : b + "/";
-            return _apiBase;
-        })();
-    }
-    return _baseReady;
+    // if (_apiBase) return _apiBase;
+    // if (!_baseReady) {
+    //     _baseReady = (async () => {
+    //         const br = await waitForBridge();
+    //         const base = typeof br.getApiBase === "function" ? await br.getApiBase() : br.apiBase;
+    //         const b = (base || "").trim();
+    //         if (!b) throw new Error("API base not provided by preload");
+    //         _apiBase = b.endsWith("/") ? b : b + "/";
+    //         return _apiBase;
+    //     })();
+    // }
+    // return _baseReady;
+    return "http://127.0.0.1:8000/"
 }
 
 function joinUrl(base, endpoint) {
@@ -106,6 +107,27 @@ export async function getRfqDetails(rfqPk) {
 }
 
 export async function prepareRfqEmails(rfqId, payload) {
+    console.log("[DEBUG] prepareRfqEmails payload:", JSON.stringify(payload, null, 2));
+    
+    // Validate payload structure before sending
+    if (!payload.recipientsByCategory) {
+        throw new Error("recipientsByCategory is required");
+    }
+    
+    // Check for invalid emails
+    for (const [category, emails] of Object.entries(payload.recipientsByCategory)) {
+        console.log(`[DEBUG] Category ${category}:`, emails);
+        if (!Array.isArray(emails)) {
+            throw new Error(`recipientsByCategory.${category} must be an array`);
+        }
+        for (const email of emails) {
+            if (!email || typeof email !== 'string' || !email.includes('@')) {
+                console.error(`[DEBUG] Invalid email in ${category}:`, email);
+                throw new Error(`Invalid email in ${category}: ${email}`);
+            }
+        }
+    }
+    
     if (!rfqId) throw new Error("rfqId is required");
     return requestJson(`rfqs/${encodeURIComponent(rfqId)}/emails`, {
         method: "POST",
