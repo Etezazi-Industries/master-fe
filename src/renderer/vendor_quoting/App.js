@@ -39624,23 +39624,7 @@ function ItemRow({ it }) {
       title: "Edit Quantity"
     },
     /* @__PURE__ */ import_react22.default.createElement("i", { className: "bi bi-pencil", style: { fontSize: "0.75rem" } })
-  )))), description && /* @__PURE__ */ import_react22.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react22.default.createElement("div", { className: "text-muted flex-grow-1", style: { fontSize: "0.875rem" } }, description), /* @__PURE__ */ import_react22.default.createElement(
-    "button",
-    {
-      className: "btn btn-sm btn-outline-secondary",
-      style: {
-        padding: "2px 6px",
-        fontSize: "0.75rem",
-        minWidth: "28px",
-        height: "28px"
-      },
-      onClick: () => {
-        console.log("Processing description:", description);
-      },
-      title: "Process Description"
-    },
-    /* @__PURE__ */ import_react22.default.createElement("i", { className: "bi bi-search", style: { fontSize: "0.75rem" } })
-  )), dimensionsStr && /* @__PURE__ */ import_react22.default.createElement("div", { className: "mt-2" }, /* @__PURE__ */ import_react22.default.createElement(
+  )))), description && /* @__PURE__ */ import_react22.default.createElement("div", { className: "text-muted", style: { fontSize: "0.875rem" } }, description), dimensionsStr && /* @__PURE__ */ import_react22.default.createElement("div", { className: "mt-2" }, /* @__PURE__ */ import_react22.default.createElement(
     "span",
     {
       className: "badge bg-light text-dark border",
@@ -59522,11 +59506,11 @@ async function requestJson3(endpoint, init = {}, timeoutMs = 2e4) {
   }
   return data;
 }
-async function searchBoeingFinishCode(finishCode) {
-  if (!finishCode || !finishCode.trim()) {
-    throw new Error("Finish code is required");
+async function searchBoeingFinishCode(searchTerm) {
+  if (!searchTerm || !searchTerm.trim()) {
+    throw new Error("Search term is required");
   }
-  return requestJson3(`boeing-finish-code?finish_code=${encodeURIComponent(finishCode.trim())}`);
+  return requestJson3(`boeing-finish-search?search_term=${encodeURIComponent(searchTerm.trim())}`);
 }
 function BoeingFinishModal({ onClose }) {
   const [query, setQuery] = (0, import_react8.useState)("");
@@ -59594,16 +59578,17 @@ function BoeingFinishModal({ onClose }) {
       onClick: () => setError(null),
       "aria-label": "Close"
     }
-  )), data && !loading && !error && /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("div", { className: "card mb-3" }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react8.default.createElement("h6", { className: "card-title" }, data.process_code), /* @__PURE__ */ import_react8.default.createElement("p", { className: "card-text" }, data.nomenclature), /* @__PURE__ */ import_react8.default.createElement("div", { className: "row" }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react8.default.createElement("small", { className: "text-muted" }, "Specification Number:"), /* @__PURE__ */ import_react8.default.createElement("div", null, data.specification_number)), /* @__PURE__ */ import_react8.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react8.default.createElement("small", { className: "text-muted" }, "Specification Title:"), /* @__PURE__ */ import_react8.default.createElement("div", null, data.specification_title))), data.url && /* @__PURE__ */ import_react8.default.createElement("div", { className: "mt-2" }, /* @__PURE__ */ import_react8.default.createElement(
+  )), data && !loading && !error && /* @__PURE__ */ import_react8.default.createElement("div", null, data.results && data.results.length > 0 ? data.results.map((result, resultIndex) => /* @__PURE__ */ import_react8.default.createElement("div", { key: resultIndex, className: "card mb-4" }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "card-header" }, /* @__PURE__ */ import_react8.default.createElement("h6", { className: "card-title mb-0" }, result.process_code, /* @__PURE__ */ import_react8.default.createElement("small", { className: "text-muted ms-2" }, "(", result.suppliers.length, " supplier", result.suppliers.length !== 1 ? "s" : "", ")"))), /* @__PURE__ */ import_react8.default.createElement("div", { className: "card-body" }, /* @__PURE__ */ import_react8.default.createElement("p", { className: "card-text mb-3" }, result.nomenclature), /* @__PURE__ */ import_react8.default.createElement("div", { className: "row mb-3" }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react8.default.createElement("small", { className: "text-muted" }, "Specification Number:"), /* @__PURE__ */ import_react8.default.createElement("div", { className: "fw-medium" }, result.specification_number)), /* @__PURE__ */ import_react8.default.createElement("div", { className: "col-md-6" }, /* @__PURE__ */ import_react8.default.createElement("small", { className: "text-muted" }, "Specification Title:"), /* @__PURE__ */ import_react8.default.createElement("div", { className: "fw-medium" }, result.specification_title))), result.url && /* @__PURE__ */ import_react8.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react8.default.createElement(
     "a",
     {
-      href: data.url,
+      href: result.url,
       target: "_blank",
       rel: "noopener noreferrer",
       className: "btn btn-sm btn-outline-primary"
     },
+    /* @__PURE__ */ import_react8.default.createElement("i", { className: "bi bi-box-arrow-up-right me-1" }),
     "View on Boeing"
-  )))), /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("h6", null, "Approved Suppliers"), data.suppliers && data.suppliers.length > 0 ? /* @__PURE__ */ import_react8.default.createElement("table", { className: "table table-sm table-striped" }, /* @__PURE__ */ import_react8.default.createElement("thead", null, /* @__PURE__ */ import_react8.default.createElement("tr", null, /* @__PURE__ */ import_react8.default.createElement("th", null, "Country"), /* @__PURE__ */ import_react8.default.createElement("th", null, "State"), /* @__PURE__ */ import_react8.default.createElement("th", null, "Processor Code"), /* @__PURE__ */ import_react8.default.createElement("th", null, "Processor Name"))), /* @__PURE__ */ import_react8.default.createElement("tbody", null, data.suppliers.map((supplier, index) => /* @__PURE__ */ import_react8.default.createElement("tr", { key: index }, /* @__PURE__ */ import_react8.default.createElement("td", null, supplier.country), /* @__PURE__ */ import_react8.default.createElement("td", null, supplier.state || "\u2014"), /* @__PURE__ */ import_react8.default.createElement("td", null, supplier.processor_code), /* @__PURE__ */ import_react8.default.createElement("td", null, supplier.processor_name))))) : /* @__PURE__ */ import_react8.default.createElement("p", { className: "text-muted" }, "No approved suppliers found."))))), /* @__PURE__ */ import_react8.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react8.default.createElement("button", { type: "button", className: "btn btn-secondary", onClick: onClose }, "Close")))));
+  )), /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("h6", { className: "mb-2" }, "Approved Suppliers"), result.suppliers && result.suppliers.length > 0 ? /* @__PURE__ */ import_react8.default.createElement("div", { className: "table-responsive" }, /* @__PURE__ */ import_react8.default.createElement("table", { className: "table table-sm table-striped" }, /* @__PURE__ */ import_react8.default.createElement("thead", null, /* @__PURE__ */ import_react8.default.createElement("tr", null, /* @__PURE__ */ import_react8.default.createElement("th", null, "Country"), /* @__PURE__ */ import_react8.default.createElement("th", null, "State"), /* @__PURE__ */ import_react8.default.createElement("th", null, "Processor Code"), /* @__PURE__ */ import_react8.default.createElement("th", null, "Processor Name"))), /* @__PURE__ */ import_react8.default.createElement("tbody", null, result.suppliers.map((supplier, supplierIndex) => /* @__PURE__ */ import_react8.default.createElement("tr", { key: supplierIndex }, /* @__PURE__ */ import_react8.default.createElement("td", null, supplier.country), /* @__PURE__ */ import_react8.default.createElement("td", null, supplier.state || "\u2014"), /* @__PURE__ */ import_react8.default.createElement("td", null, supplier.processor_code), /* @__PURE__ */ import_react8.default.createElement("td", null, supplier.processor_name)))))) : /* @__PURE__ */ import_react8.default.createElement("p", { className: "text-muted" }, "No approved suppliers found for this process code."))))) : /* @__PURE__ */ import_react8.default.createElement("div", { className: "alert alert-warning" }, 'No results found for "', data.search_term, '". Try a different search term.')))), /* @__PURE__ */ import_react8.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react8.default.createElement("button", { type: "button", className: "btn btn-secondary", onClick: onClose }, "Close")))));
 }
 var modalRoot = null;
 var modalContainer = null;

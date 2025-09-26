@@ -101,64 +101,81 @@ function BoeingFinishModal({ onClose }) {
 
                             {data && !loading && !error && (
                                 <div>
-                                    {/* Summary Card */}
-                                    <div className="card mb-3">
-                                        <div className="card-body">
-                                            <h6 className="card-title">{data.process_code}</h6>
-                                            <p className="card-text">{data.nomenclature}</p>
-                                            <div className="row">
-                                                <div className="col-md-6">
-                                                    <small className="text-muted">Specification Number:</small>
-                                                    <div>{data.specification_number}</div>
+                                    {/* Results List */}
+                                    {data.results && data.results.length > 0 ? (
+                                        data.results.map((result, resultIndex) => (
+                                            <div key={resultIndex} className="card mb-4">
+                                                <div className="card-header">
+                                                    <h6 className="card-title mb-0">
+                                                        {result.process_code}
+                                                        <small className="text-muted ms-2">({result.suppliers.length} supplier{result.suppliers.length !== 1 ? 's' : ''})</small>
+                                                    </h6>
                                                 </div>
-                                                <div className="col-md-6">
-                                                    <small className="text-muted">Specification Title:</small>
-                                                    <div>{data.specification_title}</div>
+                                                <div className="card-body">
+                                                    <p className="card-text mb-3">{result.nomenclature}</p>
+                                                    <div className="row mb-3">
+                                                        <div className="col-md-6">
+                                                            <small className="text-muted">Specification Number:</small>
+                                                            <div className="fw-medium">{result.specification_number}</div>
+                                                        </div>
+                                                        <div className="col-md-6">
+                                                            <small className="text-muted">Specification Title:</small>
+                                                            <div className="fw-medium">{result.specification_title}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    {result.url && (
+                                                        <div className="mb-3">
+                                                            <a
+                                                                href={result.url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="btn btn-sm btn-outline-primary"
+                                                            >
+                                                                <i className="bi bi-box-arrow-up-right me-1"></i>
+                                                                View on Boeing
+                                                            </a>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Suppliers Table for this result */}
+                                                    <div>
+                                                        <h6 className="mb-2">Approved Suppliers</h6>
+                                                        {result.suppliers && result.suppliers.length > 0 ? (
+                                                            <div className="table-responsive">
+                                                                <table className="table table-sm table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Country</th>
+                                                                            <th>State</th>
+                                                                            <th>Processor Code</th>
+                                                                            <th>Processor Name</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {result.suppliers.map((supplier, supplierIndex) => (
+                                                                            <tr key={supplierIndex}>
+                                                                                <td>{supplier.country}</td>
+                                                                                <td>{supplier.state || "—"}</td>
+                                                                                <td>{supplier.processor_code}</td>
+                                                                                <td>{supplier.processor_name}</td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-muted">No approved suppliers found for this process code.</p>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
-                                            {data.url && (
-                                                <div className="mt-2">
-                                                    <a
-                                                        href={data.url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="btn btn-sm btn-outline-primary"
-                                                    >
-                                                        View on Boeing
-                                                    </a>
-                                                </div>
-                                            )}
+                                        ))
+                                    ) : (
+                                        <div className="alert alert-warning">
+                                            No results found for "{data.search_term}". Try a different search term.
                                         </div>
-                                    </div>
-
-                                    {/* Suppliers Table */}
-                                    <div>
-                                        <h6>Approved Suppliers</h6>
-                                        {data.suppliers && data.suppliers.length > 0 ? (
-                                            <table className="table table-sm table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Country</th>
-                                                        <th>State</th>
-                                                        <th>Processor Code</th>
-                                                        <th>Processor Name</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {data.suppliers.map((supplier, index) => (
-                                                        <tr key={index}>
-                                                            <td>{supplier.country}</td>
-                                                            <td>{supplier.state || "—"}</td>
-                                                            <td>{supplier.processor_code}</td>
-                                                            <td>{supplier.processor_name}</td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        ) : (
-                                            <p className="text-muted">No approved suppliers found.</p>
-                                        )}
-                                    </div>
+                                    )}
                                 </div>
                             )}
                         </div>

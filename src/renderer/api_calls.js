@@ -237,12 +237,12 @@ export async function createBuyer(partyPk, body) {
     return res.json();
 }
 
-export async function searchBoeingFinishCode(finishCode) {
-    if (!finishCode || !finishCode.trim()) {
-        throw new Error("Finish code is required");
+export async function searchBoeingFinishCode(searchTerm) {
+    if (!searchTerm || !searchTerm.trim()) {
+        throw new Error("Search term is required");
     }
     
-    return requestJson(`boeing-finish-code?finish_code=${encodeURIComponent(finishCode.trim())}`);
+    return requestJson(`boeing-finish-search?search_term=${encodeURIComponent(searchTerm.trim())}`);
 }
 
 // ----------- VACATION REQUESTS --------------------
