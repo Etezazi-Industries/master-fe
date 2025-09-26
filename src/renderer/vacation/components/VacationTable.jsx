@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 
 /**
  * Vacation requests table component
@@ -7,8 +7,20 @@ import React from 'react';
  * @param {Object|null} props.selectedRequest - Currently selected request
  * @param {Function} props.onSelectRequest - Callback when a request is selected
  * @param {Function} props.onEditReason - Callback when edit reason is clicked
+ * @param {boolean} props.showApprovedOnly - Whether to show only approved requests
+ * @param {Function} props.onToggleApprovedFilter - Callback when approved filter is toggled
  */
-export default function VacationTable({ requests, selectedRequest, onSelectRequest, onEditReason }) {
+export default function VacationTable({ requests, selectedRequest, onSelectRequest, onEditReason, showApprovedOnly, onToggleApprovedFilter }) {
+    // Search state
+    const [nameSearch, setNameSearch] = useState('');
+    const [fromDateSearch, setFromDateSearch] = useState('');
+    const [toDateSearch, setToDateSearch] = useState('');
+
+    // Get unique employee names for dropdown
+    const uniqueEmployeeNames = useMemo(() => {
+        const names = [...new Set(requests.map(request => request['Employee']).filter(Boolean))];
+        return names.sort();
+    }, [requests]);
     const cardStyle = {
         border: 'none',
         borderRadius: '16px',
@@ -40,8 +52,182 @@ export default function VacationTable({ requests, selectedRequest, onSelectReque
         onEditReason(request);
     };
 
+    // Filter requests based on search criteria
+    const filteredRequests = useMemo(() => {
+        return requests.filter(request => {
+            const employeeName = request['Employee'] || '';
+            const fromDate = request['From Date'] || '';
+            const toDate = request['To Date'] || '';
+
+            // Name filter - exact match for dropdown
+            const nameMatch = !nameSearch || employeeName === nameSearch;
+
+            // Date filters - convert to Date objects for proper comparison
+            let fromDateMatch = true;
+            let toDateMatch = true;
+
+            if (fromDateSearch) {
+                try {
+                    const searchFromDate = new Date(fromDateSearch);
+                    const requestFromDate = new Date(fromDate);
+                    fromDateMatch = requestFromDate.toDateString() === searchFromDate.toDateString();
+                } catch (e) {
+                    fromDateMatch = false;
+                }
+            }
+
+            if (toDateSearch) {
+                try {
+                    const searchToDate = new Date(toDateSearch);
+                    const requestToDate = new Date(toDate);
+                    toDateMatch = requestToDate.toDateString() === searchToDate.toDateString();
+                } catch (e) {
+                    toDateMatch = false;
+                }
+            }
+
+            return nameMatch && fromDateMatch && toDateMatch;
+        });
+    }, [requests, nameSearch, fromDateSearch, toDateSearch]);
+
+    const clearSearch = () => {
+        setNameSearch('');
+        setFromDateSearch('');
+        setToDateSearch('');
+    };
+
     return (
         <div className="card" style={cardStyle}>
+            {/* Search Controls */}
+            <div style={{
+                padding: '1.5rem',
+                borderBottom: '1px solid #e2e8f0',
+                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
+            }}>
+                <div className="row g-3">
+                    <div className="col-md-4">
+                        <label className="form-label" style={{
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            color: '#475569',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            marginBottom: '0.5rem'
+                        }}>
+                            <i className="bi bi-person me-1"></i>Filter by Employee
+                        </label>
+                        <select
+                            className="form-select"
+                            value={nameSearch}
+                            onChange={(e) => setNameSearch(e.target.value)}
+                            style={{
+                                fontSize: '0.875rem',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '8px',
+                                padding: '0.75rem',
+                                background: 'white'
+                            }}
+                        >
+                            <option value="">All Employees</option>
+                            {uniqueEmployeeNames.map(name => (
+                                <option key={name} value={name}>{name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="col-md-4">
+                        <label className="form-label" style={{
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            color: '#475569',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            marginBottom: '0.5rem'
+                        }}>
+                            <i className="bi bi-calendar-event me-1"></i>From Date
+                        </label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            value={fromDateSearch}
+                            onChange={(e) => setFromDateSearch(e.target.value)}
+                            style={{
+                                fontSize: '0.875rem',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '8px',
+                                padding: '0.75rem',
+                                background: 'white'
+                            }}
+                        />
+                    </div>
+                    <div className="col-md-4">
+                        <label className="form-label" style={{
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            color: '#475569',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            marginBottom: '0.5rem'
+                        }}>
+                            <i className="bi bi-calendar-check me-1"></i>To Date
+                        </label>
+                        <div className="d-flex gap-2">
+                            <input
+                                type="date"
+                                className="form-control"
+                                value={toDateSearch}
+                                onChange={(e) => setToDateSearch(e.target.value)}
+                                style={{
+                                    fontSize: '0.875rem',
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '8px',
+                                    padding: '0.75rem',
+                                    background: 'white'
+                                }}
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={clearSearch}
+                                title="Clear all filters"
+                                style={{
+                                    minWidth: '40px',
+                                    height: '40px',
+                                    padding: '0',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    borderRadius: '8px',
+                                    border: '1px solid #e2e8f0',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    transition: 'all 0.2s ease'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.target.style.background = '#f1f5f9';
+                                    e.target.style.color = '#374151';
+                                    e.target.style.borderColor = '#cbd5e1';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.background = 'white';
+                                    e.target.style.color = '#64748b';
+                                    e.target.style.borderColor = '#e2e8f0';
+                                }}
+                            >
+                                <i className="bi bi-x-lg" style={{ fontSize: '0.875rem' }}></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {(nameSearch || fromDateSearch || toDateSearch || showApprovedOnly) && (
+                    <div className="mt-3">
+                        <small className="text-muted">
+                            <i className="bi bi-funnel me-1"></i>
+                            Showing {filteredRequests.length} of {requests.length} requests
+                            {showApprovedOnly && <span className="ms-2 badge bg-primary" style={{ fontSize: '0.625rem' }}>Approved Only</span>}
+                        </small>
+                    </div>
+                )}
+            </div>
             <div className="card-body" style={{ padding: '0' }}>
                 <div className="table-responsive">
                     <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.875rem' }}>
@@ -126,11 +312,50 @@ export default function VacationTable({ requests, selectedRequest, onSelectReque
                                     letterSpacing: '0.5px',
                                     padding: '1rem 0.75rem',
                                     border: 'none'
-                                }}>Approved</th>
+                                }}>
+                                    <div className="d-flex align-items-center justify-content-between">
+                                        <span>Approved</span>
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onToggleApprovedFilter();
+                                            }}
+                                            title={showApprovedOnly ? "Show all requests" : "Show only approved requests"}
+                                            style={{
+                                                minWidth: '24px',
+                                                height: '24px',
+                                                padding: '0',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                borderRadius: '4px',
+                                                border: '1px solid #e2e8f0',
+                                                background: showApprovedOnly ? '#f0f9ff' : 'white',
+                                                color: showApprovedOnly ? '#1e40af' : '#64748b',
+                                                transition: 'all 0.2s ease',
+                                                fontSize: '0.625rem'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.background = showApprovedOnly ? '#dbeafe' : '#f1f5f9';
+                                                e.target.style.color = showApprovedOnly ? '#1e40af' : '#374151';
+                                                e.target.style.borderColor = '#cbd5e1';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.background = showApprovedOnly ? '#f0f9ff' : 'white';
+                                                e.target.style.color = showApprovedOnly ? '#1e40af' : '#64748b';
+                                                e.target.style.borderColor = '#e2e8f0';
+                                            }}
+                                        >
+                                            <i className={`bi ${showApprovedOnly ? 'bi-funnel-fill' : 'bi-funnel'}`} style={{ fontSize: '0.625rem' }}></i>
+                                        </button>
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {requests.map((request) => {
+                            {filteredRequests.map((request) => {
                                 const id = request['Vacation ID'];
                                 const name = request['Employee'];
                                 const fromDate = request['From Date'];
@@ -258,12 +483,17 @@ export default function VacationTable({ requests, selectedRequest, onSelectReque
                                     </tr>
                                 );
                             })}
-                            {requests.length === 0 && (
+                            {filteredRequests.length === 0 && (
                                 <tr>
                                     <td colSpan="8" className="text-center text-muted" style={{ padding: '3rem 1rem' }}>
                                         <div style={{ opacity: '0.6' }}>
                                             <i className="bi bi-inbox" style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }}></i>
-                                            <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>No vacation requests found</span>
+                                            <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>
+                                                {(nameSearch || fromDateSearch || toDateSearch || showApprovedOnly) 
+                                                    ? 'No vacation requests match your search criteria' 
+                                                    : 'No vacation requests found'
+                                                }
+                                            </span>
                                         </div>
                                     </td>
                                 </tr>

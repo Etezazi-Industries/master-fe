@@ -19381,7 +19381,14 @@ function HeaderBar({ icon, title, subtitle, actions, sticky = false }) {
 
 // src/renderer/vacation/components/VacationTable.jsx
 var import_react2 = __toESM(require_react(), 1);
-function VacationTable({ requests, selectedRequest, onSelectRequest, onEditReason }) {
+function VacationTable({ requests, selectedRequest, onSelectRequest, onEditReason, showApprovedOnly, onToggleApprovedFilter }) {
+  const [nameSearch, setNameSearch] = (0, import_react2.useState)("");
+  const [fromDateSearch, setFromDateSearch] = (0, import_react2.useState)("");
+  const [toDateSearch, setToDateSearch] = (0, import_react2.useState)("");
+  const uniqueEmployeeNames = (0, import_react2.useMemo)(() => {
+    const names = [...new Set(requests.map((request) => request["Employee"]).filter(Boolean))];
+    return names.sort();
+  }, [requests]);
   const cardStyle = {
     border: "none",
     borderRadius: "16px",
@@ -19403,7 +19410,144 @@ function VacationTable({ requests, selectedRequest, onSelectRequest, onEditReaso
     e.stopPropagation();
     onEditReason(request);
   };
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "card", style: cardStyle }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-body", style: { padding: "0" } }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "table-responsive" }, /* @__PURE__ */ import_react2.default.createElement("table", { className: "table table-hover align-middle mb-0", style: { fontSize: "0.875rem" } }, /* @__PURE__ */ import_react2.default.createElement("thead", { style: headerStyle }, /* @__PURE__ */ import_react2.default.createElement("tr", null, /* @__PURE__ */ import_react2.default.createElement("th", { style: {
+  const filteredRequests = (0, import_react2.useMemo)(() => {
+    return requests.filter((request) => {
+      const employeeName = request["Employee"] || "";
+      const fromDate = request["From Date"] || "";
+      const toDate = request["To Date"] || "";
+      const nameMatch = !nameSearch || employeeName === nameSearch;
+      let fromDateMatch = true;
+      let toDateMatch = true;
+      if (fromDateSearch) {
+        try {
+          const searchFromDate = new Date(fromDateSearch);
+          const requestFromDate = new Date(fromDate);
+          fromDateMatch = requestFromDate.toDateString() === searchFromDate.toDateString();
+        } catch (e) {
+          fromDateMatch = false;
+        }
+      }
+      if (toDateSearch) {
+        try {
+          const searchToDate = new Date(toDateSearch);
+          const requestToDate = new Date(toDate);
+          toDateMatch = requestToDate.toDateString() === searchToDate.toDateString();
+        } catch (e) {
+          toDateMatch = false;
+        }
+      }
+      return nameMatch && fromDateMatch && toDateMatch;
+    });
+  }, [requests, nameSearch, fromDateSearch, toDateSearch]);
+  const clearSearch = () => {
+    setNameSearch("");
+    setFromDateSearch("");
+    setToDateSearch("");
+  };
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "card", style: cardStyle }, /* @__PURE__ */ import_react2.default.createElement("div", { style: {
+    padding: "1.5rem",
+    borderBottom: "1px solid #e2e8f0",
+    background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)"
+  } }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "row g-3" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-4" }, /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label", style: {
+    fontSize: "0.75rem",
+    fontWeight: "600",
+    color: "#475569",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    marginBottom: "0.5rem"
+  } }, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-person me-1" }), "Filter by Employee"), /* @__PURE__ */ import_react2.default.createElement(
+    "select",
+    {
+      className: "form-select",
+      value: nameSearch,
+      onChange: (e) => setNameSearch(e.target.value),
+      style: {
+        fontSize: "0.875rem",
+        border: "1px solid #e2e8f0",
+        borderRadius: "8px",
+        padding: "0.75rem",
+        background: "white"
+      }
+    },
+    /* @__PURE__ */ import_react2.default.createElement("option", { value: "" }, "All Employees"),
+    uniqueEmployeeNames.map((name) => /* @__PURE__ */ import_react2.default.createElement("option", { key: name, value: name }, name))
+  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-4" }, /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label", style: {
+    fontSize: "0.75rem",
+    fontWeight: "600",
+    color: "#475569",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    marginBottom: "0.5rem"
+  } }, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-calendar-event me-1" }), "From Date"), /* @__PURE__ */ import_react2.default.createElement(
+    "input",
+    {
+      type: "date",
+      className: "form-control",
+      value: fromDateSearch,
+      onChange: (e) => setFromDateSearch(e.target.value),
+      style: {
+        fontSize: "0.875rem",
+        border: "1px solid #e2e8f0",
+        borderRadius: "8px",
+        padding: "0.75rem",
+        background: "white"
+      }
+    }
+  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "col-md-4" }, /* @__PURE__ */ import_react2.default.createElement("label", { className: "form-label", style: {
+    fontSize: "0.75rem",
+    fontWeight: "600",
+    color: "#475569",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    marginBottom: "0.5rem"
+  } }, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-calendar-check me-1" }), "To Date"), /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex gap-2" }, /* @__PURE__ */ import_react2.default.createElement(
+    "input",
+    {
+      type: "date",
+      className: "form-control",
+      value: toDateSearch,
+      onChange: (e) => setToDateSearch(e.target.value),
+      style: {
+        fontSize: "0.875rem",
+        border: "1px solid #e2e8f0",
+        borderRadius: "8px",
+        padding: "0.75rem",
+        background: "white"
+      }
+    }
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "btn btn-outline-secondary",
+      onClick: clearSearch,
+      title: "Clear all filters",
+      style: {
+        minWidth: "40px",
+        height: "40px",
+        padding: "0",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "8px",
+        border: "1px solid #e2e8f0",
+        background: "white",
+        color: "#64748b",
+        transition: "all 0.2s ease"
+      },
+      onMouseEnter: (e) => {
+        e.target.style.background = "#f1f5f9";
+        e.target.style.color = "#374151";
+        e.target.style.borderColor = "#cbd5e1";
+      },
+      onMouseLeave: (e) => {
+        e.target.style.background = "white";
+        e.target.style.color = "#64748b";
+        e.target.style.borderColor = "#e2e8f0";
+      }
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-x-lg", style: { fontSize: "0.875rem" } })
+  )))), (nameSearch || fromDateSearch || toDateSearch || showApprovedOnly) && /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-3" }, /* @__PURE__ */ import_react2.default.createElement("small", { className: "text-muted" }, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-funnel me-1" }), "Showing ", filteredRequests.length, " of ", requests.length, " requests", showApprovedOnly && /* @__PURE__ */ import_react2.default.createElement("span", { className: "ms-2 badge bg-primary", style: { fontSize: "0.625rem" } }, "Approved Only")))), /* @__PURE__ */ import_react2.default.createElement("div", { className: "card-body", style: { padding: "0" } }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "table-responsive" }, /* @__PURE__ */ import_react2.default.createElement("table", { className: "table table-hover align-middle mb-0", style: { fontSize: "0.875rem" } }, /* @__PURE__ */ import_react2.default.createElement("thead", { style: headerStyle }, /* @__PURE__ */ import_react2.default.createElement("tr", null, /* @__PURE__ */ import_react2.default.createElement("th", { style: {
     width: "60px",
     fontSize: "0.75rem",
     fontWeight: "600",
@@ -19475,7 +19619,43 @@ function VacationTable({ requests, selectedRequest, onSelectRequest, onEditReaso
     letterSpacing: "0.5px",
     padding: "1rem 0.75rem",
     border: "none"
-  } }, "Approved"))), /* @__PURE__ */ import_react2.default.createElement("tbody", null, requests.map((request) => {
+  } }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center justify-content-between" }, /* @__PURE__ */ import_react2.default.createElement("span", null, "Approved"), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "btn btn-sm",
+      onClick: (e) => {
+        e.stopPropagation();
+        onToggleApprovedFilter();
+      },
+      title: showApprovedOnly ? "Show all requests" : "Show only approved requests",
+      style: {
+        minWidth: "24px",
+        height: "24px",
+        padding: "0",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "4px",
+        border: "1px solid #e2e8f0",
+        background: showApprovedOnly ? "#f0f9ff" : "white",
+        color: showApprovedOnly ? "#1e40af" : "#64748b",
+        transition: "all 0.2s ease",
+        fontSize: "0.625rem"
+      },
+      onMouseEnter: (e) => {
+        e.target.style.background = showApprovedOnly ? "#dbeafe" : "#f1f5f9";
+        e.target.style.color = showApprovedOnly ? "#1e40af" : "#374151";
+        e.target.style.borderColor = "#cbd5e1";
+      },
+      onMouseLeave: (e) => {
+        e.target.style.background = showApprovedOnly ? "#f0f9ff" : "white";
+        e.target.style.color = showApprovedOnly ? "#1e40af" : "#64748b";
+        e.target.style.borderColor = "#e2e8f0";
+      }
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: `bi ${showApprovedOnly ? "bi-funnel-fill" : "bi-funnel"}`, style: { fontSize: "0.625rem" } })
+  ))))), /* @__PURE__ */ import_react2.default.createElement("tbody", null, filteredRequests.map((request) => {
     const id = request["Vacation ID"];
     const name = request["Employee"];
     const fromDate = request["From Date"];
@@ -19584,7 +19764,7 @@ function VacationTable({ requests, selectedRequest, onSelectRequest, onEditReaso
         approved ? /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-check-circle me-1", style: { fontSize: "0.625rem" } }), "Approved") : /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-clock me-1", style: { fontSize: "0.625rem" } }), "Pending")
       ))
     );
-  }), requests.length === 0 && /* @__PURE__ */ import_react2.default.createElement("tr", null, /* @__PURE__ */ import_react2.default.createElement("td", { colSpan: "8", className: "text-center text-muted", style: { padding: "3rem 1rem" } }, /* @__PURE__ */ import_react2.default.createElement("div", { style: { opacity: "0.6" } }, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-inbox", style: { fontSize: "2rem", display: "block", marginBottom: "0.5rem" } }), /* @__PURE__ */ import_react2.default.createElement("span", { style: { fontSize: "0.875rem", fontWeight: "500" } }, "No vacation requests found")))))))));
+  }), filteredRequests.length === 0 && /* @__PURE__ */ import_react2.default.createElement("tr", null, /* @__PURE__ */ import_react2.default.createElement("td", { colSpan: "8", className: "text-center text-muted", style: { padding: "3rem 1rem" } }, /* @__PURE__ */ import_react2.default.createElement("div", { style: { opacity: "0.6" } }, /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-inbox", style: { fontSize: "2rem", display: "block", marginBottom: "0.5rem" } }), /* @__PURE__ */ import_react2.default.createElement("span", { style: { fontSize: "0.875rem", fontWeight: "500" } }, nameSearch || fromDateSearch || toDateSearch || showApprovedOnly ? "No vacation requests match your search criteria" : "No vacation requests found")))))))));
 }
 
 // src/renderer/vacation/components/ApprovalActions.jsx
@@ -19796,8 +19976,14 @@ async function requestJson(endpoint, init = {}, timeoutMs = 2e4) {
   }
   return data;
 }
-async function getVacationRequests() {
-  return requestJson(`employee/vacation-requests/`);
+async function getVacationRequests(approved = null) {
+  const params = new URLSearchParams();
+  if (approved !== null) {
+    params.append("approved", approved ? "1" : "0");
+  }
+  const queryString = params.toString();
+  const endpoint = queryString ? `employee/vacation-requests/?${queryString}` : `employee/vacation-requests/`;
+  return requestJson(endpoint);
 }
 async function approveVacationRequest(id) {
   if (!id) throw new Error("Request ID is required");
@@ -19824,13 +20010,14 @@ function VacationApp() {
   const [isLoading, setIsLoading] = (0, import_react5.useState)(false);
   const [isEditModalOpen, setIsEditModalOpen] = (0, import_react5.useState)(false);
   const [editingRequest, setEditingRequest] = (0, import_react5.useState)(null);
+  const [showApprovedOnly, setShowApprovedOnly] = (0, import_react5.useState)(false);
   (0, import_react5.useEffect)(() => {
     loadVacationRequests();
   }, []);
-  const loadVacationRequests = (0, import_react5.useCallback)(async () => {
+  const loadVacationRequests = (0, import_react5.useCallback)(async (approvedFilter = null) => {
     setIsLoading(true);
     try {
-      const response = await getVacationRequests();
+      const response = await getVacationRequests(approvedFilter);
       const requests = Array.isArray(response) ? response : Array.isArray(response.data) ? response.data : [];
       setVacationRequests(requests);
     } catch (error) {
@@ -19879,6 +20066,11 @@ ${comment}` : comment } : req
     setIsEditModalOpen(false);
     setEditingRequest(null);
   }, []);
+  const handleToggleApprovedFilter = (0, import_react5.useCallback)(() => {
+    const newShowApprovedOnly = !showApprovedOnly;
+    setShowApprovedOnly(newShowApprovedOnly);
+    loadVacationRequests(newShowApprovedOnly ? true : null);
+  }, [showApprovedOnly, loadVacationRequests]);
   return /* @__PURE__ */ import_react5.default.createElement("div", { className: "bg-white text-dark", style: {
     fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif',
     letterSpacing: "-0.01em"
@@ -19920,7 +20112,9 @@ ${comment}` : comment } : req
         requests: vacationRequests,
         selectedRequest,
         onSelectRequest: handleSelectRequest,
-        onEditReason: handleEditReason
+        onEditReason: handleEditReason,
+        showApprovedOnly,
+        onToggleApprovedFilter: handleToggleApprovedFilter
       }
     ))),
     isLoading && /* @__PURE__ */ import_react5.default.createElement("div", { style: {

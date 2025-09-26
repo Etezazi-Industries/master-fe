@@ -13,16 +13,17 @@ function VacationApp() {
     const [isLoading, setIsLoading] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingRequest, setEditingRequest] = useState(null);
+    const [showApprovedOnly, setShowApprovedOnly] = useState(false);
 
     // Load vacation requests on mount
     useEffect(() => {
         loadVacationRequests();
     }, []);
 
-    const loadVacationRequests = useCallback(async () => {
+    const loadVacationRequests = useCallback(async (approvedFilter = null) => {
         setIsLoading(true);
         try {
-            const response = await getVacationRequests();
+            const response = await getVacationRequests(approvedFilter);
             const requests = Array.isArray(response) ? response : (Array.isArray(response.data) ? response.data : []);
             setVacationRequests(requests);
         } catch (error) {
@@ -89,6 +90,12 @@ function VacationApp() {
         setEditingRequest(null);
     }, []);
 
+    const handleToggleApprovedFilter = useCallback(() => {
+        const newShowApprovedOnly = !showApprovedOnly;
+        setShowApprovedOnly(newShowApprovedOnly);
+        loadVacationRequests(newShowApprovedOnly ? true : null);
+    }, [showApprovedOnly, loadVacationRequests]);
+
     return (
         <div className="bg-white text-dark" style={{ 
             fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif',
@@ -131,6 +138,8 @@ function VacationApp() {
                             selectedRequest={selectedRequest}
                             onSelectRequest={handleSelectRequest}
                             onEditReason={handleEditReason}
+                            showApprovedOnly={showApprovedOnly}
+                            onToggleApprovedFilter={handleToggleApprovedFilter}
                         />
                     </div>
                 </div>

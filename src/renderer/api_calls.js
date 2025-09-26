@@ -247,8 +247,14 @@ export async function searchBoeingFinishCode(searchTerm) {
 
 // ----------- VACATION REQUESTS --------------------
 
-export async function getVacationRequests() {
-    return requestJson(`employee/vacation-requests/`);
+export async function getVacationRequests(approved = null) {
+    const params = new URLSearchParams();
+    if (approved !== null) {
+        params.append('approved', approved ? '1' : '0');
+    }
+    const queryString = params.toString();
+    const endpoint = queryString ? `employee/vacation-requests/?${queryString}` : `employee/vacation-requests/`;
+    return requestJson(endpoint);
 }
 
 export async function approveVacationRequest(id) {
