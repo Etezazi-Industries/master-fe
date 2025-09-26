@@ -3,7 +3,7 @@ import React from "react";
 import { parseExcelFiles } from "../../api_calls";
 
 
-function ActionBar({ onMapPress }) {
+function ActionBar({ onMapPress, itar = false, onItarChange }) {
     return (
         <div className="d-flex align-items-center gap-3 my-3 flex-wrap">
             {/* Three mapping buttons */}
@@ -37,6 +37,8 @@ function ActionBar({ onMapPress }) {
                     className="form-check-input"
                     type="checkbox"
                     id="itarCheck"
+                    checked={itar}
+                    onChange={(e) => onItarChange?.(e.target.checked)}
                 />
                 <label className="form-check-label" htmlFor="itarCheck">
                     ITAR RESTRICTED
@@ -175,9 +177,9 @@ function FileUpload({
 }
 
 /**
- * @param {{onChange: Function, onRemove: Function, onMapPress: Function, files: {excel?: any[], estimation?: any[], parts_requested?: any[]}}} props
+ * @param {{onChange: Function, onRemove: Function, onMapPress: Function, files: {excel?: any[], estimation?: any[], parts_requested?: any[]}, itar: boolean, onItarChange: Function}} props
  */
-export default function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: [], estimation: [], parts_requested: [] } }) {
+export default function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: [], estimation: [], parts_requested: [] }, itar = false, onItarChange }) {
     return (
         <div className="container my-4">
             <h5 className="mb-3">Upload Files</h5>
@@ -219,6 +221,8 @@ export default function FileUploadSection({ onChange, onRemove, onMapPress, file
             </div>
             <ActionBar
                 onMapPress={onMapPress}
+                itar={itar}
+                onItarChange={onItarChange}
             />
         </div>
     );

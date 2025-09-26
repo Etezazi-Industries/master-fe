@@ -156,8 +156,26 @@ function ItemRow({ it }) {
                 
                 {/* Description row */}
                 {description && (
-                    <div className="text-muted" style={{ fontSize: '0.875rem' }}>
-                        {description}
+                    <div className="d-flex align-items-center gap-2">
+                        <div className="text-muted flex-grow-1" style={{ fontSize: '0.875rem' }}>
+                            {description}
+                        </div>
+                        <button 
+                            className="btn btn-sm btn-outline-secondary" 
+                            style={{ 
+                                padding: '2px 6px',
+                                fontSize: '0.75rem',
+                                minWidth: '28px',
+                                height: '28px'
+                            }}
+                            onClick={() => {
+                                // TODO: Send description to server for processing
+                                console.log('Processing description:', description);
+                            }}
+                            title="Process Description"
+                        >
+                            <i className="bi bi-search" style={{ fontSize: '0.75rem' }}></i>
+                        </button>
                     </div>
                 )}
                 

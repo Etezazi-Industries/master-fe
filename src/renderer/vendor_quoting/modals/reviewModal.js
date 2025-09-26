@@ -19623,7 +19623,23 @@ function ItemRow({ it }) {
       title: "Edit Quantity"
     },
     /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-pencil", style: { fontSize: "0.75rem" } })
-  )))), description && /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-muted", style: { fontSize: "0.875rem" } }, description), dimensionsStr && /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-2" }, /* @__PURE__ */ import_react2.default.createElement(
+  )))), description && /* @__PURE__ */ import_react2.default.createElement("div", { className: "d-flex align-items-center gap-2" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "text-muted flex-grow-1", style: { fontSize: "0.875rem" } }, description), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn btn-sm btn-outline-secondary",
+      style: {
+        padding: "2px 6px",
+        fontSize: "0.75rem",
+        minWidth: "28px",
+        height: "28px"
+      },
+      onClick: () => {
+        console.log("Processing description:", description);
+      },
+      title: "Process Description"
+    },
+    /* @__PURE__ */ import_react2.default.createElement("i", { className: "bi bi-search", style: { fontSize: "0.75rem" } })
+  )), dimensionsStr && /* @__PURE__ */ import_react2.default.createElement("div", { className: "mt-2" }, /* @__PURE__ */ import_react2.default.createElement(
     "span",
     {
       className: "badge bg-light text-dark border",

@@ -185,10 +185,24 @@ export async function generateRfq(payload) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-    });
+    }, 300000); // 5 minutes timeout for RFQ generation
     if (!res.ok) {
-        console.error("RFQ generation failed:", await res.text());
-        throw new Error(`HTTP ${res.status}`);
+        let errorDetail;
+        try {
+            const errorText = await res.text();
+            errorDetail = JSON.parse(errorText);
+        } catch {
+            errorDetail = await res.text();
+        }
+        
+        console.error("RFQ generation failed:", errorDetail);
+        
+        // Create a structured error object with status code and details
+        const error = new Error(`RFQ generation failed`);
+        /** @type {any} */ (error).status = res.status;
+        /** @type {any} */ (error).detail = errorDetail;
+        
+        throw error;
     }
     const data = await res.json();
     return data;

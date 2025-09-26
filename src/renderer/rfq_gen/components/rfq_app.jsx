@@ -19,6 +19,7 @@ export default function RfqApp() {
         customer_name: null, // Store the party name
         buyer_pk: null,
         customer_rfq_number: null,
+        itar: false, // ITAR restricted checkbox value
         files: { 
             excel: /** @type {Array<File & {path?: string}>} */ ([]), 
             estimation: /** @type {Array<File & {path?: string}>} */ ([]), 
@@ -45,6 +46,62 @@ export default function RfqApp() {
 
     // Loading state for RFQ generation
     const [isGenerating, setIsGenerating] = useState(false);
+    
+    // Error display state
+    const [errorModal, setErrorModal] = useState({ open: false, message: "" });
+    
+    // Helper function to format error messages based on API response
+    const formatErrorMessage = (error) => {
+        // Handle timeout/abort errors specifically
+        if (error.name === 'AbortError' || error.message?.includes('aborted')) {
+            return `Request timed out. RFQ generation is taking longer than expected.\n\nThis may be normal for large RFQs. Please check if the RFQ was actually generated successfully on the server side.`;
+        }
+        
+        if (!error.status) {
+            return `Unexpected error: ${error.message || error}`;
+        }
+        
+        // Helper function to convert error detail to readable string
+        const formatErrorDetail = (detail) => {
+            if (typeof detail === 'string') {
+                return detail;
+            } else if (typeof detail === 'object' && detail !== null) {
+                // Try to extract meaningful information from the object
+                if (detail.message) {
+                    return detail.message;
+                } else if (detail.detail) {
+                    return detail.detail;
+                } else if (detail.error) {
+                    return detail.error;
+                } else {
+                    // Convert object to readable JSON string
+                    return JSON.stringify(detail, null, 2);
+                }
+            }
+            return String(detail);
+        };
+        
+        switch (error.status) {
+            case 422: // ValidationError
+                if (Array.isArray(error.detail)) {
+                    const validationErrors = error.detail.map(err => {
+                        const field = err.loc ? err.loc.join('.') : 'field';
+                        return `${field}: ${err.msg}`;
+                    }).join('\n');
+                    return `Validation Error:\n${validationErrors}`;
+                }
+                return `Validation Error: ${formatErrorDetail(error.detail)}`;
+                
+            case 400: // ValueError or PermissionError
+                return formatErrorDetail(error.detail);
+                
+            case 500: // General Exception
+                return `Server Error: ${formatErrorDetail(error.detail)}`;
+                
+            default:
+                return `Error ${error.status}: ${formatErrorDetail(error.detail)}`;
+        }
+    };
 
     // Reset function to restore all state to factory defaults
     const resetToDefaults = useCallback(() => {
@@ -181,7 +238,7 @@ export default function RfqApp() {
             buyer_fk: state.buyer_pk,
             party_pk: state.customer_pk,
             party_name: state.customer_name, // Use stored customer name
-            itar: false, // TODO: Add ITAR field to form if needed
+            itar: state.itar, // Use actual ITAR checkbox value
             inquiry_date: state.dates.inquiry || currentDate,
             due_date: state.dates.due || currentDate,
             current_date: currentDate,
@@ -293,6 +350,8 @@ export default function RfqApp() {
                                 onRemove={handleFileRemove}
                                 onMapPress={handleMapPress}
                                 files={state.files}
+                                itar={state.itar}
+                                onItarChange={(checked) => setState(prev => ({ ...prev, itar: checked }))}
                             />
                             <DateSection 
                                 inquiryDate={state.dates.inquiry}
@@ -319,7 +378,8 @@ export default function RfqApp() {
                                         resetToDefaults();
                                     } catch (error) {
                                         console.error("Failed to generate RFQ:", error);
-                                        alert(`Failed to generate RFQ: ${error.message || error}`);
+                                        const errorMessage = formatErrorMessage(error);
+                                        setErrorModal({ open: true, message: errorMessage });
                                     } finally {
                                         setIsGenerating(false);
                                     }
@@ -370,6 +430,73 @@ export default function RfqApp() {
                             </div>
                             <div style={{ fontSize: '16px', fontWeight: '500' }}>
                                 Generating RFQ...
+                            </div>
+                            <div style={{ fontSize: '14px', color: '#6c757d', marginTop: '8px' }}>
+                                This may take a few minutes for large RFQs
+                            </div>
+                        </div>
+                    </div>
+                )}
+                
+                {/* Error Modal */}
+                {errorModal.open && (
+                    <div style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 9999
+                    }}>
+                        <div style={{
+                            backgroundColor: 'white',
+                            padding: '30px',
+                            borderRadius: '8px',
+                            textAlign: 'left',
+                            minWidth: '400px',
+                            maxWidth: '600px',
+                            maxHeight: '80vh',
+                            overflowY: 'auto'
+                        }}>
+                            <div style={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between', 
+                                alignItems: 'center',
+                                marginBottom: '20px',
+                                paddingBottom: '10px',
+                                borderBottom: '1px solid #dee2e6'
+                            }}>
+                                <h5 style={{ color: '#dc3545', margin: 0 }}>RFQ Generation Failed</h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => setErrorModal({ open: false, message: "" })}
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <div style={{ 
+                                whiteSpace: 'pre-line',
+                                fontFamily: 'monospace',
+                                fontSize: '14px',
+                                lineHeight: '1.4'
+                            }}>
+                                {errorModal.message}
+                            </div>
+                            <div style={{ 
+                                marginTop: '20px',
+                                textAlign: 'right'
+                            }}>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => setErrorModal({ open: false, message: "" })}
+                                >
+                                    OK
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -19466,10 +19466,20 @@ async function generateRfq(payload) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
-  });
+  }, 3e5);
   if (!res.ok) {
-    console.error("RFQ generation failed:", await res.text());
-    throw new Error(`HTTP ${res.status}`);
+    let errorDetail;
+    try {
+      const errorText = await res.text();
+      errorDetail = JSON.parse(errorText);
+    } catch {
+      errorDetail = await res.text();
+    }
+    console.error("RFQ generation failed:", errorDetail);
+    const error = new Error(`RFQ generation failed`);
+    error.status = res.status;
+    error.detail = errorDetail;
+    throw error;
   }
   const data = await res.json();
   return data;
@@ -19629,7 +19639,7 @@ function CustomerBuyerPanel({ value, onChange }) {
 
 // src/renderer/rfq_gen/components/file_input.jsx
 var import_react3 = __toESM(require_react(), 1);
-function ActionBar({ onMapPress }) {
+function ActionBar({ onMapPress, itar = false, onItarChange }) {
   return /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex align-items-center gap-3 my-3 flex-wrap" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "d-flex gap-2" }, /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
@@ -19659,7 +19669,9 @@ function ActionBar({ onMapPress }) {
     {
       className: "form-check-input",
       type: "checkbox",
-      id: "itarCheck"
+      id: "itarCheck",
+      checked: itar,
+      onChange: (e) => onItarChange?.(e.target.checked)
     }
   ), /* @__PURE__ */ import_react3.default.createElement("label", { className: "form-check-label", htmlFor: "itarCheck" }, "ITAR RESTRICTED")));
 }
@@ -19775,7 +19787,7 @@ function FileUpload({
     files.length > 5 && /* @__PURE__ */ import_react3.default.createElement("div", { className: "text-center p-1 bg-light border-top" }, /* @__PURE__ */ import_react3.default.createElement("small", { className: "text-muted", style: { fontSize: "0.65rem" } }, "Showing all ", files.length, " files - scroll to see more"))
   ));
 }
-function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: [], estimation: [], parts_requested: [] } }) {
+function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: [], estimation: [], parts_requested: [] }, itar = false, onItarChange }) {
   return /* @__PURE__ */ import_react3.default.createElement("div", { className: "container my-4" }, /* @__PURE__ */ import_react3.default.createElement("h5", { className: "mb-3" }, "Upload Files"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "row g-3 mt-3" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "col-12 col-md-4" }, /* @__PURE__ */ import_react3.default.createElement(
     FileUpload,
     {
@@ -19813,7 +19825,9 @@ function FileUploadSection({ onChange, onRemove, onMapPress, files = { excel: []
   ))), /* @__PURE__ */ import_react3.default.createElement(
     ActionBar,
     {
-      onMapPress
+      onMapPress,
+      itar,
+      onItarChange
     }
   ));
 }
@@ -20771,6 +20785,8 @@ function RfqApp() {
     // Store the party name
     buyer_pk: null,
     customer_rfq_number: null,
+    itar: false,
+    // ITAR restricted checkbox value
     files: {
       excel: (
         /** @type {Array<File & {path?: string}>} */
@@ -20812,6 +20828,51 @@ function RfqApp() {
   });
   const [documentMapModal, setDocumentMapModal] = (0, import_react8.useState)(getInitialModalState());
   const [isGenerating, setIsGenerating] = (0, import_react8.useState)(false);
+  const [errorModal, setErrorModal] = (0, import_react8.useState)({ open: false, message: "" });
+  const formatErrorMessage = (error) => {
+    if (error.name === "AbortError" || error.message?.includes("aborted")) {
+      return `Request timed out. RFQ generation is taking longer than expected.
+
+This may be normal for large RFQs. Please check if the RFQ was actually generated successfully on the server side.`;
+    }
+    if (!error.status) {
+      return `Unexpected error: ${error.message || error}`;
+    }
+    const formatErrorDetail = (detail) => {
+      if (typeof detail === "string") {
+        return detail;
+      } else if (typeof detail === "object" && detail !== null) {
+        if (detail.message) {
+          return detail.message;
+        } else if (detail.detail) {
+          return detail.detail;
+        } else if (detail.error) {
+          return detail.error;
+        } else {
+          return JSON.stringify(detail, null, 2);
+        }
+      }
+      return String(detail);
+    };
+    switch (error.status) {
+      case 422:
+        if (Array.isArray(error.detail)) {
+          const validationErrors = error.detail.map((err) => {
+            const field = err.loc ? err.loc.join(".") : "field";
+            return `${field}: ${err.msg}`;
+          }).join("\n");
+          return `Validation Error:
+${validationErrors}`;
+        }
+        return `Validation Error: ${formatErrorDetail(error.detail)}`;
+      case 400:
+        return formatErrorDetail(error.detail);
+      case 500:
+        return `Server Error: ${formatErrorDetail(error.detail)}`;
+      default:
+        return `Error ${error.status}: ${formatErrorDetail(error.detail)}`;
+    }
+  };
   const resetToDefaults = (0, import_react8.useCallback)(() => {
     setState(getInitialState());
     setDocumentMapModal(getInitialModalState());
@@ -20912,8 +20973,8 @@ function RfqApp() {
       party_pk: state.customer_pk,
       party_name: state.customer_name,
       // Use stored customer name
-      itar: false,
-      // TODO: Add ITAR field to form if needed
+      itar: state.itar,
+      // Use actual ITAR checkbox value
       inquiry_date: state.dates.inquiry || currentDate,
       due_date: state.dates.due || currentDate,
       current_date: currentDate,
@@ -21023,7 +21084,9 @@ function RfqApp() {
         onChange: handleFileUpload,
         onRemove: handleFileRemove,
         onMapPress: handleMapPress,
-        files: state.files
+        files: state.files,
+        itar: state.itar,
+        onItarChange: (checked) => setState((prev) => ({ ...prev, itar: checked }))
       }
     ), /* @__PURE__ */ import_react8.default.createElement(
       DateSection,
@@ -21050,7 +21113,8 @@ function RfqApp() {
             resetToDefaults();
           } catch (error) {
             console.error("Failed to generate RFQ:", error);
-            alert(`Failed to generate RFQ: ${error.message || error}`);
+            const errorMessage = formatErrorMessage(error);
+            setErrorModal({ open: true, message: errorMessage });
           } finally {
             setIsGenerating(false);
           }
@@ -21089,7 +21153,58 @@ function RfqApp() {
     borderRadius: "8px",
     textAlign: "center",
     minWidth: "200px"
-  } }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "spinner-border text-primary mb-3", role: "status" }, /* @__PURE__ */ import_react8.default.createElement("span", { className: "visually-hidden" }, "Loading...")), /* @__PURE__ */ import_react8.default.createElement("div", { style: { fontSize: "16px", fontWeight: "500" } }, "Generating RFQ...")))));
+  } }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "spinner-border text-primary mb-3", role: "status" }, /* @__PURE__ */ import_react8.default.createElement("span", { className: "visually-hidden" }, "Loading...")), /* @__PURE__ */ import_react8.default.createElement("div", { style: { fontSize: "16px", fontWeight: "500" } }, "Generating RFQ..."), /* @__PURE__ */ import_react8.default.createElement("div", { style: { fontSize: "14px", color: "#6c757d", marginTop: "8px" } }, "This may take a few minutes for large RFQs"))), errorModal.open && /* @__PURE__ */ import_react8.default.createElement("div", { style: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999
+  } }, /* @__PURE__ */ import_react8.default.createElement("div", { style: {
+    backgroundColor: "white",
+    padding: "30px",
+    borderRadius: "8px",
+    textAlign: "left",
+    minWidth: "400px",
+    maxWidth: "600px",
+    maxHeight: "80vh",
+    overflowY: "auto"
+  } }, /* @__PURE__ */ import_react8.default.createElement("div", { style: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+    paddingBottom: "10px",
+    borderBottom: "1px solid #dee2e6"
+  } }, /* @__PURE__ */ import_react8.default.createElement("h5", { style: { color: "#dc3545", margin: 0 } }, "RFQ Generation Failed"), /* @__PURE__ */ import_react8.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "btn-close",
+      onClick: () => setErrorModal({ open: false, message: "" }),
+      "aria-label": "Close"
+    }
+  )), /* @__PURE__ */ import_react8.default.createElement("div", { style: {
+    whiteSpace: "pre-line",
+    fontFamily: "monospace",
+    fontSize: "14px",
+    lineHeight: "1.4"
+  } }, errorModal.message), /* @__PURE__ */ import_react8.default.createElement("div", { style: {
+    marginTop: "20px",
+    textAlign: "right"
+  } }, /* @__PURE__ */ import_react8.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "btn btn-primary",
+      onClick: () => setErrorModal({ open: false, message: "" })
+    },
+    "OK"
+  ))))));
 }
 
 // src/renderer/rfq_gen/main.jsx
