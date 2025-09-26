@@ -18,12 +18,14 @@ async function loadApp(url, appType = null) {
     const vendorQuotingRoot = document.getElementById('vendor-quoting-root');
     const vacationRoot = document.getElementById('vacation-root');
     const rfqGenRoot = document.getElementById('rfq-gen-root');
+    const adminPanelRoot = document.getElementById('admin-panel-root');
     
     // Hide all containers first
     if (frame) frame.style.display = 'none';
     if (vendorQuotingRoot) vendorQuotingRoot.style.display = 'none';
     if (vacationRoot) vacationRoot.style.display = 'none';
     if (rfqGenRoot) rfqGenRoot.style.display = 'none';
+    if (adminPanelRoot) adminPanelRoot.style.display = 'none';
     
     // Unmount previous React apps
     if (currentApp === 'vendor-quoting') {
@@ -46,6 +48,13 @@ async function loadApp(url, appType = null) {
             unmountRfqGenApp();
         } catch (error) {
             console.error('Failed to unmount RFQ Gen app:', error);
+        }
+    } else if (currentApp === 'admin-panel') {
+        try {
+            const { unmountAdminPanel } = await import('../admin_panel/main.js');
+            unmountAdminPanel();
+        } catch (error) {
+            console.error('Failed to unmount Admin Panel app:', error);
         }
     }
     
@@ -81,6 +90,17 @@ async function loadApp(url, appType = null) {
             currentApp = 'rfq-gen';
         } catch (error) {
             console.error('Failed to load RFQ Gen app:', error);
+        }
+    } else if (appType === 'admin-panel') {
+        // Show and mount Admin Panel React app
+        if (adminPanelRoot) adminPanelRoot.style.display = 'block';
+        
+        try {
+            const { mountAdminPanel } = await import('../admin_panel/main.js');
+            mountAdminPanel();
+            currentApp = 'admin-panel';
+        } catch (error) {
+            console.error('Failed to load Admin Panel app:', error);
         }
     } else {
         // Show iframe for other apps

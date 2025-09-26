@@ -287,3 +287,9 @@ export async function updateItemCommodityCode(itemPk, codeId) {
     });
 }
 
+// ----------- USER MANAGEMENT --------------------
+
+export async function fetchUsers() {
+    return requestJson("users");
+}
+
